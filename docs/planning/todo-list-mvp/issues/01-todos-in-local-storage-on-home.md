@@ -23,7 +23,7 @@
 - [x] Home reads the list from `useTodos()` and shows one row per Todo, keyed by `id`, using Mantine components. On a load error it shows a red Mantine `Alert` "Could not load your todos." No loading indicator is needed
 - [x] No reference to Item remains in `src/`
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
-- [ ] Manual check on `/`:
+- [x] Manual check on `/`:
   - With nothing stored, the six Demo Todos show.
   - Invalid JSON under the storage key in devtools shows the load-error alert after a reload.
 
@@ -31,3 +31,4 @@
 
 - 2026-10-05: The spec's function shape (`async` with no `await` in the LOCAL STORAGE block) fails lint: `@typescript-eslint/require-await`, plus `arrow-body-style` where a function only returns. The developer chose to drop `async` instead of disabling the rules: each API Function returns `Promise.resolve(...)` from its LOCAL STORAGE block, so the return types are unchanged, and switch step 2 says to make each function `async` again.
 - 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. Code review (Standards + Spec) is clean after round 2. Round 1's fixes: FILES.md and `apiClient.ts` no longer say the API Functions use `apiClient` today, and the storage module gained `removeTodos()` so the storage key stays private to it. With invalid stored JSON, React Query's default 3 retries delay the load-error alert by about 7 seconds. The manual check on `/` is left to the developer.
+- 2026-10-05: The developer did the manual check on `/`: the six Demo Todos show with nothing stored, and invalid JSON under the `todos` key shows the load-error alert after a reload. The alert took 5–10 seconds because of React Query's retries, so at the developer's request `useTodos` now sets `retry: false`, marked demo-only. Switch step 4 in `todos.ts` says to remove it.

@@ -12,8 +12,10 @@ import type { UpdateTodoInput } from "@/interfaces";
 
 const todosQueryKey = ["todos"] as const;
 
+// DEMO ONLY: `retry: false`, since retrying can't fix bad localStorage data and only delays the error.
+// Remove it when switching to a real API, so failed requests are retried again.
 export const useTodos = () =>
-  useQuery({ queryKey: todosQueryKey, queryFn: getTodos });
+  useQuery({ queryKey: todosQueryKey, queryFn: getTodos, retry: false });
 
 export const useTodo = (id: string) =>
   useQuery({ queryKey: [...todosQueryKey, id], queryFn: () => getTodo(id) });
