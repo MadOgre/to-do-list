@@ -29,7 +29,7 @@
 - [x] The favicon is the design's 32×32 PNG, served from the public folder and replacing the SVG. The page title is "Todo app"
 - [x] The untracked Figma screenshots and `STYLEGUIDE.md` move into a `design` folder in this feature's planning folder, and the empty root folder is removed
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
-- [ ] Manual check on `/`:
+- [x] Manual check on `/`:
   - The theme starts from the OS setting.
   - The toggle switches the colors, icon and background image, and the choice survives a reload with no flash.
   - Check at 320px, 375px, just below and above 768px, and 1440px: the mobile and desktop images show, with no horizontal scroll.
@@ -50,3 +50,4 @@
   - Text has a line height of 1. The top padding is 48px at every width. Rows are padded 24px on desktop and 16 × 20px on mobile.
   - "TODO" is an image in the design. Josefin Sans Bold's glyph metrics put it at 40px text with 15px letter spacing on desktop, and 26.6px with 10px on mobile.
   - Other review-driven changes, made at the developer's request: the row dividers are drawn in SCSS instead of with `withBorder`; the dead `min-height` is gone; the letter spacing is in px.
+- 2026-10-05: The developer did the manual check on `/` and reports that all of it passes.

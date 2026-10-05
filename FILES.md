@@ -28,6 +28,12 @@ When you add, move or delete a file, update this list.
 | `tsconfig.node.json` | TypeScript settings for `vite.config.ts`, which runs in Node. |
 | `vite.config.ts` | Vite config: the React plugin, the checker plugin that shows TypeScript and ESLint errors during `pnpm dev`, the dev server host and fixed port 9000, the injection of Mantine's Sass helpers into every SCSS file, and the `@/` alias. |
 
+## `.claude/`
+
+| File | Purpose |
+| --- | --- |
+| `.claude/settings.json` | Shared Claude Code project settings. Enables the official Figma plugin, so the design can be read from the Figma file. |
+
 ## `.vscode/`
 
 | File | Purpose |
