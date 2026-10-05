@@ -18,7 +18,7 @@ Install Mantine (core components and hooks) and configure it once at the app roo
 2. As a developer, I want Mantine's hooks package installed, so that I can use its utility hooks and so that the core package's peer dependency is satisfied.
 3. As a developer, I want to import any Mantine component directly from the Mantine package in any file, so that I don't have to go through a wrapper or barrel of our own.
 4. As a developer, I want Mantine's provider set up once at the app root, so that every Page and Shared Component gets the theme without extra setup.
-5. As a developer, I want the theme defined in its own module, so that future customisation has one obvious place to go.
+5. As a developer, I want the theme defined in its own module, so that future customization has one obvious place to go.
 6. As a developer, I want the theme's primary color set to green, so that buttons, links, loaders and other accent elements use the app's chosen color.
 7. As a developer, I want the default radius set to medium, so that cards, buttons and inputs share consistently softened corners.
 8. As a developer, I want the theme to set only what we deliberately chose, so that everything else follows Mantine's documented defaults.
@@ -107,7 +107,7 @@ Install Mantine (core components and hooks) and configure it once at the app roo
 - Dark mode, an `auto` color scheme, a color-scheme toggle, and the `index.html` color-scheme script.
 - Optional Mantine packages: form, notifications, dates, modals, code highlight, and so on.
 - Wrapping or re-exporting Mantine components, and any Shared Components.
-- Theme customisation beyond `primaryColor` and `defaultRadius`: fonts, custom palettes, breakpoints, component default props.
+- Theme customization beyond `primaryColor` and `defaultRadius`: fonts, custom palettes, breakpoints, component default props.
 - Restyling the NotFound Page or adding Pages. The demo is Home only.
 - Right-to-left support. The `rtl`/`ltr` mixins come with the verbatim helpers file but aren't used.
 
@@ -116,4 +116,4 @@ Install Mantine (core components and hooks) and configure it once at the app roo
 - Installing dependencies requires the developer's `pnpm dev` to be stopped first (Keep the build green rule).
 - Mantine's documentation examples use PostCSS-preset syntax. In `.scss` files, `@mixin hover { … }` is silently swallowed as a Sass mixin definition, and bare `rem()` hits Sass's built-in modulo function and fails the build. Both were confirmed with the project's `sass-embedded` 1.105.0 during grilling. Always use the namespaced forms.
 - If dark mode is added later, `light-dark()` stays unavailable (no preset). Use `@include mantine.light` / `@include mantine.dark`, and add the color-scheme script to the HTML entry page.
-- If the theme's breakpoints are ever customised, update the helpers partial's breakpoint variables to match.
+- If the theme's breakpoints are ever customized, update the helpers partial's breakpoint variables to match.

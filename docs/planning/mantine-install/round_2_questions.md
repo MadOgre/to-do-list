@@ -63,7 +63,7 @@ as recommended
 
 ---
 
-❓ **Q5** - **Home's style module**: Today `Home.module.scss` only styles `.intro` (grey italic). Mantine can do that with props (`<Text c="dimmed" fs="italic">`), which would leave the module empty. **(a)** Keep the module and rewrite `.intro` with Mantine's CSS variables (`color: var(--mantine-color-dimmed)`). That demonstrates SCSS and Mantine working together, which is what round 1 Q3 decided on. **(b)** Use props and delete the module.
+❓ **Q5** - **Home's style module**: Today `Home.module.scss` only styles `.intro` (gray italic). Mantine can do that with props (`<Text c="dimmed" fs="italic">`), which would leave the module empty. **(a)** Keep the module and rewrite `.intro` with Mantine's CSS variables (`color: var(--mantine-color-dimmed)`). That demonstrates SCSS and Mantine working together, which is what round 1 Q3 decided on. **(b)** Use props and delete the module.
 
 ➡️ (a). It keeps the "Page + its SCSS module" convention visible in the one real Page, and shows how SCSS reads Mantine's theme.
 

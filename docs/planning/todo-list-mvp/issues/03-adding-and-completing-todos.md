@@ -14,10 +14,10 @@
 - [ ] On Enter, the input trims the value and ignores it if empty. Otherwise it creates the Todo through `useCreateTodo`. It clears only once the create succeeds, and keeps the typed text on failure. Duplicate titles are allowed
 - [ ] A Todo row Shared Component, typed `FC<TodoRowProps>` (or the matching name):
   - A round Mantine `Checkbox` with the style guide's gradient (`hsl(192, 100%, 67%)` → `hsl(280, 87%, 65%)`) and the design's check icon when checked.
-  - The checkbox is labelled for screen readers with the Todo's title.
+  - The checkbox is labeled for screen readers with the Todo's title.
   - It sits in a clickable left gutter that covers the row's full height up to the text.
 - [ ] The row's title text is not part of the checkbox label and doesn't toggle it. Long titles wrap
-- [ ] Toggling calls `useUpdateTodo` with the new `completed`. Completed Todos show a struck-through title in the theme's Completed colour
+- [ ] Toggling calls `useUpdateTodo` with the new `completed`. Completed Todos show a struck-through title in the theme's Completed color
 - [ ] A failed create or update shows a red Mantine `Alert` "Could not save your change." above the list, and the list stays as it was
 - [ ] Home renders the input above the list card and one Todo row per Todo, replacing ticket 01's plain rows
 - [ ] Keyboard: Tab reaches the input and every check, and Space toggles a check

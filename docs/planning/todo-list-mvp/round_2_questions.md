@@ -93,7 +93,7 @@ yes
 - **Active** filter, none Active: "No active todos."
 - **Completed** filter, none Completed: "No completed todos."
 
-➡️ Those three, in the dimmed text colour.
+➡️ Those three, in the dimmed text color.
 
 **Answer:**
 as recommended
@@ -121,11 +121,11 @@ as recommended
 
 ---
 
-❓ **Q9** - **Matching the style guide's colours**: The current theme uses green as the primary colour with Mantine's default grays. To match the design, options:
+❓ **Q9** - **Matching the style guide's colors**: The current theme uses green as the primary color with Mantine's default grays. To match the design, options:
 
-- (a) Put the style guide into `theme.ts`: Blue 500 as the primary colour, Josefin Sans as the font, and the light and dark page and card colours through Mantine's theme (custom colours and a CSS variables resolver). The SCSS modules then use Mantine CSS variables only. Close to the design, and all colour decisions live in one file.
-- (b) Use Mantine's nearest built-in colours (`blue`, `gray`, `dark`) and accept an approximate match.
-- (c) Write the style guide's colours straight into the SCSS modules.
+- (a) Put the style guide into `theme.ts`: Blue 500 as the primary color, Josefin Sans as the font, and the light and dark page and card colors through Mantine's theme (custom colors and a CSS variables resolver). The SCSS modules then use Mantine CSS variables only. Close to the design, and all color decisions live in one file.
+- (b) Use Mantine's nearest built-in colors (`blue`, `gray`, `dark`) and accept an approximate match.
+- (c) Write the style guide's colors straight into the SCSS modules.
 
 ➡️ (a). The Definition Of Done is "as outlined by Figma design", and (a) gets there with Mantine's own theming instead of custom CSS.
 
@@ -134,7 +134,7 @@ as recommended
 
 ---
 
-❓ **Q10** - **The filters**: The design shows All / Active / Completed as plain words, with the selected one in blue. Mantine's `SegmentedControl` draws a pill behind the selection, which would need overriding with custom CSS. I'd use three Mantine `Button`s with `variant="transparent"`, coloured by whether they are selected. The selected filter is plain in-memory state: it resets to All on reload and isn't in the URL.
+❓ **Q10** - **The filters**: The design shows All / Active / Completed as plain words, with the selected one in blue. Mantine's `SegmentedControl` draws a pill behind the selection, which would need overriding with custom CSS. I'd use three Mantine `Button`s with `variant="transparent"`, colored by whether they are selected. The selected filter is plain in-memory state: it resets to All on reload and isn't in the URL.
 
 ➡️ Yes to both.
 

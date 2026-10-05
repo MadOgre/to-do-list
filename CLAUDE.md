@@ -28,7 +28,7 @@ Before every commit, run `pnpm install`, `pnpm lint`, `pnpm build` and a short `
 
 ### Review until clean
 
-After `/code-review`, repeat: fix the findings, verify as above, then have both the Standards and the Spec agents review again. Commit once both report nothing to fix. When the only fixes are wording changes, a re-review is usually unnecessary: use judgement, and re-review when a wording fix changes a fact, an instruction or the meaning. Tell the developer which round a change is on.
+After `/code-review`, repeat: fix the findings, verify as above, then have both the Standards and the Spec agents review again. Commit once both report nothing to fix. When the only fixes are wording changes, a re-review is usually unnecessary: use judgment, and re-review when a wording fix changes a fact, an instruction or the meaning. Tell the developer which round a change is on.
 
 ### Code conventions
 

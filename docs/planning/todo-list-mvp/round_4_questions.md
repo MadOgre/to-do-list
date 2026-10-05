@@ -79,9 +79,9 @@ as recommended
 
 ---
 
-❓ **Q5** - **Small behaviours the design doesn't show**:
+❓ **Q5** - **Small behaviors the design doesn't show**:
 
-- **Accessibility:** the icon-only controls get labels for screen readers: the theme toggle says "Switch to dark theme" or "Switch to light theme", and the ✕ says "Delete “<title>”". The new-todo input gets a visually hidden label "Create a new todo". Each check is labelled with its Todo's title.
+- **Accessibility:** the icon-only controls get labels for screen readers: the theme toggle says "Switch to dark theme" or "Switch to light theme", and the ✕ says "Delete “<title>”". The new-todo input gets a visually hidden label "Create a new todo". Each check is labeled with its Todo's title.
 - **Long titles** wrap onto more lines, with no length limit.
 - **Duplicate titles** are allowed.
 - **The input clears** only once the create succeeds, so a failed create keeps what you typed.

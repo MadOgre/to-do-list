@@ -81,7 +81,7 @@ a. You can remove the artificial delay. That was only there to test the loading
 
 ❓ **Q5** - **The Restore link**:
 
-- Copy: "Restore original todos", in the hint's style (small, dimmed, centred under the list card), looking and behaving like a link (Mantine `Anchor` rendered as a button), with a hover state.
+- Copy: "Restore original todos", in the hint's style (small, dimmed, centered under the list card), looking and behaving like a link (Mantine `Anchor` rendered as a button), with a hover state.
 - Confirmation: Restore throws away every change, so it asks with the same dialog: "Restore original todos?" / "Your current todos will be replaced by the six original ones." / Cancel / red **Restore**.
 - Always visible, even when the list already is the original six.
 

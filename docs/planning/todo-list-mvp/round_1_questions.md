@@ -58,19 +58,19 @@ Item should now be called Todo as per Q3 but leave all the mock routes and logic
 
 ---
 
-❓ **Q5** - **Light/dark switch: starting theme and memory**: Mantine's colour scheme switching (`useMantineColorScheme`) is built in. By default Mantine stores the chosen scheme in `localStorage`, so it survives a reload. Your intent says no saving functionality. Two parts:
+❓ **Q5** - **Light/dark switch: starting theme and memory**: Mantine's color scheme switching (`useMantineColorScheme`) is built in. By default Mantine stores the chosen scheme in `localStorage`, so it survives a reload. Your intent says no saving functionality. Two parts:
 
 - Starting theme: (a) light, as in the first design frames, or (b) follow the OS setting.
 - Memory: (a) keep Mantine's default of remembering the choice in `localStorage`, or (b) forget it on reload.
 
-➡️ Starting theme: (b), follow the OS setting. Memory: (a), keep Mantine's default. "No saving" reads as being about the todos, and this is Mantine's out-of-the-box behaviour, not anything we'd build.
+➡️ Starting theme: (b), follow the OS setting. Memory: (a), keep Mantine's default. "No saving" reads as being about the todos, and this is Mantine's out-of-the-box behavior, not anything we'd build.
 
 **Answer:**
 as recommended
 
 ---
 
-❓ **Q6** - **Adding a todo**: The design shows typing into the input but not how a todo gets created. My reading of the usual behaviour:
+❓ **Q6** - **Adding a todo**: The design shows typing into the input but not how a todo gets created. My reading of the usual behavior:
 
 - Pressing Enter adds the todo at the bottom of the list, as active, and clears the input.
 - Leading and trailing spaces are trimmed, and an empty or spaces-only input adds nothing.
@@ -92,7 +92,7 @@ yes on other two items
 - Deleting: the ✕ deletes at once, with no confirmation and no undo.
 - Editing a todo's text isn't in the design, so it is out.
 
-➡️ Clicking the text toggles too (Mantine's default behaviour). ✕ deletes at once. No editing.
+➡️ Clicking the text toggles too (Mantine's default behavior). ✕ deletes at once. No editing.
 
 **Answer:**
 only clicking the checkbox or the general area around it counts as completion, I want to later implement drag and drop and having the entire item clickable will interfere
@@ -113,7 +113,7 @@ as recommended
 
 ---
 
-❓ **Q9** - **Footer behaviour**:
+❓ **Q9** - **Footer behavior**:
 
 - "N items left" counts the active todos, whatever filter is selected. Should it read "1 item left" for one todo (a tiny bit of custom logic) or always say "items"?
 - "Clear Completed" deletes every completed todo, and stays visible even when nothing is completed.

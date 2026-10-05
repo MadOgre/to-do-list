@@ -11,7 +11,7 @@
 - [ ] Ask the developer to stop their `pnpm dev` before installing dependencies
 - [ ] `@mantine/modals` is a runtime dependency at the same range as `@mantine/core` (`^9.6.3`). No other new dependencies
 - [ ] `ModalsProvider` is added at the app root inside `MantineProvider`
-- [ ] The Todo row has a Mantine `ActionIcon` with the design's cross icon, labelled "Delete “<title>”". On devices with hover it shows on row hover and focus-within (`@include mantine.hover` or equivalent); on touch devices it is always visible
+- [ ] The Todo row has a Mantine `ActionIcon` with the design's cross icon, labeled "Delete “<title>”". On devices with hover it shows on row hover and focus-within (`@include mantine.hover` or equivalent); on touch devices it is always visible
 - [ ] The ✕ opens `modals.openConfirmModal`: title "Delete todo?", body "“<title>” will be deleted.", **Cancel** and a red **Delete**
 - [ ] Confirming calls `useDeleteTodo`. A failure shows the "Could not save your change." alert from ticket 03
 - [ ] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node

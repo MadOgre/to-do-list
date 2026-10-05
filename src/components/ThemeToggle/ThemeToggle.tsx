@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { moonIcon, sunIcon } from "@/images";
 import styles from "./ThemeToggle.module.scss";
 
-// Shows the moon in light and the sun in dark, as in the design. The colour scheme may be "auto", so the icon follows the computed one.
+// Shows the moon in light and the sun in dark, as in the design. The color scheme may be "auto", so the icon follows the computed one.
 export const ThemeToggle: FC = () => {
   const { setColorScheme } = useMantineColorScheme();
   const isDark = useComputedColorScheme("light", { getInitialValueInEffect: false }) === "dark";

@@ -12,7 +12,7 @@ The app's Home Page is still a placeholder that lists sample Items. The develope
 
 ## Solution
 
-The Home Page becomes the to-do list from the design. It is built with Mantine components and themed from the style guide, with Josefin Sans, the design's colours and the design's background images.
+The Home Page becomes the to-do list from the design. It is built with Mantine components and themed from the style guide, with Josefin Sans, the design's colors and the design's background images.
 
 The user types a Todo and presses Enter to add it to the top of the list. They complete a Todo with its round check, delete it with its ✕ after confirming, filter by All / Active / Completed, and clear every Completed Todo after confirming. They see how many Todos are left, and they toggle light/dark with the sun/moon icon.
 
@@ -75,9 +75,9 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
 51. As a user, I want a red message in place of the list if my Todos can't be loaded, so that I know something is wrong.
 52. As a user, I want a red message above the list if a change can't be saved, with the list left as it was, so that I know my change didn't happen.
 53. As a screen reader user, I want the theme toggle to say "Switch to dark theme" or "Switch to light theme", so that I know what it does.
-54. As a screen reader user, I want each ✕ labelled "Delete “<title>”", so that I know which Todo it deletes.
-55. As a screen reader user, I want each check labelled with its Todo's title, so that I know which Todo I'm completing.
-56. As a screen reader user, I want the input labelled "Create a new todo", so that I know what it's for.
+54. As a screen reader user, I want each ✕ labeled "Delete “<title>”", so that I know which Todo it deletes.
+55. As a screen reader user, I want each check labeled with its Todo's title, so that I know which Todo I'm completing.
+56. As a screen reader user, I want the input labeled "Create a new todo", so that I know what it's for.
 57. As a keyboard user, I want to reach every control with Tab and toggle a check with Space, so that I can use the app without a mouse.
 58. As a user, I want the browser tab to show the design's favicon and the title "Todo app", so that I can find the tab easily.
 59. As a developer, I want every change to go through the Todo API Functions and API Hooks, so that swapping in a real API later doesn't touch the components.
@@ -88,7 +88,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
 64. As a developer, I want no artificial delay in the API Functions, so that every click shows immediately without optimistic-update code.
 65. As a developer, I want Item renamed to Todo throughout the data access layers, so that the code uses the glossary's term.
 66. As a developer, I want the unused mock adapter removed, so that no dead code is left.
-67. As a developer, I want the style guide's colours and font in the Mantine theme, so that all colour decisions live in one place and SCSS modules only use Mantine CSS variables.
+67. As a developer, I want the style guide's colors and font in the Mantine theme, so that all color decisions live in one place and SCSS modules only use Mantine CSS variables.
 68. As a developer, I want the page split into Shared Components (theme toggle, new-todo input, Todo row, footer with filters), so that each part stays small and the Todo row is ready to wrap for drag and drop.
 69. As a developer, I want the Figma screenshots and style guide kept with this feature's planning files, so that the spec and tickets can link to the design.
 70. As a developer, I want the install, lint, build and dev-server checks to pass with my existing pnpm and Node, so that the build stays green.
@@ -175,9 +175,9 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
     - A Mantine `TextInput` with placeholder "Create a new todo…" and a visually hidden label "Create a new todo". Its left section is an empty, decorative circle.
     - On Enter it trims the value and ignores it if empty. Otherwise it calls an `onCreate` callback, and clears only once the create succeeds.
   - **Todo row.**
-    - A Mantine `Checkbox` (round, gradient fill and the design's check icon when checked), labelled for screen readers with the Todo's title. It sits in a clickable left gutter that covers the row's full height up to the text.
+    - A Mantine `Checkbox` (round, gradient fill and the design's check icon when checked), labeled for screen readers with the Todo's title. It sits in a clickable left gutter that covers the row's full height up to the text.
     - The title text is not part of the checkbox's label and doesn't toggle it.
-    - The ✕ is a Mantine `ActionIcon` with the design's cross icon, labelled "Delete “<title>”". On devices with hover it shows on row hover and focus-within; on touch devices it is always visible.
+    - The ✕ is a Mantine `ActionIcon` with the design's cross icon, labeled "Delete “<title>”". On devices with hover it shows on row hover and focus-within; on touch devices it is always visible.
     - Completed styling: struck-through, faded title.
   - **Footer.**
     - Shows "N items left" ("1 item left" in the singular) and "Clear Completed" as a transparent Mantine `Button`.
@@ -188,7 +188,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
   - **Delete:** title "Delete todo?", body "“<title>” will be deleted.", confirm **Delete**.
   - **Clear Completed:** title "Delete completed todos?", body "N completed todos will be deleted." (singular for one), confirm **Delete**. It only opens when at least one Todo is Completed.
   - **Restore Demo Todos:** title "Restore demo todos?", body "Your current todos will be replaced by the six demo todos.", confirm **Restore**.
-- **Restore link.** "Restore demo todos" is a Mantine `Anchor` rendered as a button, with a hover state. It sits where the design shows the drag-and-drop hint (small, dimmed, centred under the list card) and is always visible. It is demo-only, and removed at the switch.
+- **Restore link.** "Restore demo todos" is a Mantine `Anchor` rendered as a button, with a hover state. It sits where the design shows the drag-and-drop hint (small, dimmed, centered under the list card) and is always visible. It is demo-only, and removed at the switch.
 - **Empty states**, in dimmed text inside the list card above the footer:
   - "Nothing to do. Add a todo above." when there are no Todos at all, whatever the filter
   - "No active todos." when the Active filter matches nothing
@@ -200,16 +200,16 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
 
 ### Theme and styling
 
-- **The Mantine theme carries the style guide.** Blue 500 (`hsl(220, 98%, 61%)`) is the primary colour, as a custom colour tuple. Josefin Sans (400 and 700) is the font family. The light and dark surface and text colours come through Mantine's theme (custom colours and a CSS variables resolver):
+- **The Mantine theme carries the style guide.** Blue 500 (`hsl(220, 98%, 61%)`) is the primary color, as a custom color tuple. Josefin Sans (400 and 700) is the font family. The light and dark surface and text colors come through Mantine's theme (custom colors and a CSS variables resolver):
   - **Light:** page Gray 50; cards White; text Navy 850; dimmed Gray 600; dividers and the Completed title Gray 300.
   - **Dark:** page Navy 950; cards Navy 900; text Purple 300; hover Purple 100; dimmed Purple 600; Completed title Purple 700; dividers Purple 800.
 
-  Match the screenshots where the style guide leaves a role open. The green primary colour goes. `defaultRadius` and breakpoints stay as they are.
-- **SCSS modules use only Mantine CSS variables and the injected `mantine` helpers** (ADR-0002): `mantine.rem()`, `@include mantine.light` / `mantine.dark` for the theme-dependent background images, `@include mantine.hover`, and `mantine.smaller-than(mantine.$mantine-breakpoint-sm)` / `larger-than` for the mobile/desktop switch. No hard-coded colours.
+  Match the screenshots where the style guide leaves a role open. The green primary color goes. `defaultRadius` and breakpoints stay as they are.
+- **SCSS modules use only Mantine CSS variables and the injected `mantine` helpers** (ADR-0002): `mantine.rem()`, `@include mantine.light` / `mantine.dark` for the theme-dependent background images, `@include mantine.hover`, and `mantine.smaller-than(mantine.$mantine-breakpoint-sm)` / `larger-than` for the mobile/desktop switch. No hard-coded colors.
 - **Check gradient:** `hsl(192, 100%, 67%)` to `hsl(280, 87%, 65%)`, from the style guide.
-- **Background images:** the light/dark × mobile/desktop images from the images area. They are full-width at the top of the page behind the header, with the page colour below, as in the screenshots.
+- **Background images:** the light/dark × mobile/desktop images from the images area. They are full-width at the top of the page behind the header, with the page color below, as in the screenshots.
 - **Typography** follows the design's text presets: 18px body on desktop with -0.25px letter spacing, and smaller presets (14px / 12px) on mobile and in the footer. The header "TODO" is bold, white and widely letter-spaced.
-- **Layout** is centred, with the design's widths at 375px and 1440px. It works without horizontal scrolling from 320px up.
+- **Layout** is centered, with the design's widths at 375px and 1440px. It works without horizontal scrolling from 320px up.
 - **Light/dark:** Mantine's color scheme with `defaultColorScheme="auto"`, so the OS setting applies first. Mantine's default `localStorage` color scheme manager remembers the choice. Add Mantine's `ColorSchemeScript` (or its equivalent attribute script) to the HTML entry page, to avoid a flash of the wrong theme.
 
 ### HTML entry page and assets
@@ -231,7 +231,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
 
 - **No test runner and no automated tests.** The developer's intent rules them out, and this was confirmed when choosing the seams.
 - **Seam 1: the Keep the build green checks** (`pnpm install`, `pnpm lint`, `pnpm build`, a short `pnpm dev` start), with the developer's pnpm and Node. `pnpm build` type-checks the Todo types, the API Functions and Hooks, the components' props and the theme. It also compiles every SCSS module through the injected helpers. Lint checks the conventions, including that no unused `apiClient` import is left active.
-- **Seam 2: the Home Page in the running app.** This checks external behaviour only, what the user sees. Open `/` and confirm:
+- **Seam 2: the Home Page in the running app.** This checks external behavior only, what the user sees. Open `/` and confirm:
   1. **First visit** (empty storage for the app's key): the six Demo Todos show, the first Completed, with "5 items left".
   2. **Adding:**
      - Enter adds a trimmed Todo at the top and clears the input.
@@ -260,7 +260,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
   9. **Load error:** put invalid JSON under the storage key in devtools and reload. "Could not load your todos." shows, and Restore recovers. No code change is needed.
   10. **Theme:**
       - It starts from the OS setting.
-      - The toggle switches the colours, icon and background image, and the choice survives a reload.
+      - The toggle switches the colors, icon and background image, and the choice survives a reload.
       - There is no flash of the wrong theme.
   11. **Responsive:**
       - Check at 320px, 375px, just below and above 768px, and 1440px.
@@ -288,7 +288,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
 ## Further Notes
 
 - The developer must stop their `pnpm dev` before `@mantine/modals` is installed (Keep the build green rule).
-- The design's frames disagree on the ✕: one desktop frame shows it on every row. The hover behaviour follows the interaction frame (4.png) and the mobile frames.
+- The design's frames disagree on the ✕: one desktop frame shows it on every row. The hover behavior follows the interaction frame (4.png) and the mobile frames.
 - Mantine's color scheme choice is stored in `localStorage` under Mantine's own key. It is separate from the Todo storage key, and Restore Demo Todos doesn't touch it.
 - The demo-only parts (the storage module, the Demo Todos, `restoreTodos`, its hook and the Restore link) are what the switch deletes. Keep them clearly marked so a later reader finds them all from the switch comment.
 - No ADR: the `localStorage` approach is built so the switch is easy, so it doesn't meet the "hard to reverse" bar.

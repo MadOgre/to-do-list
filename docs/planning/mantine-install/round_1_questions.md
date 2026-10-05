@@ -48,7 +48,7 @@ I say go ahead and add them anyway. If it's not going to hurt anything, I would 
 ❓ **Q5** - **Theme ("reasonable defaults")**: Options:
 
 - **(a)** `MantineProvider` with no theme: Mantine's defaults (blue primary, system font stack).
-- **(b)** A `theme` from `createTheme()` in its own file (e.g. `src/theme.ts`, next to `queryClient.ts`). It starts almost empty (say, only `primaryColor`) and gives future customisation an obvious home.
+- **(b)** A `theme` from `createTheme()` in its own file (e.g. `src/theme.ts`, next to `queryClient.ts`). It starts almost empty (say, only `primaryColor`) and gives future customization an obvious home.
 - **(c)** A fuller theme now: fonts, radius, custom palette.
 
 ➡️ (b), with `primaryColor` and `defaultRadius` set explicitly and nothing else. It's the "configured" part of the Definition of Done without inventing a design.

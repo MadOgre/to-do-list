@@ -1,6 +1,6 @@
 import { colorsTuple, createTheme, type CSSVariablesResolver } from "@mantine/core";
 
-// The style guide's colours (docs/planning/todo-list-mvp/design/STYLEGUIDE.md), by their names there.
+// The style guide's colors (docs/planning/todo-list-mvp/design/STYLEGUIDE.md), by their names there.
 const styleGuide = {
   blue500: "hsl(220, 98%, 61%)",
   white: "hsl(0, 0%, 100%)",
@@ -10,6 +10,7 @@ const styleGuide = {
   navy850: "hsl(235, 19%, 35%)",
   navy900: "hsl(235, 24%, 19%)",
   navy950: "hsl(235, 21%, 11%)",
+  purple100: "hsl(236, 33%, 92%)",
   purple300: "hsl(234, 39%, 85%)",
   purple600: "hsl(235, 16%, 43%)",
   purple700: "hsl(233, 14%, 35%)",
@@ -27,11 +28,13 @@ export const theme = createTheme({
   fontFamily,
   // Mantine's headings have their own font family, so the font is set for both.
   headings: { fontFamily },
-  defaultRadius: "md",
+  // The design's cards have 5px corners.
+  defaultRadius: 5,
 });
 
-// The light and dark surface and text colours. `body` is the card colour, because Mantine's Paper, Card and Modal use it.
-// `page` (the page background) and `completed` (a Completed Todo's title) are our own.
+// The light and dark surface and text colors, as the Figma frames use them. `body` is the card color, because Mantine's
+// Paper, Card and Modal use it. `page` (the page background), `completed` (a Completed Todo's title) and the cards'
+// `shadow-card` are our own; `shadow="card"` on a Card or Paper uses it.
 export const cssVariablesResolver: CSSVariablesResolver = () => ({
   variables: {},
   light: {
@@ -41,15 +44,17 @@ export const cssVariablesResolver: CSSVariablesResolver = () => ({
     "--mantine-color-dimmed": styleGuide.gray600,
     "--mantine-color-placeholder": styleGuide.gray600,
     "--mantine-color-completed": styleGuide.gray300,
-    "--mantine-color-default-border": styleGuide.gray300,
+    "--mantine-color-default-border": styleGuide.purple300,
+    "--mantine-shadow-card": "0 35px 25px rgba(194, 195, 214, 0.5)",
   },
   dark: {
     "--mantine-color-page": styleGuide.navy950,
     "--mantine-color-body": styleGuide.navy900,
-    "--mantine-color-text": styleGuide.purple300,
+    "--mantine-color-text": styleGuide.purple100,
     "--mantine-color-dimmed": styleGuide.purple600,
-    "--mantine-color-placeholder": styleGuide.purple600,
+    "--mantine-color-placeholder": styleGuide.gray600,
     "--mantine-color-completed": styleGuide.purple700,
     "--mantine-color-default-border": styleGuide.purple800,
+    "--mantine-shadow-card": "0 35px 25px rgba(0, 0, 0, 0.5)",
   },
 });

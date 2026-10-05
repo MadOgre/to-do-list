@@ -17,10 +17,10 @@ export const Home: FC = () => {
         </Group>
         {isError && <Alert color="red">Could not load your todos.</Alert>}
         {todos && (
-          <Card shadow="xl" padding={0}>
+          <Card shadow="card" padding={0}>
             {todos.map(({ id, title, completed }) => (
-              <Card.Section key={id} withBorder className={styles.row}>
-                <Text fz="inherit" td={completed ? "line-through" : undefined} className={completed ? styles.completed : undefined}>
+              <Card.Section key={id} className={styles.row}>
+                <Text fz="inherit" lh="inherit" td={completed ? "line-through" : undefined} className={completed ? styles.completed : undefined}>
                   {title}
                 </Text>
               </Card.Section>

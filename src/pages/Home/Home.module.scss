@@ -1,14 +1,15 @@
 // The design's mobile layout below `sm`, its desktop layout from `sm` up.
 
+// Positions the background image against the page.
 .page {
   position: relative;
-  min-height: 100dvh;
 }
 
-// The full-width image behind the header, with the page colour below it.
+// The full-width image behind the header, with the page color below it.
 .background {
   position: absolute;
-  inset: 0 0 auto;
+  top: 0;
+  inset-inline: 0;
   height: mantine.rem(200);
   background-position: center;
   background-size: cover;
@@ -41,10 +42,10 @@
   padding-inline: mantine.rem(24);
   padding-block: mantine.rem(48);
   font-size: mantine.rem(12);
-  letter-spacing: mantine.rem(-0.25);
+  line-height: 1;
+  letter-spacing: -0.25px;
 
   @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
-    padding-block: mantine.rem(70);
     font-size: mantine.rem(18);
   }
 }
@@ -57,9 +58,11 @@
   }
 }
 
+// The design draws "TODO" as an image: 162.6 × 30.1px on desktop, 108.1 × 20px on mobile. Josefin Sans Bold's
+// glyph metrics put that at 40px text with 15px letter spacing, and 26.6px text with 10px.
 .title {
   color: var(--mantine-color-white);
-  font-size: mantine.rem(28);
+  font-size: mantine.rem(26.6);
   font-weight: 700;
   letter-spacing: mantine.rem(10);
   line-height: 1;
@@ -71,14 +74,17 @@
 }
 
 .row {
-  // Card.Section's border uses Mantine's grays; the theme's divider colour replaces them.
-  // `--border-color` is internal to Mantine's Card styles, not a documented variable: check it after a Mantine upgrade.
-  --border-color: var(--mantine-color-default-border);
   padding: mantine.rem(16) mantine.rem(20);
 
   @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
-    padding: mantine.rem(20) mantine.rem(24);
+    padding: mantine.rem(24);
   }
+}
+
+// Drawn here rather than with Card.Section's `withBorder`, whose border ignores the theme's divider color.
+// A bottom border, because Mantine's Card removes the top border of every section after the first with `!important`.
+.row:not(:last-child) {
+  border-bottom: 1px solid var(--mantine-color-default-border);
 }
 
 .completed {
