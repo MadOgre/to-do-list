@@ -1,9 +1,8 @@
-// Mantine's base styles first, before any import that brings in our SCSS modules (the routes load the Pages),
-// so our global and module rules come after Mantine's in the CSS and win where they overlap.
-import "@mantine/core/styles.css";
-import "@/styles/global.scss";
-
+// Mantine's base styles load in the packages section, before any `@/` import that brings in our styles
+// (global.scss, and the Pages' SCSS modules through the routes). Our rules then come after Mantine's in the CSS
+// and win where they overlap.
 import { MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
@@ -12,6 +11,7 @@ import { RouterProvider } from "react-router/dom";
 
 import { queryClient } from "@/queryClient";
 import { router } from "@/routes";
+import "@/styles/global.scss";
 import { cssVariablesResolver, theme } from "@/theme";
 
 createRoot(document.getElementById("root")!).render(
