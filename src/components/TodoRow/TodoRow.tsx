@@ -1,7 +1,9 @@
 import { Checkbox, type CheckboxIconComponent, Group, Text } from "@mantine/core";
 import type { FC } from "react";
+
 import { checkIcon } from "@/images";
 import type { Todo } from "@/interfaces";
+
 import styles from "./TodoRow.module.scss";
 
 export interface TodoRowProps {

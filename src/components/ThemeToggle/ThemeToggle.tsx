@@ -1,6 +1,8 @@
 import { ActionIcon, Image, useComputedColorScheme, useMantineColorScheme } from "@mantine/core";
 import type { FC } from "react";
+
 import { moonIcon, sunIcon } from "@/images";
+
 import styles from "./ThemeToggle.module.scss";
 
 // Shows the moon in light and the sun in dark, as in the design. The color scheme may be "auto", so the icon follows the computed one.

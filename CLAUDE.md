@@ -38,7 +38,13 @@ Lint enforces style (`eslint.config.js`): double quotes, trailing commas, semico
 
 - **Components are typed with `FC`.** Use `FC` for components without props and `FC<ComponentNameProps>` for components with props. Props interfaces are named `<ComponentName>Props`, never a bare `Props`, because barrels re-export with `export *` and bare names would collide. Import `FC` as a type-only import. The one exception is generic components, which annotate their props parameter instead.
 - **No generics without a reason.** Add a generic type parameter only when it actually links or constrains types that callers rely on. If a type would be erased downstream, or only inferred from the argument and never checked, use `unknown` or a concrete type instead.
-- **Imports** use the `@/` alias for `src/`.
+- **Imports** use the `@/` alias for `src/`. They sit in up to three sections, in this order, with one blank line between sections and empty sections left out:
+  1. Packages: `"react"`, `"@mantine/core"`, `"node:url"`.
+  2. The `@/` alias.
+  3. Relative files: `"./…"` and `"../…"`.
+
+  Within a section, sort the imports by their module path, alphabetically: lowercase both paths, then compare them character by character (so `"eslint-plugin-x"` comes before `"eslint/config"`). Sort the names inside braces the same way, ignoring any `type` keyword: `import { alpha, beta, type Gamma } from "lib";`. Re-exports (`export … from`, as in barrels) follow the same order. An `import type` from a module goes right after the value import from the same module. Side-effect imports (`import "./styles.css";`) keep the place they need, because their order can matter; give them a comment when they sit outside the sections, as `main.tsx` does for loading Mantine's styles and `global.scss` first.
+- **Readable over clever.** Write the plainest code that does the job, so a reader understands it at first glance: an `if` over a dense one-liner, a named variable over a nested expression, a plain comparison over a `reduce` or a chained ternary, and the obvious language feature over a trick. When code still isn't obvious, add a comment saying what it does and why.
 - **Barrels:** each area of `src/` has an `index.ts` barrel, except `styles`, and `components` until its first Shared Component. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
 - **Pages** live one per folder under `src/pages/`, with their SCSS module next to them.
 - **Shared types** go in `src/interfaces/`, one file per type, with the types derived from it in the same file.

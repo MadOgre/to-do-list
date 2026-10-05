@@ -1,6 +1,7 @@
 import { TextInput } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import type { FC, KeyboardEvent } from "react";
+
 import styles from "./NewTodoInput.module.scss";
 
 export interface NewTodoInputProps {
@@ -17,8 +18,11 @@ export const NewTodoInput: FC<NewTodoInputProps> = ({ onCreate }) => {
     if (event.key !== "Enter" || event.nativeEvent.isComposing || !title) {
       return;
     }
-    // The caller shows the error when the create fails.
-    onCreate(title).then(() => setValue(""), () => {});
+    onCreate(title)
+      .then(() => setValue(""))
+      .catch(() => {
+        // The caller shows the error. Keep the typed text so the user can try again.
+      });
   };
 
   return (

@@ -1,16 +1,19 @@
 import { Alert, Card, Container, Group, Stack, Title } from "@mantine/core";
 import type { FC } from "react";
+
 import { useCreateTodo, useTodos, useUpdateTodo } from "@/apiHooks";
 import { NewTodoInput, ThemeToggle, TodoRow } from "@/components";
+
 import styles from "./Home.module.scss";
 
 export const Home: FC = () => {
   const { data: todos, isError } = useTodos();
   const createTodo = useCreateTodo();
   const updateTodo = useUpdateTodo();
-  // The most recent change decides the alert, so a later success clears an earlier failure. A failed change leaves
-  // the list as it was, since the list only refetches after a change succeeds.
-  const lastChange = [createTodo, updateTodo].reduce((latest, change) => (change.submittedAt > latest.submittedAt ? change : latest));
+  // The alert follows the most recent change, so a later success clears an earlier failure. `submittedAt` is when
+  // each mutation last ran (0 if never). A failed change leaves the list as it was, since the list only refetches
+  // after a change succeeds.
+  const lastChange = createTodo.submittedAt > updateTodo.submittedAt ? createTodo : updateTodo;
   const saveFailed = lastChange.isError;
 
   return (
