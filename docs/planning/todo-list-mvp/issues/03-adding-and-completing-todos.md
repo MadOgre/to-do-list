@@ -40,3 +40,4 @@
   - "Could not save your change." follows the most recent change, so a later success clears an earlier failure.
   - Not built: the design's interaction frame (`4.png`) shows a ring on the hovered check, which this ticket doesn't ask for. Left for the developer to decide.
   - The manual check on `/` is left to the developer.
+- 2026-10-05: At the developer's request, an Active Todo's check now shows the check gradient as its ring on hover (of the check or its gutter), as in the interaction frame (`4.png`).

@@ -67,7 +67,7 @@ When you add, move or delete a file, update this list.
 | `src/components/ThemeToggle/ThemeToggle.tsx` | The theme toggle Shared Component: a moon in light and a sun in dark, switching the color scheme. |
 | `src/components/ThemeToggle/ThemeToggle.module.scss` | The theme toggle's scoped styles: the icon's mobile and desktop sizes. |
 | `src/components/TodoRow/TodoRow.tsx` | The Todo row Shared Component: a round check in a clickable gutter, labeled with the Todo's title, and the title, struck through when Completed. Clicking the title does nothing. |
-| `src/components/TodoRow/TodoRow.module.scss` | The Todo row's scoped styles: the divider, the gutter and title padding, the check's ring and gradient fill, and the Completed title color. |
+| `src/components/TodoRow/TodoRow.module.scss` | The Todo row's scoped styles: the divider, the gutter and title padding, the check's ring, its gradient ring on hover and gradient fill, and the Completed title color. |
 | `src/components/index.ts` | Barrel for the Shared Components. |
 | `src/images/bg-{mobile,desktop}-{light,dark}.jpg` | The design's header background images, one per color scheme and layout. Used by Home's SCSS module. |
 | `src/images/icon-{moon,sun,check,cross}.svg` | The design's icons. The theme toggle uses the moon and sun; the Todo row uses the check for a Completed Todo, and the ✕ (delete) is for a later ticket. |

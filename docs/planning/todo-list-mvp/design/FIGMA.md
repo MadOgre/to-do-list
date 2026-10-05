@@ -55,7 +55,7 @@ All Josefin Sans Regular, line height 1 (100%), letter spacing -0.25px.
 | ✕ | 17.7px (18px icon) | 11.8px |
 
 - Dividers are 1px: Purple 300 in light, Purple 800 in dark.
-- An Active Todo's check: the same 1px ring as the input's circle.
+- An Active Todo's check: the same 1px ring as the input's circle. On hover the ring becomes the check gradient (from the interaction frame, `4.png`; not measured in Figma).
 - A Completed Todo's check: filled with gradient `colors/gradient/1`, `hsl(192, 100%, 67%)` (top left) to `hsl(280, 87%, 65%)` (bottom right), with the white tick from `icon-check.svg` (11 × 9).
 - Completed title: line-through, Gray 300 (`#d1d2da`) in light, Purple 700 (`#4d5067`) in dark.
 
