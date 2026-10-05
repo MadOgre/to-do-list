@@ -1,4 +1,86 @@
-.intro {
-  color: var(--mantine-color-dimmed);
-  font-style: italic;
+// The design's mobile layout below `sm`, its desktop layout from `sm` up.
+
+.page {
+  position: relative;
+  min-height: 100dvh;
+}
+
+// The full-width image behind the header, with the page colour below it.
+.background {
+  position: absolute;
+  inset: 0 0 auto;
+  height: mantine.rem(200);
+  background-position: center;
+  background-size: cover;
+
+  @include mantine.light {
+    background-image: url("@/images/bg-mobile-light.jpg");
+  }
+
+  @include mantine.dark {
+    background-image: url("@/images/bg-mobile-dark.jpg");
+  }
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    height: mantine.rem(300);
+
+    @include mantine.light {
+      background-image: url("@/images/bg-desktop-light.jpg");
+    }
+
+    @include mantine.dark {
+      background-image: url("@/images/bg-desktop-dark.jpg");
+    }
+  }
+}
+
+// The design's card widths: 540px on desktop, and 327px at 375px wide (24px gutters).
+.main {
+  position: relative;
+  max-width: mantine.rem(588);
+  padding-inline: mantine.rem(24);
+  padding-block: mantine.rem(48);
+  font-size: mantine.rem(12);
+  letter-spacing: mantine.rem(-0.25);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding-block: mantine.rem(70);
+    font-size: mantine.rem(18);
+  }
+}
+
+.header {
+  margin-bottom: mantine.rem(40);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    margin-bottom: mantine.rem(48);
+  }
+}
+
+.title {
+  color: var(--mantine-color-white);
+  font-size: mantine.rem(28);
+  font-weight: 700;
+  letter-spacing: mantine.rem(10);
+  line-height: 1;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    font-size: mantine.rem(40);
+    letter-spacing: mantine.rem(15);
+  }
+}
+
+.row {
+  // Card.Section's border uses Mantine's grays; the theme's divider colour replaces them.
+  // `--border-color` is internal to Mantine's Card styles, not a documented variable: check it after a Mantine upgrade.
+  --border-color: var(--mantine-color-default-border);
+  padding: mantine.rem(16) mantine.rem(20);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding: mantine.rem(20) mantine.rem(24);
+  }
+}
+
+.completed {
+  color: var(--mantine-color-completed);
 }

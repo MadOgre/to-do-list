@@ -1,1 +1,6 @@
 // Global styles, loaded once at startup after Mantine's base styles. Applies to every Page.
+
+// The theme's `body` colour is the card colour (see src/theme.ts), so the page gets its own.
+body {
+  background-color: var(--mantine-color-page);
+}

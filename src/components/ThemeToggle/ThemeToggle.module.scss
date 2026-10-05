@@ -1,0 +1,9 @@
+.icon {
+  width: mantine.rem(20);
+  height: mantine.rem(20);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    width: mantine.rem(26);
+    height: mantine.rem(26);
+  }
+}
