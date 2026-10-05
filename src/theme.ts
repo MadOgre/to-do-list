@@ -1,4 +1,4 @@
-import { Button, colorsTuple, createTheme, type CSSVariablesResolver } from "@mantine/core";
+import { Button, Card, colorsTuple, createTheme, type CSSVariablesResolver } from "@mantine/core";
 
 import classes from "./theme.module.scss";
 
@@ -35,12 +35,14 @@ export const theme = createTheme({
   defaultRadius: 5,
   components: {
     Button: Button.extend({ classNames: { label: classes.buttonLabel } }),
+    Card: Card.extend({ classNames: { root: classes.card } }),
   },
 });
 
 // The light and dark surface and text colors, as the Figma frames use them. `body` is the card color, because Mantine's
-// Paper, Card and Modal use it. `page` (the page background), `completed` (a Completed Todo's title), the cards'
-// `shadow-card` and `gradient-check` (a Completed Todo's check) are our own; `shadow="card"` on a Card or Paper uses it.
+// Paper and Modal use it, and Card does through the theme above. `page` (the page background), `completed` (a Completed
+// Todo's title), the cards' `shadow-card` and `gradient-check` (a Completed Todo's check) are our own; `shadow="card"` on
+// a Card or Paper uses it.
 export const cssVariablesResolver: CSSVariablesResolver = () => ({
   variables: {
     "--mantine-gradient-check": styleGuide.checkBackground,

@@ -10,3 +10,8 @@
   height: auto;
   overflow: visible;
 }
+
+// Mantine's Card is white in light and `dark-6` in dark. The design's cards use the card color (`body`) in both.
+.card {
+  background-color: var(--mantine-color-body);
+}

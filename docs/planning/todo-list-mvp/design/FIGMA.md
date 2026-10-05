@@ -64,5 +64,7 @@ All Josefin Sans Regular, line height 1 (100%), letter spacing -0.25px.
 
 - Desktop: in the list card, 24px side padding, "N items left" left, filters centered (All, Active, Completed, 16px apart), "Clear Completed" right.
 - Mobile: "N items left" and "Clear Completed" in the list card at 20px side padding. The filters sit in their own 48px card 16px below it.
-- Desktop footer row: 24px from the last divider and from the card's bottom.
+- Desktop footer row: 24px from the last divider and from the card's bottom. Mobile: 16px from each.
+- Footer text is 14px on desktop and 12px on mobile ("5 items left", "Clear Completed").
+- The filters are 14px text at every width, 16px apart, also in the mobile filter card, where they are centered.
 - "Drag and drop to reorder list" is centered, 24px below the list card on desktop and 40px below the filter card on mobile.

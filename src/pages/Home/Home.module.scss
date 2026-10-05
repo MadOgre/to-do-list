@@ -81,3 +81,19 @@
     gap: mantine.rem(24);
   }
 }
+
+// Sits between the rows and the footer, with a divider like a row's.
+.empty {
+  padding: mantine.rem(16) mantine.rem(20);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding: mantine.rem(24);
+  }
+}
+
+// The design's 48px card under the list on mobile, with the filters centered in it.
+.filterCard {
+  justify-content: center;
+  height: mantine.rem(48);
+}
