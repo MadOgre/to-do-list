@@ -7,7 +7,7 @@ import { readTodos, removeTodos, writeTodos } from "./todoStorage";
 // 2. Uncomment the apiClient import and each function's REAL API lines, delete its LOCAL STORAGE lines,
 //    and make the function async.
 // 3. Delete todoStorage.ts and restoreTodos, together with useRestoreTodos and the Restore Demo Todos link in Home.
-// 4. Remove `retry: false` from useTodos.
+// 4. Remove `retry: false` from useTodos and useTodo.
 
 const findTodo = (todos: Todo[], id: string) => {
   const todo = todos.find((candidate) => candidate.id === id);

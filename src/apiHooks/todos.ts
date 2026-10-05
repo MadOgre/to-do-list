@@ -12,13 +12,13 @@ import type { UpdateTodoInput } from "@/interfaces";
 
 const todosQueryKey = ["todos"] as const;
 
-// DEMO ONLY: `retry: false`, since retrying can't fix bad localStorage data and only delays the error.
-// Remove it when switching to a real API, so failed requests are retried again.
+// DEMO ONLY: both queries set `retry: false`, since retrying can't fix bad localStorage data and only
+// delays the error (mutations never retry by default). Remove both when switching to a real API.
 export const useTodos = () =>
   useQuery({ queryKey: todosQueryKey, queryFn: getTodos, retry: false });
 
 export const useTodo = (id: string) =>
-  useQuery({ queryKey: [...todosQueryKey, id], queryFn: () => getTodo(id) });
+  useQuery({ queryKey: [...todosQueryKey, id], queryFn: () => getTodo(id), retry: false });
 
 // Each mutation invalidates the Todo list once it succeeds, so it refetches.
 export const useCreateTodo = () => {

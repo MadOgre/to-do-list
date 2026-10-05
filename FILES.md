@@ -54,7 +54,7 @@ When you add, move or delete a file, update this list.
 | `src/api/todos.ts` | The Todo API Functions (list, get one, create, update, delete, clear Completed, and the demo-only Restore Demo Todos). Each keeps its real axios call commented out above the `localStorage` code, and the comment at the top lists the steps to switch to a real API. |
 | `src/api/todoStorage.ts` | Demo only: everything that exists only for `localStorage`, namely the storage key, the six Demo Todos and the helpers that read, write and remove the stored list. Deleted at the switch to a real API. |
 | `src/api/index.ts` | Barrel for the API Functions and the shared axios instance. |
-| `src/apiHooks/todos.ts` | The Todo API Hooks: two queries and five mutations. Each mutation refreshes the Todo list when it succeeds. While the list lives in `localStorage`, `useTodos` doesn't retry a failed read. |
+| `src/apiHooks/todos.ts` | The Todo API Hooks: two queries and five mutations. Each mutation refreshes the Todo list when it succeeds. While the list lives in `localStorage`, the queries don't retry a failed read. |
 | `src/apiHooks/index.ts` | Barrel for the API Hooks. |
 | `src/components/.gitkeep` | Keeps the empty `components` folder, the home of Shared Components, in git. Delete it once the first Shared Component is added. |
 | `src/interfaces/Todo.ts` | The Todo type, with its create and update input types derived from it. |
