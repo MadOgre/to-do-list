@@ -14,6 +14,10 @@ Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/do
 
 ## Working rules
 
+### Workflow
+
+A feature moves through `INTENT.md` → `/grill-with-docs` → `/to-spec` → `/to-tickets` → `/implement`, one stage at a time. The developer starts each stage; finish the current one and wait for them to start the next. `/implement` reviews with `/code-review`, and its commit follows Review until clean below. Prompt the developer to clear the context and to review the spec and tickets manually when running implement.
+
 ### Keep the build green
 
 Before every commit, run `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start with the same `pnpm` and Node the developer uses. Commit only when all of them pass: chain the checks and the commit with `&&`.
@@ -40,4 +44,4 @@ Lint enforces style (`eslint.config.js`): double quotes, trailing commas, semico
 
 ### Grilling sessions
 
-Write each round's questions to `docs/planning/<feature-slug>/round_<N>_questions.md`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `CONTEXT.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.
+Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/round_<N>_questions.md`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `CONTEXT.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.
