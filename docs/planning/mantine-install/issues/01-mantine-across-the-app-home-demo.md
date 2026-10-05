@@ -21,8 +21,8 @@
 - [x] Home is still typed `FC` with a named export, and still gets its data from the `useItems` API Hook
 - [x] Mantine components are imported directly from `@mantine/core`, and nothing is added to a `@/components` barrel
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
-- [ ] Manual check on `/`: loader during the mock delay, then green-themed cards with `md` corners and Mantine's font. The error branch is verified by reading the code, since the mock adapter can't fail
+- [x] Manual check on `/`: loader during the mock delay, then green-themed cards with `md` corners and Mantine's font. The error branch is verified by reading the code, since the mock adapter can't fail
 
 ## Comments
 
-- 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. Code review (Standards + Spec) is clean after round 1, whose only fix was a GUIDE.md wording change. The manual check on `/` is left to the developer.
+- 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. Code review (Standards + Spec) is clean after round 1, whose only fix was a GUIDE.md wording change. The developer did the manual check on `/`: the page loads, and the theme's primary color resolves to green.
