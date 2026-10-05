@@ -3,6 +3,7 @@
 // and win where they overlap.
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
+import { ModalsProvider } from "@mantine/modals";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
@@ -18,11 +19,14 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* "auto" starts from the OS setting; Mantine's default manager remembers the choice in localStorage. */}
     <MantineProvider theme={theme} cssVariablesResolver={cssVariablesResolver} defaultColorScheme="auto">
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        {/* Rendered only in development; production builds get an empty stub. */}
-        <ReactQueryDevtools />
-      </QueryClientProvider>
+      {/* Renders the dialogs that `modals.openConfirmModal` opens. */}
+      <ModalsProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+          {/* Rendered only in development; production builds get an empty stub. */}
+          <ReactQueryDevtools />
+        </QueryClientProvider>
+      </ModalsProvider>
     </MantineProvider>
   </StrictMode>,
 );

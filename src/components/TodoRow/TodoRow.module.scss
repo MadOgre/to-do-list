@@ -74,3 +74,39 @@
     color: var(--mantine-color-completed);
   }
 }
+
+// With a mouse, the ✕ shows only on the hovered row, or the row that holds the focus. On touch screens (no hover)
+// it is always visible. It stays in the layout and in the tab order while hidden, so the title doesn't reflow and
+// Tab can reach it. A plain media query, not `mantine.hover`: that mixin only styles `:hover` itself, and on
+// touch screens it switches to `:active`, which would show the ✕ only while it's pressed.
+@media (hover: hover) {
+  .delete {
+    opacity: 0;
+  }
+
+  .row:hover .delete,
+  .row:focus-within .delete {
+    opacity: 1;
+  }
+}
+
+.delete {
+  flex-shrink: 0;
+  align-self: center;
+  margin-inline-end: mantine.rem(20);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    margin-inline-end: mantine.rem(24);
+  }
+}
+
+// The design's ✕: 12px on mobile and 18px on desktop.
+.cross {
+  width: mantine.rem(12);
+  height: mantine.rem(12);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    width: mantine.rem(18);
+    height: mantine.rem(18);
+  }
+}

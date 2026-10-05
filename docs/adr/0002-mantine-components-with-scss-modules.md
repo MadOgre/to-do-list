@@ -1,6 +1,6 @@
 # Mantine provides the components; custom styles stay in SCSS modules
 
-We use Mantine (`@mantine/core` + `@mantine/hooks`) for UI components and keep SCSS modules for Page layout and custom styles. Where Mantine's documentation offers something that only works through its PostCSS preset, we use the Sass variant from Mantine's own [Usage with Sass](https://mantine.dev/styles/sass/) guide: `src/styles/_mantine.scss`, injected into every SCSS file as the `mantine` namespace by `vite.config.ts`.
+We use Mantine (`@mantine/core` + `@mantine/hooks`, and `@mantine/modals` for confirmation dialogs) for UI components and keep SCSS modules for Page layout and custom styles. Where Mantine's documentation offers something that only works through its PostCSS preset, we use the Sass variant from Mantine's own [Usage with Sass](https://mantine.dev/styles/sass/) guide: `src/styles/_mantine.scss`, injected into every SCSS file as the `mantine` namespace by `vite.config.ts`.
 
 ## Considered Options
 

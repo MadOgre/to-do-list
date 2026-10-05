@@ -1,8 +1,10 @@
-import { Alert, Card, Container, Group, Stack, Title } from "@mantine/core";
+import { Alert, Card, Container, Group, Stack, Text, Title } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import type { FC } from "react";
 
-import { useCreateTodo, useTodos, useUpdateTodo } from "@/apiHooks";
+import { useCreateTodo, useDeleteTodo, useTodos, useUpdateTodo } from "@/apiHooks";
 import { NewTodoInput, ThemeToggle, TodoRow } from "@/components";
+import type { Todo } from "@/interfaces";
 
 import styles from "./Home.module.scss";
 
@@ -10,11 +12,22 @@ export const Home: FC = () => {
   const { data: todos, isError } = useTodos();
   const createTodo = useCreateTodo();
   const updateTodo = useUpdateTodo();
+  const deleteTodo = useDeleteTodo();
   // The alert follows the most recent change, so a later success clears an earlier failure. `submittedAt` is when
-  // each mutation last ran (0 if never). A failed change leaves the list as it was, since the list only refetches
-  // after a change succeeds.
-  const lastChange = createTodo.submittedAt > updateTodo.submittedAt ? createTodo : updateTodo;
+  // each mutation last ran (0 if never), so sorting by it, newest first, puts the most recent change first. A failed
+  // change leaves the list as it was, since the list only refetches after a change succeeds.
+  const changes = [createTodo, updateTodo, deleteTodo];
+  const [lastChange] = changes.toSorted((a, b) => b.submittedAt - a.submittedAt);
   const saveFailed = lastChange.isError;
+
+  const confirmDelete = ({ id, title }: Todo) =>
+    modals.openConfirmModal({
+      title: "Delete todo?",
+      children: <Text size="sm">“{title}” will be deleted.</Text>,
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: () => deleteTodo.mutate(id),
+    });
 
   return (
     <div className={styles.page}>
@@ -35,6 +48,7 @@ export const Home: FC = () => {
                   key={todo.id}
                   todo={todo}
                   onToggle={(completed) => updateTodo.mutate({ id: todo.id, input: { completed } })}
+                  onDelete={() => confirmDelete(todo)}
                 />
               ))}
             </Card>

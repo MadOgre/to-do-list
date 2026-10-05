@@ -26,6 +26,12 @@ export default defineConfig({
     port: 9000,
     strictPort: true,
   },
+  build: {
+    // Vite warns at 500 kB per minified chunk. The app is one Page that loads everything up front, so splitting
+    // wouldn't speed up the first load; Mantine's Modal took the one chunk to about 540 kB (about 170 kB gzipped).
+    // Lazy-load Pages by route once there's a second one, instead of raising this again.
+    chunkSizeWarningLimit: 600,
+  },
   css: {
     preprocessorOptions: {
       scss: {
