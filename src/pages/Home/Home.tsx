@@ -1,27 +1,23 @@
-import { Alert, Card, Container, Loader, Stack, Text, Title } from "@mantine/core";
+import { Alert, Card, Container, Stack, Text, Title } from "@mantine/core";
 import type { FC } from "react";
-import { useItems } from "@/apiHooks";
+import { useTodos } from "@/apiHooks";
 import styles from "./Home.module.scss";
 
 export const Home: FC = () => {
-  const { data: items, isPending, isError } = useItems();
+  const { data: todos, isError } = useTodos();
 
   return (
     <Container component="main" py="xl">
       <Title>to-do-list</Title>
       <Text className={styles.intro} mb="md">Edit this Page to start building your app.</Text>
-      {isPending && <Loader />}
-      {isError && (
-        <Alert color="red" title="Error">
-          Could not load Items.
-        </Alert>
-      )}
-      {items && (
+      {isError && <Alert color="red">Could not load your todos.</Alert>}
+      {todos && (
         <Stack>
-          {items.map(({ id, name, description }) => (
+          {todos.map(({ id, title, completed }) => (
             <Card key={id} withBorder>
-              <Text fw={500}>{name}</Text>
-              <Text c="dimmed" size="sm">{description}</Text>
+              <Text td={completed ? "line-through" : undefined} c={completed ? "dimmed" : undefined}>
+                {title}
+              </Text>
             </Card>
           ))}
         </Stack>

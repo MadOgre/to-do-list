@@ -13,7 +13,7 @@ When you add, move or delete a file, update this list.
 | `.gitignore` | Keeps dependencies, build output, local env overrides, editor and OS files, and Vagrant's state out of git. Lets the two shared VS Code files through. |
 | `.nvmrc` | Pins Node 22 for version managers such as fnm and nvm. |
 | `CLAUDE.md` | Instructions for AI coding agents: where issues, specs and domain docs live, and the working rules for this repo (keep the build green, review until clean, code conventions, grilling sessions). |
-| `CONTEXT.md` | The glossary: the project's terms (Host, Dev VM, Working Copy, Page, Shared Component, API Function, API Hook, Item) and the synonyms to avoid. |
+| `CONTEXT.md` | The glossary: the project's terms (Host, Dev VM, Working Copy, Page, Shared Component, API Function, API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and Restore Demo Todos) and the synonyms to avoid. |
 | `FILES.md` | This file. |
 | `GUIDE.md` | The full guide: both ways to run the project on every OS, the Dev VM (Remote-SSH, pushing, slow boots, OS upgrades), the project layout, adding a backend and where the project came from. |
 | `README.md` | The quick start: prerequisites, clone and run, the Dev VM in brief, the scripts, and the main caveats. |
@@ -50,16 +50,16 @@ When you add, move or delete a file, update this list.
 | `src/queryClient.ts` | The React Query client, in one place so its defaults are easy to find and change. |
 | `src/theme.ts` | The Mantine theme: green primary color and medium radius, with everything else at Mantine's defaults. |
 | `src/vite-env.d.ts` | Types the environment variables, and makes reading an undeclared one a type error. |
-| `src/api/apiClient.ts` | The shared axios instance every API Function uses, with its base URL from `VITE_API_BASE_URL`. |
-| `src/api/items.ts` | The five Item API Functions (list, get one, create, update, delete), with the mock Item data at the top. The mocks are marked for removal once a backend exists. |
-| `src/api/mockAdapter.ts` | A per-request axios adapter that answers with fixed data after 500 ms, so the real axios path runs and loading states show while there's no backend. |
+| `src/api/apiClient.ts` | The shared axios instance the API Functions use once a real API exists (see the `REAL API` blocks in `src/api/todos.ts`), with its base URL from `VITE_API_BASE_URL`. |
+| `src/api/todos.ts` | The Todo API Functions (list, get one, create, update, delete, clear Completed, and the demo-only Restore Demo Todos). Each keeps its real axios call commented out above the `localStorage` code, and the comment at the top lists the steps to switch to a real API. |
+| `src/api/todoStorage.ts` | Demo only: everything that exists only for `localStorage`, namely the storage key, the six Demo Todos and the helpers that read, write and remove the stored list. Deleted at the switch to a real API. |
 | `src/api/index.ts` | Barrel for the API Functions and the shared axios instance. |
-| `src/apiHooks/items.ts` | The five Item API Hooks: two queries and three mutations. Each mutation refreshes the Item list when it succeeds. |
+| `src/apiHooks/todos.ts` | The Todo API Hooks: two queries and five mutations. Each mutation refreshes the Todo list when it succeeds. |
 | `src/apiHooks/index.ts` | Barrel for the API Hooks. |
 | `src/components/.gitkeep` | Keeps the empty `components` folder, the home of Shared Components, in git. Delete it once the first Shared Component is added. |
-| `src/interfaces/Item.ts` | The placeholder Item type, with its create and update input types derived from it. |
+| `src/interfaces/Todo.ts` | The Todo type, with its create and update input types derived from it. |
 | `src/interfaces/index.ts` | Barrel for the shared types. |
-| `src/pages/Home/Home.tsx` | The Home Page, built with Mantine: lists Items as cards through the `useItems` API Hook, with a loader and an error alert. |
+| `src/pages/Home/Home.tsx` | The Home Page, built with Mantine: lists the Todos as cards through the `useTodos` API Hook, with an error alert if they can't be loaded. |
 | `src/pages/Home/Home.module.scss` | The Home Page's scoped styles, showing an SCSS module styled with Mantine's CSS variables. |
 | `src/pages/NotFound/NotFound.tsx` | The NotFound Page, shown for any unknown URL, with a link back home. |
 | `src/pages/index.ts` | Barrel for the Pages. |
@@ -87,3 +87,19 @@ The planning record for installing Mantine.
 | `spec.md` | The spec derived from the intent and the grilling rounds. |
 | `issues/01-mantine-across-the-app-home-demo.md` | Ticket 01: install and configure Mantine, and rebuild the Home Page with it. |
 | `issues/02-mantine-sass-helpers-home-intro.md` | Ticket 02: inject Mantine's Sass helpers into every SCSS file and use them on Home's intro line. |
+
+### `docs/planning/todo-list-mvp/`
+
+The planning record for the to-do list from the Figma design.
+
+| File | Purpose |
+| --- | --- |
+| `INTENT.md` | The goal, definition of done, constraints and acceptance criteria, in the developer's own words. |
+| `round_1_questions.md` … `round_4_questions.md` | The grilling rounds: each round's questions and the developer's answers. |
+| `spec.md` | The spec derived from the intent and the grilling rounds. |
+| `issues/01-todos-in-local-storage-on-home.md` | Ticket 01: replace Item with Todo, store the Todos in `localStorage` and list them on Home. |
+| `issues/02-themed-page-shell-and-theme-toggle.md` | Ticket 02: the themed page shell and the light/dark toggle. |
+| `issues/03-adding-and-completing-todos.md` | Ticket 03: adding and completing Todos. |
+| `issues/04-deleting-a-todo-with-confirmation.md` | Ticket 04: deleting a Todo after confirming. |
+| `issues/05-footer-count-filters-empty-states-clear-completed.md` | Ticket 05: the footer's count, filters, empty states and Clear Completed. |
+| `issues/06-restore-demo-todos-link.md` | Ticket 06: the Restore Demo Todos link. |

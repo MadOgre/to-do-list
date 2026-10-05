@@ -9,7 +9,7 @@ There are two ways to run it, and both use the same `pnpm dev`:
 - **[Run on your machine](#run-on-your-machine):** install the dependencies on your Host and serve from there.
 - **[Run in the Dev VM](#run-in-the-dev-vm):** `vagrant up` gives every developer the same Linux environment, whatever their Host. You edit the Working Copy inside the Dev VM through VS Code Remote-SSH, and open the app in your Host's browser.
 
-The terms used here (Host, Dev VM, Working Copy, Page, Shared Component, API Function, API Hook, Item) are defined in [`CONTEXT.md`](CONTEXT.md). Every committed file is explained in [`FILES.md`](FILES.md).
+The terms used here (Host, Dev VM, Working Copy, Page, Shared Component, API Function, API Hook, Todo) are defined in [`CONTEXT.md`](CONTEXT.md). Every committed file is explained in [`FILES.md`](FILES.md).
 
 ## Run on your machine
 
@@ -206,9 +206,9 @@ src/
 - **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, which can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See ADR-0002.
 - **Environment variables** go in `.env` (committed, with safe defaults) and are typed in `src/vite-env.d.ts`. Override them in `.env.local`, which is gitignored. `VITE_API_BASE_URL` sets the base URL of the shared axios instance.
 
-### Mock data
+### Local storage instead of an API
 
-No backend exists yet, so each Item API Function passes a mock axios adapter, marked `// MOCK`, that answers with fixed data after 500 ms. The mocks store nothing. When a real backend is ready, follow the removal comments at the top of `src/api/items.ts` and in `src/api/mockAdapter.ts`.
+No backend exists yet, so the Todo API Functions keep the list in the browser's `localStorage`, through the demo-only helpers in `src/api/todoStorage.ts`. Each function keeps its real axios call commented out as a `REAL API` block above its `LOCAL STORAGE` block. When a real backend is ready, follow the switch steps in the comment at the top of `src/api/todos.ts`.
 
 ### Barrels and lazy-loaded routes
 
@@ -218,7 +218,7 @@ Barrels keep imports short, but they make it harder to load Pages on demand late
 
 There is no backend folder yet. When you add one, put it next to `src/` at the repo root, for example in `server/`. Once the repo holds more than one package, consider pnpm workspaces. Then:
 - point `VITE_API_BASE_URL` at it, or add a dev proxy in `vite.config.ts`;
-- remove the mocks (see [Mock data](#mock-data));
+- switch the Todo API Functions from `localStorage` to it (see [Local storage instead of an API](#local-storage-instead-of-an-api));
 - forward its port in the `Vagrantfile` if you run it in the Dev VM.
 
 ## Origin
