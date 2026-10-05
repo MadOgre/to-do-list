@@ -1,0 +1,5 @@
+# pnpm settings for this single-package project (no workspace packages).
+# @parcel/watcher comes in through sass. Its install script only builds from source on request,
+# and the prebuilt binary is a separate package, so skipping the script is safe.
+ignoredBuiltDependencies:
+  - "@parcel/watcher"
