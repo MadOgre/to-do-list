@@ -23,7 +23,7 @@
 - [x] Keyboard: Tab reaches the input and every check, and Space toggles a check
 - [x] Styling follows ADR-0002 (Mantine CSS variables and `mantine` helpers only), in both themes
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
-- [ ] Manual check on `/`:
+- [x] Manual check on `/`:
   - Enter adds a trimmed Todo at the top and clears the input. Empty or spaces-only input adds nothing.
   - A duplicate is added, and a long title wraps.
   - The check and its gutter toggle Completed, and clicking the title does nothing.
@@ -41,3 +41,4 @@
   - Not built: the design's interaction frame (`4.png`) shows a ring on the hovered check, which this ticket doesn't ask for. Left for the developer to decide.
   - The manual check on `/` is left to the developer.
 - 2026-10-05: At the developer's request, an Active Todo's check now shows the check gradient as its ring on hover (of the check or its gutter), as in the interaction frame (`4.png`).
+- 2026-10-05: The developer did the manual check on `/`, including the hover ring, and reports that all of it passes. The "change failed" alert was also triggered for real: with invalid JSON under the storage key, adding a Todo shows it and keeps the typed text.
