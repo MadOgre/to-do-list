@@ -17,8 +17,8 @@
   - custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the injected `mantine` helpers
   - Mantine docs examples written for `postcss-preset-mantine` are translated to the Sass form (`mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`)
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node. The build compiles every SCSS file through the injected helpers
-- [ ] Manual check on `/`: the intro line is dimmed and italic, styled from Home's SCSS module
+- [x] Manual check on `/`: the intro line is dimmed and italic, styled from Home's SCSS module
 
 ## Comments
 
-- 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. The dev server served Home's SCSS module compiled through the injected helpers. Code review (Standards + Spec) was clean on round 1. `.intro` sets no size, so it has no `mantine.rem()` call. The manual check on `/` is left to the developer.
+- 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. The dev server served Home's SCSS module compiled through the injected helpers. Code review (Standards + Spec) was clean on round 1. `.intro` sets no size, so it has no `mantine.rem()` call. The developer did the manual check on `/` and reviewed the spec, ticket and diff: all good.
