@@ -26,7 +26,7 @@ Before every commit, run `pnpm install`, `pnpm lint`, `pnpm build` and a short `
 
 - A check that passes only through a workaround (another binary, an env var, a manual step) has failed. Report it and agree the fix with the developer before committing. Version bumps to dependencies or tooling must run with the developer's existing tools.
 - Every failure seen while verifying is real, including a one-off that looks environmental. Resolve it with the developer before calling the work done.
-- Ask the developer to stop their `pnpm dev` before installing or removing dependencies. Start a test dev server only while theirs is stopped: every Vite server shares `node_modules/.vite/deps`.
+- Ask the developer to stop their `pnpm dev` before installing or removing dependencies. Start a test dev server only while theirs is stopped: every Vite server shares `node_modules/.vite/deps`. Start it as `env -u CLAUDECODE -u AI_AGENT pnpm dev`, which runs Vite as the developer's own `pnpm dev` does (not a workaround): Vite changes its config when it detects an agent, and the deps would be rebuilt each time the two servers alternate. Stop it by its process IDs, never with `pkill -f`.
 
 ### Review until clean
 
