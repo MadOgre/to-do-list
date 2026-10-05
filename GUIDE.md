@@ -196,13 +196,14 @@ src/
   api/              the shared axios instance and the API Functions
   apiHooks/         the API Hooks, built on React Query
   interfaces/       shared types, one file per type and the types derived from it
-  styles/           global.scss, loaded once at startup
+  styles/           global.scss, loaded once at startup, and _mantine.scss, Mantine's Sass helpers
 ```
 
 - **Imports** use the `@/` alias for `src/`, for example `import { Home } from "@/pages"`.
 - **Named exports only.** Lint rejects default exports, except in tool config files.
 - **Barrels:** each area except `components` and `styles` has an `index.ts` that re-exports it. Give `components` one when you add the first Shared Component.
 - **Components** are typed with `FC`, or `FC<ComponentNameProps>` when they take props.
+- **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, which can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See ADR-0002.
 - **Environment variables** go in `.env` (committed, with safe defaults) and are typed in `src/vite-env.d.ts`. Override them in `.env.local`, which is gitignored. `VITE_API_BASE_URL` sets the base URL of the shared axios instance.
 
 ### Mock data

@@ -22,6 +22,15 @@ export default defineConfig({
     port: 9000,
     strictPort: true,
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Mantine's "Usage with Sass" setup: every SCSS file gets Mantine's helpers as the `mantine` namespace.
+        // The guide's `api: "modern-compiler"` is left out: Vite 8 has no `api` option.
+        additionalData: `@use "${fileURLToPath(new URL("./src/styles/_mantine", import.meta.url)).replace(/\\/g, "/")}" as mantine;`,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

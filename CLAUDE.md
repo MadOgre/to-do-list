@@ -40,6 +40,7 @@ Lint enforces style (`eslint.config.js`): double quotes, trailing commas, semico
 - **Barrels:** each area of `src/` has an `index.ts` barrel, except `styles`, and `components` until its first Shared Component. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
 - **Pages** live one per folder under `src/pages/`, with their SCSS module next to them.
 - **Shared types** go in `src/interfaces/`, one file per type, with the types derived from it in the same file.
+- **Mantine** (ADR-0002): UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
 - **Environment variables** go in `.env` (committed, safe defaults), are typed in `src/vite-env.d.ts`, and are overridden in the gitignored `.env.local`.
 
 ### Grilling sessions

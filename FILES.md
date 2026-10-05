@@ -25,7 +25,7 @@ When you add, move or delete a file, update this list.
 | `tsconfig.json` | The root TypeScript config. Only references the app and Node configs below, so `tsc -b` checks both. |
 | `tsconfig.app.json` | TypeScript settings for the app code in `src`: browser libraries, bundler module resolution, JSX, unused-code checks and the `@/` alias. |
 | `tsconfig.node.json` | TypeScript settings for `vite.config.ts`, which runs in Node. |
-| `vite.config.ts` | Vite config: the React plugin, the checker plugin that shows TypeScript and ESLint errors during `pnpm dev`, the dev server host and fixed port 9000, and the `@/` alias. |
+| `vite.config.ts` | Vite config: the React plugin, the checker plugin that shows TypeScript and ESLint errors during `pnpm dev`, the dev server host and fixed port 9000, the injection of Mantine's Sass helpers into every SCSS file, and the `@/` alias. |
 
 ## `.vscode/`
 
@@ -59,10 +59,11 @@ When you add, move or delete a file, update this list.
 | `src/interfaces/Item.ts` | The placeholder Item type, with its create and update input types derived from it. |
 | `src/interfaces/index.ts` | Barrel for the shared types. |
 | `src/pages/Home/Home.tsx` | The Home Page, built with Mantine: lists Items as cards through the `useItems` API Hook, with a loader and an error alert. |
-| `src/pages/Home/Home.module.scss` | The Home Page's scoped styles, showing SCSS modules working. |
+| `src/pages/Home/Home.module.scss` | The Home Page's scoped styles, showing an SCSS module styled with Mantine's CSS variables. |
 | `src/pages/NotFound/NotFound.tsx` | The NotFound Page, shown for any unknown URL, with a link back home. |
 | `src/pages/index.ts` | Barrel for the Pages. |
 | `src/styles/global.scss` | Global styles for every Page, loaded once in `main.tsx` after Mantine's base styles. Empty for now: Mantine provides the reset and typography. |
+| `src/styles/_mantine.scss` | Mantine's Sass helpers (`rem`, the breakpoint variables and the `hover`, `smaller-than`, `larger-than`, `light`, `dark`, `rtl` and `ltr` mixins), copied verbatim from Mantine's "Usage with Sass" guide. `vite.config.ts` injects it into every SCSS file as `mantine`. Its breakpoints must match the theme's. |
 
 ## `docs/`
 
