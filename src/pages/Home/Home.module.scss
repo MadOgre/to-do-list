@@ -73,20 +73,11 @@
   }
 }
 
-.row {
-  padding: mantine.rem(16) mantine.rem(20);
+// The gap between the input, the alerts and the list card.
+.content {
+  gap: mantine.rem(16);
 
   @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
-    padding: mantine.rem(24);
+    gap: mantine.rem(24);
   }
-}
-
-// Drawn here rather than with Card.Section's `withBorder`, whose border ignores the theme's divider color.
-// A bottom border, because Mantine's Card removes the top border of every section after the first with `!important`.
-.row:not(:last-child) {
-  border-bottom: 1px solid var(--mantine-color-default-border);
-}
-
-.completed {
-  color: var(--mantine-color-completed);
 }

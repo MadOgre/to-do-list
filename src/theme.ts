@@ -15,6 +15,7 @@ const styleGuide = {
   purple600: "hsl(235, 16%, 43%)",
   purple700: "hsl(233, 14%, 35%)",
   purple800: "hsl(237, 14%, 26%)",
+  checkBackground: "linear-gradient(135deg, hsl(192, 100%, 67%), hsl(280, 87%, 65%))",
 };
 
 const fontFamily = "\"Josefin Sans\", sans-serif";
@@ -33,10 +34,12 @@ export const theme = createTheme({
 });
 
 // The light and dark surface and text colors, as the Figma frames use them. `body` is the card color, because Mantine's
-// Paper, Card and Modal use it. `page` (the page background), `completed` (a Completed Todo's title) and the cards'
-// `shadow-card` are our own; `shadow="card"` on a Card or Paper uses it.
+// Paper, Card and Modal use it. `page` (the page background), `completed` (a Completed Todo's title), the cards'
+// `shadow-card` and `gradient-check` (a Completed Todo's check) are our own; `shadow="card"` on a Card or Paper uses it.
 export const cssVariablesResolver: CSSVariablesResolver = () => ({
-  variables: {},
+  variables: {
+    "--mantine-gradient-check": styleGuide.checkBackground,
+  },
   light: {
     "--mantine-color-page": styleGuide.gray50,
     "--mantine-color-body": styleGuide.white,

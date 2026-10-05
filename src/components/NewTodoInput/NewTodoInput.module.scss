@@ -1,0 +1,42 @@
+// Sizes from the Figma frames (docs/planning/todo-list-mvp/design/FIGMA.md): the mobile layout below `sm`, desktop from `sm` up.
+
+// Styles set here override Mantine's input rules of the same specificity, which come earlier in the CSS.
+.input {
+  // No border at rest, as in the design. Mantine's primary-color border on focus stays as the focus cue.
+  --input-bd: transparent;
+
+  height: mantine.rem(48);
+  min-height: 0;
+  padding-inline: mantine.rem(60) mantine.rem(24);
+  background-color: var(--mantine-color-body);
+  box-shadow: var(--mantine-shadow-card);
+  font-size: mantine.rem(12);
+  line-height: 1;
+  letter-spacing: -0.25px;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    height: mantine.rem(64);
+    padding-inline-start: mantine.rem(72);
+    font-size: mantine.rem(18);
+  }
+}
+
+// Mantine centers the section in a square; the design puts the circle 24px from the edge.
+.section {
+  inset-inline-start: 0;
+  width: auto;
+  padding-inline-start: mantine.rem(24);
+}
+
+// Decorative: the empty circle in front of the text, matching an Active Todo's check.
+.circle {
+  width: mantine.rem(20);
+  height: mantine.rem(20);
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: 50%;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    width: mantine.rem(24);
+    height: mantine.rem(24);
+  }
+}

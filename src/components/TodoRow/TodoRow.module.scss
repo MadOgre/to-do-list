@@ -1,0 +1,65 @@
+// Sizes from the Figma frames (docs/planning/todo-list-mvp/design/FIGMA.md): the mobile layout below `sm`, desktop from `sm` up.
+// The row's padding sits on the gutter and the title, so the gutter covers the row's full height.
+
+// A bottom border, so the footer that follows the rows in the card gets a divider above it.
+.row:not(:last-child) {
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.gutter {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-block: mantine.rem(16);
+  padding-inline: mantine.rem(20) mantine.rem(16);
+  cursor: pointer;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding: mantine.rem(24);
+  }
+}
+
+.checkbox {
+  --checkbox-size: #{mantine.rem(20)};
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    --checkbox-size: #{mantine.rem(24)};
+  }
+}
+
+// The design's ring in place of Mantine's per-scheme colors when Active, and the gradient when Completed.
+.input {
+  border-color: var(--mantine-color-default-border);
+  background-color: transparent;
+  cursor: pointer;
+
+  &:checked {
+    border-color: transparent;
+    // From the border's outer edge, so the gradient fills the ring too instead of repeating into it.
+    background-origin: border-box;
+    background-image: var(--mantine-gradient-check);
+  }
+}
+
+// The tick at the SVG's own size, centered, instead of Mantine's 60% width.
+.icon {
+  width: auto;
+}
+
+.title {
+  flex: 1;
+  align-self: center;
+  min-width: 0;
+  padding-block: mantine.rem(16);
+  padding-inline-end: mantine.rem(20);
+  overflow-wrap: anywhere;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding-block: mantine.rem(24);
+    padding-inline-end: mantine.rem(24);
+  }
+
+  &[data-completed] {
+    color: var(--mantine-color-completed);
+  }
+}

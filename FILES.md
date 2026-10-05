@@ -54,7 +54,7 @@ When you add, move or delete a file, update this list.
 | `src/main.tsx` | The entry point. Loads Mantine's base styles, then the global styles, and renders the app with the Mantine provider (the theme, its CSS variables resolver, and the color scheme starting from the OS setting), the React Query provider, the router and React Query Devtools (development only). |
 | `src/routes.tsx` | Declares every route in React Router's data mode: the Home Page at `/` and the NotFound Page for anything else. |
 | `src/queryClient.ts` | The React Query client, in one place so its defaults are easy to find and change. |
-| `src/theme.ts` | The Mantine theme from the style guide: Blue 500 as the primary color, Josefin Sans and the design's 5px radius, plus the CSS variables resolver that sets the light and dark page, card, text, dimmed, placeholder, Completed and divider colors and the card shadow, as the Figma frames use them. |
+| `src/theme.ts` | The Mantine theme from the style guide: Blue 500 as the primary color, Josefin Sans and the design's 5px radius, plus the CSS variables resolver that sets the check gradient and the light and dark page, card, text, dimmed, placeholder, Completed and divider colors and the card shadow, as the Figma frames use them. |
 | `src/vite-env.d.ts` | Types the environment variables, and makes reading an undeclared one a type error. |
 | `src/api/apiClient.ts` | The shared axios instance the API Functions use once a real API exists (see the `REAL API` blocks in `src/api/todos.ts`), with its base URL from `VITE_API_BASE_URL`. |
 | `src/api/todos.ts` | The Todo API Functions (list, get one, create, update, delete, clear Completed, and the demo-only Restore Demo Todos). Each keeps its real axios call commented out above the `localStorage` code, and the comment at the top lists the steps to switch to a real API. |
@@ -62,16 +62,20 @@ When you add, move or delete a file, update this list.
 | `src/api/index.ts` | Barrel for the API Functions and the shared axios instance. |
 | `src/apiHooks/todos.ts` | The Todo API Hooks: two queries and five mutations. Each mutation refreshes the Todo list when it succeeds. While the list lives in `localStorage`, the queries don't retry a failed read. |
 | `src/apiHooks/index.ts` | Barrel for the API Hooks. |
+| `src/components/NewTodoInput/NewTodoInput.tsx` | The new-todo input Shared Component: "Create a new todo…" with a decorative circle. On Enter it creates the trimmed, non-empty title, and clears once the create succeeds. |
+| `src/components/NewTodoInput/NewTodoInput.module.scss` | The new-todo input's scoped styles: the design's mobile and desktop sizes, card color and shadow, and the circle. |
 | `src/components/ThemeToggle/ThemeToggle.tsx` | The theme toggle Shared Component: a moon in light and a sun in dark, switching the color scheme. |
 | `src/components/ThemeToggle/ThemeToggle.module.scss` | The theme toggle's scoped styles: the icon's mobile and desktop sizes. |
+| `src/components/TodoRow/TodoRow.tsx` | The Todo row Shared Component: a round check in a clickable gutter, labeled with the Todo's title, and the title, struck through when Completed. Clicking the title does nothing. |
+| `src/components/TodoRow/TodoRow.module.scss` | The Todo row's scoped styles: the divider, the gutter and title padding, the check's ring and gradient fill, and the Completed title color. |
 | `src/components/index.ts` | Barrel for the Shared Components. |
 | `src/images/bg-{mobile,desktop}-{light,dark}.jpg` | The design's header background images, one per color scheme and layout. Used by Home's SCSS module. |
-| `src/images/icon-{moon,sun,check,cross}.svg` | The design's icons. The theme toggle uses the moon and sun; the check (a Completed Todo) and the ✕ (delete) are for the Todo row in later tickets. |
+| `src/images/icon-{moon,sun,check,cross}.svg` | The design's icons. The theme toggle uses the moon and sun; the Todo row uses the check for a Completed Todo, and the ✕ (delete) is for a later ticket. |
 | `src/images/index.ts` | Barrel for the images imported from TypeScript. |
 | `src/interfaces/Todo.ts` | The Todo type, with its create and update input types derived from it. |
 | `src/interfaces/index.ts` | Barrel for the shared types. |
-| `src/pages/Home/Home.tsx` | The Home Page, built with Mantine: the "TODO" header with the theme toggle over the background image, and the Todos in a card through the `useTodos` API Hook, with an error alert if they can't be loaded. |
-| `src/pages/Home/Home.module.scss` | The Home Page's scoped styles: the background image per color scheme and layout, the centered column, the header and the typography. |
+| `src/pages/Home/Home.tsx` | The Home Page, built with Mantine: the "TODO" header with the theme toggle over the background image, the new-todo input, and a Todo row per Todo in a card, through the Todo API Hooks. Shows an error alert if the Todos can't be loaded or a change can't be saved. |
+| `src/pages/Home/Home.module.scss` | The Home Page's scoped styles: the background image per color scheme and layout, the centered column, the header, the typography and the gaps between the input, alerts and list. |
 | `src/pages/NotFound/NotFound.tsx` | The NotFound Page, shown for any unknown URL, with a link back home. |
 | `src/pages/index.ts` | Barrel for the Pages. |
 | `src/styles/global.scss` | Global styles for every Page, loaded once in `main.tsx` after Mantine's base styles. Gives the page its own background color, since the theme's body color is the card color. |
@@ -116,3 +120,4 @@ The planning record for the to-do list from the Figma design.
 | `issues/06-restore-demo-todos-link.md` | Ticket 06: the Restore Demo Todos link. |
 | `design/1.png` … `design/4.png` | The Figma screenshots: the style guide sheet, and the light, dark and interaction frames at desktop and mobile widths. |
 | `design/STYLEGUIDE.md` | The design's style guide: layout widths, colors and typography. |
+| `design/FIGMA.md` | The Figma file's link and frame IDs, and the sizes and colors measured from it, so Figma needn't be queried again. |
