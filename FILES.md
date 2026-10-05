@@ -44,9 +44,10 @@ When you add, move or delete a file, update this list.
 
 | File | Purpose |
 | --- | --- |
-| `src/main.tsx` | The entry point. Loads the global styles and renders the app with the React Query provider, the router and React Query Devtools (development only). |
+| `src/main.tsx` | The entry point. Loads Mantine's base styles, then the global styles, and renders the app with the Mantine provider, the React Query provider, the router and React Query Devtools (development only). |
 | `src/routes.tsx` | Declares every route in React Router's data mode: the Home Page at `/` and the NotFound Page for anything else. |
 | `src/queryClient.ts` | The React Query client, in one place so its defaults are easy to find and change. |
+| `src/theme.ts` | The Mantine theme: green primary color and medium radius, with everything else at Mantine's defaults. |
 | `src/vite-env.d.ts` | Types the environment variables, and makes reading an undeclared one a type error. |
 | `src/api/apiClient.ts` | The shared axios instance every API Function uses, with its base URL from `VITE_API_BASE_URL`. |
 | `src/api/items.ts` | The five Item API Functions (list, get one, create, update, delete), with the mock Item data at the top. The mocks are marked for removal once a backend exists. |
@@ -57,25 +58,30 @@ When you add, move or delete a file, update this list.
 | `src/components/.gitkeep` | Keeps the empty `components` folder, the home of Shared Components, in git. Delete it once the first Shared Component is added. |
 | `src/interfaces/Item.ts` | The placeholder Item type, with its create and update input types derived from it. |
 | `src/interfaces/index.ts` | Barrel for the shared types. |
-| `src/pages/Home/Home.tsx` | The Home Page: lists Items through the `useItems` API Hook, with a loading line and an error line. |
+| `src/pages/Home/Home.tsx` | The Home Page, built with Mantine: lists Items as cards through the `useItems` API Hook, with a loader and an error alert. |
 | `src/pages/Home/Home.module.scss` | The Home Page's scoped styles, showing SCSS modules working. |
 | `src/pages/NotFound/NotFound.tsx` | The NotFound Page, shown for any unknown URL, with a link back home. |
 | `src/pages/index.ts` | Barrel for the Pages. |
-| `src/styles/global.scss` | Global styles for every Page, loaded once in `main.tsx`. |
+| `src/styles/global.scss` | Global styles for every Page, loaded once in `main.tsx` after Mantine's base styles. Empty for now: Mantine provides the reset and typography. |
 
 ## `docs/`
 
 | File | Purpose |
 | --- | --- |
 | `docs/adr/0001-dev-vm-working-copy-inside-vm.md` | Architecture decision record: why the Working Copy lives on the Dev VM's own disk instead of in a shared folder, the options rejected and the consequences. |
+| `docs/adr/0002-mantine-components-with-scss-modules.md` | Architecture decision record: Mantine provides the UI components while custom styles stay in SCSS modules, using Mantine's Sass helpers instead of its PostCSS preset. |
 | `docs/agents/domain.md` | Tells AI coding agents to read `CONTEXT.md` and the ADRs before exploring, and to use the glossary's terms. |
 | `docs/agents/issue-tracker.md` | Tells AI coding agents that issues and specs are markdown files under `docs/planning/`, how they're laid out, and that each feature folder starts from the developer's `INTENT.md`, with its template. |
 | `docs/agents/triage-labels.md` | Maps the agent skills' triage roles to the status labels used in the issue files. |
 
-### `docs/planning/to-do-list-setup/`
+### `docs/planning/mantine-install/`
 
-The planning record for setting up the project.
+The planning record for installing Mantine.
 
 | File | Purpose |
 | --- | --- |
 | `INTENT.md` | The goal, definition of done, constraints and acceptance criteria, in the developer's own words. |
+| `round_1_questions.md` … `round_3_questions.md` | The grilling rounds: each round's questions and the developer's answers. |
+| `spec.md` | The spec derived from the intent and the grilling rounds. |
+| `issues/01-mantine-across-the-app-home-demo.md` | Ticket 01: install and configure Mantine, and rebuild the Home Page with it. |
+| `issues/02-mantine-sass-helpers-home-intro.md` | Ticket 02: inject Mantine's Sass helpers into every SCSS file and use them on Home's intro line. |

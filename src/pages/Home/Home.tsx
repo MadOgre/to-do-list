@@ -1,3 +1,4 @@
+import { Alert, Card, Container, Loader, Stack, Text, Title } from "@mantine/core";
 import type { FC } from "react";
 import { useItems } from "@/apiHooks";
 import styles from "./Home.module.scss";
@@ -6,20 +7,25 @@ export const Home: FC = () => {
   const { data: items, isPending, isError } = useItems();
 
   return (
-    <main>
-      <h1>to-do-list</h1>
-      <p className={styles.intro}>Edit this Page to start building your app.</p>
-      {isPending && <p>Loading Items…</p>}
-      {isError && <p>Could not load Items.</p>}
-      {items && (
-        <ul>
-          {items.map(({ id, name, description }) => (
-            <li key={id}>
-              <strong>{name}</strong>: {description}
-            </li>
-          ))}
-        </ul>
+    <Container component="main" py="xl">
+      <Title>to-do-list</Title>
+      <Text className={styles.intro} mb="md">Edit this Page to start building your app.</Text>
+      {isPending && <Loader />}
+      {isError && (
+        <Alert color="red" title="Error">
+          Could not load Items.
+        </Alert>
       )}
-    </main>
+      {items && (
+        <Stack>
+          {items.map(({ id, name, description }) => (
+            <Card key={id} withBorder>
+              <Text fw={500}>{name}</Text>
+              <Text c="dimmed" size="sm">{description}</Text>
+            </Card>
+          ))}
+        </Stack>
+      )}
+    </Container>
   );
 };

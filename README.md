@@ -1,6 +1,6 @@
 # to-do-list
 
-A to-do list web app in React + TypeScript on Vite, with React Router, React Query, axios, SCSS and ESLint.
+A to-do list web app in React + TypeScript on Vite, with Mantine, React Router, React Query, axios, SCSS and ESLint.
 
 For every detail, see **[GUIDE.md](GUIDE.md)**.
 

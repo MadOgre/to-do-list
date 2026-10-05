@@ -2,7 +2,7 @@
 
 The full reference: setup on every OS, the Dev VM and troubleshooting. For the short version, see [`README.md`](README.md).
 
-A to-do list web app in React + TypeScript, built on Vite, with React Router, React Query and axios. ESLint and TypeScript check the code in the editor, in the browser overlay while the dev server runs, and on the command line. SCSS and SCSS modules work out of the box.
+A to-do list web app in React + TypeScript, built on Vite, with Mantine, React Router, React Query and axios. ESLint and TypeScript check the code in the editor, in the browser overlay while the dev server runs, and on the command line. SCSS and SCSS modules work out of the box.
 
 There are two ways to run it, and both use the same `pnpm dev`:
 
@@ -187,9 +187,10 @@ There is no test runner and no test script: add the testing setup you choose.
 
 ```
 src/
-  main.tsx          entry point: providers, router, global styles
+  main.tsx          entry point: providers, router, Mantine and global styles
   routes.tsx        every route, in React Router's data mode
   queryClient.ts    the React Query client and its defaults
+  theme.ts          the Mantine theme
   pages/            one folder per Page, e.g. pages/Home/Home.tsx + Home.module.scss
   components/       Shared Components (empty to start)
   api/              the shared axios instance and the API Functions
