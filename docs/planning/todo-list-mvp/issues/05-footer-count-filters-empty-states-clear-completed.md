@@ -25,7 +25,7 @@ When nothing matches, the card shows a dimmed message. On mobile, the filters mo
 - [x] Confirming calls `useClearCompletedTodos` (one request). A failure shows the "Could not save your change." alert
 - [x] Styling matches the design in both themes and at both widths, using only Mantine CSS variables and `mantine` helpers
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
-- [ ] Manual check on `/`:
+- [x] Manual check on `/`:
   - The count is right, with "1 item left" for one, and stays the same across filters.
   - The filters work, the selected one is blue, and the filter resets to All on reload.
   - Each empty-state message appears in its case.
@@ -42,3 +42,4 @@ When nothing matches, the card shows a dimmed message. On mobile, the filters mo
   - Checked in headless Chrome on the built app, in both themes at 375px and 1440px: the counts, the filters, both dialog texts (singular and plural), no dialog with none Completed, all three empty states, the filter reset on reload, and no horizontal scroll. The hover color was measured once (Navy 850 in light). Later runs of the same headless Chrome reported `(hover: none)`, which Chrome can't emulate away, so the hover is part of the manual check.
   - Figma's footer spacing and the filters' size are now in `design/FIGMA.md`.
   - The manual check on `/` is left to the developer.
+- 2026-10-05: The developer did the manual check on `/`, including the hover colors with a mouse, and reports that all of it passes.
