@@ -75,17 +75,22 @@
   }
 }
 
-// With a mouse, the ✕ shows only on the hovered row, or the row that holds the focus. On touch screens (no hover)
-// it is always visible. It stays in the layout and in the tab order while hidden, so the title doesn't reflow and
-// Tab can reach it. A plain media query, not `mantine.hover`: that mixin only styles `:hover` itself, and on
-// touch screens it switches to `:active`, which would show the ✕ only while it's pressed.
+// With a mouse, the ✕ shows only on the hovered row, or the row that holds keyboard focus. On touch screens (no hover)
+// it is always visible. It stays in the layout and in the tab order while hidden, so the title doesn't reflow and Tab
+// can reach it. `:focus-visible` rather than `:focus-within`: clicking the check focuses it too, and the ✕ would then
+// stay visible after the mouse leaves the row. A plain media query, not `mantine.hover`: that mixin only styles
+// `:hover` itself, and on touch screens it switches to `:active`, which would show the ✕ only while it's pressed.
 @media (hover: hover) {
   .delete {
     opacity: 0;
   }
 
-  .row:hover .delete,
-  .row:focus-within .delete {
+  .row:hover .delete {
+    opacity: 1;
+  }
+
+  // A rule of its own: a browser without `:has()` drops the whole rule it's in, which would take the hover with it.
+  .row:has(:focus-visible) .delete {
     opacity: 1;
   }
 }
