@@ -53,6 +53,7 @@ All Josefin Sans Regular, line height 1 (100%), letter spacing -0.25px.
 | Check | 24px | 20px |
 | Check to text | 24px | 16px |
 | ✕ | 17.7px (18px icon) | 11.8px |
+| ✕ to the card's right edge | 24px | 20px |
 
 - Dividers are 1px: Purple 300 in light, Purple 800 in dark.
 - An Active Todo's check: the same 1px ring as the input's circle. On hover the ring becomes the check gradient (from the interaction frame, `4.png`; not measured in Figma).

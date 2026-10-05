@@ -1,4 +1,6 @@
-import { colorsTuple, createTheme, type CSSVariablesResolver } from "@mantine/core";
+import { Button, colorsTuple, createTheme, type CSSVariablesResolver } from "@mantine/core";
+
+import classes from "./theme.module.scss";
 
 // The style guide's colors (docs/planning/todo-list-mvp/design/STYLEGUIDE.md), by their names there.
 const styleGuide = {
@@ -31,6 +33,9 @@ export const theme = createTheme({
   headings: { fontFamily },
   // The design's cards have 5px corners.
   defaultRadius: 5,
+  components: {
+    Button: Button.extend({ classNames: { label: classes.buttonLabel } }),
+  },
 });
 
 // The light and dark surface and text colors, as the Figma frames use them. `body` is the card color, because Mantine's

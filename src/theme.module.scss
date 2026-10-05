@@ -1,0 +1,12 @@
+// Theme-wide overrides of Mantine components, attached through `classNames` in src/theme.ts.
+
+// Centers a Button's text on its capitals. Mantine trims the label's text to the cap height and the baseline
+// (`text-box-trim: trim-both` and `text-box-edge: cap alphabetic`), but the label is a flex container, where the trim
+// doesn't apply. Josefin Sans keeps 0.25em under the baseline and almost nothing above its capitals, so untrimmed text
+// sits about 0.1em high. As a block, the label is trimmed, and its overflow shows ascenders and descenders that reach
+// past the trimmed box.
+.buttonLabel {
+  display: block;
+  height: auto;
+  overflow: visible;
+}

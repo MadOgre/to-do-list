@@ -90,23 +90,23 @@
   }
 }
 
+// The design's ✕ is 12px on mobile and 18px on desktop, 20px and 24px from the card's edge. The ActionIcon
+// (`--ai-size`) is wider than the ✕, so its margin is that gap less the space on each side of the ✕.
 .delete {
+  --cross-size: #{mantine.rem(12)};
+
   flex-shrink: 0;
   align-self: center;
-  margin-inline-end: mantine.rem(20);
+  margin-inline-end: calc(#{mantine.rem(20)} - (var(--ai-size) - var(--cross-size)) / 2);
 
   @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
-    margin-inline-end: mantine.rem(24);
+    --cross-size: #{mantine.rem(18)};
+
+    margin-inline-end: calc(#{mantine.rem(24)} - (var(--ai-size) - var(--cross-size)) / 2);
   }
 }
 
-// The design's ✕: 12px on mobile and 18px on desktop.
 .cross {
-  width: mantine.rem(12);
-  height: mantine.rem(12);
-
-  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
-    width: mantine.rem(18);
-    height: mantine.rem(18);
-  }
+  width: var(--cross-size);
+  height: var(--cross-size);
 }
