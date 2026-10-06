@@ -5,7 +5,7 @@
 - To-do list fully functions as intended and as outlined by Figma design.
 
 ## Constraints
-- Use mentine as much as possible
+- Use mantine as much as possible
 
 ## Acceptance Criteria
 [ ] To-do list loads on the home page, has a light/dark switch, and works as outlined in Figma screenshots
