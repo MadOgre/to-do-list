@@ -18,7 +18,7 @@ Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/do
 
 A feature moves through `INTENT.md` → `/grill-with-docs` → `/to-spec` → `/to-tickets` → `/implement`, one stage at a time. The developer starts each stage; finish the current one and wait for them to start the next. `/implement` reviews with `/code-review`, and its commit follows Review until clean below. Prompt the developer to clear the context and to review the spec and tickets manually when running implement.
 
-Whenever you ask the developer for a manual check (a ticket's closing check under `/implement`, or any other), write its steps out in chat as a numbered checklist: where to go, what to do and what they should see at each step, including any setup (starting `pnpm dev`, opening devtools, switching the theme or the window width). Base them on the ticket's or spec's manual check, so the developer can follow along without opening the ticket.
+Whenever you ask the developer for a manual check (a ticket's closing check under `/implement`, or any other), write its steps out in chat as a numbered checklist: where to go, what to do and what they should see at each step, including any setup (starting `pnpm dev`, opening devtools, switching the theme or the window width). Base them on the ticket's or spec's manual check, so the developer can follow along without opening the ticket. Take every URL, port, path, storage key and command in them from the project's config, scripts and code, never from a tool's default.
 
 ### Keep the build green
 
