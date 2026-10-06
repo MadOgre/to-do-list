@@ -70,7 +70,7 @@ When you add, move or delete a file, update this list.
 | `src/components/TodoRow/TodoRow.module.scss` | The Todo row's scoped styles: the divider, the gutter and title padding, the check's ring, its gradient ring on hover and gradient fill, and the Completed title color. |
 | `src/components/index.ts` | Barrel for the Shared Components. |
 | `src/images/bg-{mobile,desktop}-{light,dark}.jpg` | The design's header background images, one per color scheme and layout. Used by Home's SCSS module. |
-| `src/images/icon-{moon,sun,check,cross}.svg` | The design's icons. The theme toggle uses the moon and sun; the Todo row uses the check for a Completed Todo, and the ✕ (delete) is for a later ticket. |
+| `src/images/icon-{moon,sun,check,cross}.svg` | The design's icons. The theme toggle uses the moon and sun; the Todo row uses the check for a Completed Todo, and the ✕ (delete) is for deletion. |
 | `src/images/index.ts` | Barrel for the images imported from TypeScript. |
 | `src/interfaces/Todo.ts` | The Todo type, with its create and update input types derived from it. |
 | `src/interfaces/index.ts` | Barrel for the shared types. |
