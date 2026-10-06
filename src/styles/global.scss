@@ -1,15 +1,6 @@
-// Global styles, loaded once at startup. Applies to every Page.
-$font-stack: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+// Global styles, loaded once at startup after Mantine's base styles. Applies to every Page.
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
+// The theme's `body` color is the card color (see src/theme.ts), so the page gets its own.
 body {
-  margin: 0;
-  padding: 2rem;
-  font-family: $font-stack;
-  line-height: 1.5;
+  background-color: var(--mantine-color-page);
 }

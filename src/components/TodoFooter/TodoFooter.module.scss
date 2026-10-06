@@ -1,0 +1,28 @@
+// Sizes from the Figma frames (docs/planning/todo-list-mvp/design/FIGMA.md): the mobile layout below `sm`, desktop from `sm` up.
+@use "@/styles/text-button";
+
+// The count on the left and "Clear Completed" on the right. From `sm` up, three columns keep the filters centered on
+// the card whatever the widths of the count and "Clear Completed". The texts share a baseline, as in the design: the
+// Buttons' text is trimmed to its capitals and the count's isn't, so centering them would set the count higher.
+.footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: mantine.rem(16) mantine.rem(20);
+  font-size: mantine.rem(12);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    padding: mantine.rem(24);
+    font-size: mantine.rem(14);
+  }
+}
+
+.clear {
+  @include text-button.text-button;
+
+  justify-self: end;
+  font-size: inherit;
+  font-weight: 400;
+}
