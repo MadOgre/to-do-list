@@ -97,3 +97,17 @@
   justify-content: center;
   height: mantine.rem(48);
 }
+
+// Where the design shows "Drag and drop to reorder list": 14px, centered, 40px below the filter card on mobile and
+// 24px below the list card from `sm` up. The Stack's gap gives 16px on mobile, so the margin adds the rest.
+.restoreLink {
+  align-self: center;
+  margin-top: mantine.rem(24);
+  font-size: mantine.rem(14);
+  // Browsers reset a button's letter spacing, so it would lose the page's -0.25px.
+  letter-spacing: inherit;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    margin-top: 0;
+  }
+}

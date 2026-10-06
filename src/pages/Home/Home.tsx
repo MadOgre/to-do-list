@@ -1,8 +1,15 @@
-import { Alert, Card, Container, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Card, Container, Group, Stack, Text, Title } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { type FC, useState } from "react";
 
-import { useClearCompletedTodos, useCreateTodo, useDeleteTodo, useTodos, useUpdateTodo } from "@/apiHooks";
+import {
+  useClearCompletedTodos,
+  useCreateTodo,
+  useDeleteTodo,
+  useRestoreTodos,
+  useTodos,
+  useUpdateTodo,
+} from "@/apiHooks";
 import { NewTodoInput, ThemeToggle, TodoFilters, TodoFooter, TodoRow } from "@/components";
 import type { Todo, TodoFilter } from "@/interfaces";
 
@@ -14,12 +21,13 @@ export const Home: FC = () => {
   const updateTodo = useUpdateTodo();
   const deleteTodo = useDeleteTodo();
   const clearCompletedTodos = useClearCompletedTodos();
+  const restoreTodos = useRestoreTodos();
   // Starts at All on every load: the filter isn't stored or put in the URL.
   const [filter, setFilter] = useState<TodoFilter>("all");
   // The alert follows the most recent change, so a later success clears an earlier failure. `submittedAt` is when
   // each mutation last ran (0 if never), so sorting by it, newest first, puts the most recent change first. A failed
   // change leaves the list as it was, since the list only refetches after a change succeeds.
-  const changes = [createTodo, updateTodo, deleteTodo, clearCompletedTodos];
+  const changes = [createTodo, updateTodo, deleteTodo, clearCompletedTodos, restoreTodos];
   const [lastChange] = changes.toSorted((a, b) => b.submittedAt - a.submittedAt);
   const saveFailed = lastChange.isError;
 
@@ -69,6 +77,15 @@ export const Home: FC = () => {
     });
   };
 
+  const confirmRestore = () =>
+    modals.openConfirmModal({
+      title: "Restore demo todos?",
+      children: <Text size="sm">Your current todos will be replaced by the six demo todos.</Text>,
+      labels: { confirm: "Restore", cancel: "Cancel" },
+      confirmProps: { color: "red" },
+      onConfirm: () => restoreTodos.mutate(),
+    });
+
   return (
     <div className={styles.page}>
       <div className={styles.background} />
@@ -110,6 +127,11 @@ export const Home: FC = () => {
               </Card>
             </>
           )}
+          {/* DEMO ONLY: delete with restoreTodos when switching to a real API (step 3 in @/api/todos.ts). Shown even when
+              the list fails to load, since restoring also clears bad stored data. */}
+          <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={styles.restoreLink}>
+            Restore demo todos
+          </Anchor>
         </Stack>
       </Container>
     </div>

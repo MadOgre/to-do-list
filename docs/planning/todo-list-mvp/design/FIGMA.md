@@ -68,3 +68,4 @@ All Josefin Sans Regular, line height 1 (100%), letter spacing -0.25px.
 - Footer text is 14px on desktop and 12px on mobile ("5 items left", "Clear Completed").
 - The filters are 14px text at every width, 16px apart, also in the mobile filter card, where they are centered.
 - "Drag and drop to reorder list" is centered, 24px below the list card on desktop and 40px below the filter card on mobile.
+- The hint is 14px on mobile too. This was read from `2.png`, not measured in Figma: its text is as wide relative to the frame as the desktop hint is.
