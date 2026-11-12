@@ -92,8 +92,8 @@ importers:
         specifier: ^5.104.0
         version: 5.104.0(@tanstack/react-query@5.104.0(react@19.3.0))(@types/react@19.3.0)(csstype@3.2.3)(react@19.3.0)
       '@types/node':
-        specifier: ^22.20.4
-        version: 22.20.4
+        specifier: ^26.6.6
+        version: 26.6.6
       '@types/react':
         specifier: ^19.2.18
         version: 19.3.0
@@ -102,7 +102,7 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
-        version: 6.1.1(vite@8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0))
+        version: 6.1.1(vite@8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0))
       eslint:
         specifier: ^10.11.0
         version: 10.11.0
@@ -126,10 +126,10 @@ importers:
         version: 8.70.1(eslint@10.11.0)(typescript@6.0.3)
       vite:
         specifier: ^8.3.0
-        version: 8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)
+        version: 8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)
       vite-plugin-checker:
         specifier: ^0.14.5
-        version: 0.14.5(eslint@10.11.0)(optionator@0.9.4)(typescript@6.0.3)(vite@8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0))
+        version: 0.14.5(eslint@10.11.0)(optionator@0.9.4)(typescript@6.0.3)(vite@8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0))
 
 packages:
 
@@ -931,9 +931,6 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
-
-  '@types/node@22.20.4':
-    resolution: {integrity: sha512-zJRE40jpHtKqE/C4fgHrAKQLJuSpzEnP9ff9Y7YtoR3Wd2pwqzlekDeEuUQXjRd+QCYnVnNwuJYmhdk9XV8gvA==}
 
   '@types/node@26.6.6':
     resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
@@ -2180,9 +2177,6 @@ packages:
   undefsafe@2.0.5:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
@@ -3149,10 +3143,6 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/node@22.20.4':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@26.6.6':
     dependencies:
       undici-types: 8.9.0
@@ -3269,10 +3259,10 @@ snapshots:
       '@typescript-eslint/types': 8.70.1
       eslint-visitor-keys: 5.0.1
 
-  '@vitejs/plugin-react@6.1.1(vite@8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0))':
+  '@vitejs/plugin-react@6.1.1(vite@8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)
+      vite: 8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)
 
   accepts@2.0.0:
     dependencies:
@@ -4404,8 +4394,6 @@ snapshots:
 
   undefsafe@2.0.5: {}
 
-  undici-types@6.21.0: {}
-
   undici-types@8.9.0: {}
 
   unicorn-magic@0.3.0: {}
@@ -4441,7 +4429,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plugin-checker@0.14.5(eslint@10.11.0)(optionator@0.9.4)(typescript@6.0.3)(vite@8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)):
+  vite-plugin-checker@0.14.5(eslint@10.11.0)(optionator@0.9.4)(typescript@6.0.3)(vite@8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)):
     dependencies:
       '@babel/code-frame': 7.29.7
       chokidar: 5.0.0
@@ -4450,13 +4438,13 @@ snapshots:
       picomatch: 4.0.7
       proper-lockfile: 4.1.2
       tiny-invariant: 1.3.3
-      vite: 8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)
+      vite: 8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0)
     optionalDependencies:
       eslint: 10.11.0
       optionator: 0.9.4
       typescript: 6.0.3
 
-  vite@8.3.1(@types/node@22.20.4)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0):
+  vite@8.3.1(@types/node@26.6.6)(esbuild@0.28.2)(sass-embedded@1.105.0)(sass@1.105.0):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -4464,7 +4452,7 @@ snapshots:
       rolldown: 1.2.11
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 22.20.4
+      '@types/node': 26.6.6
       esbuild: 0.28.2
       fsevents: 2.3.3
       sass: 1.105.0

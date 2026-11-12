@@ -4,7 +4,7 @@ import type { CreateTodoInput, Todo, UpdateTodoInput } from "@/interfaces";
 import { readTodos, removeTodos, writeTodos } from "./todoStorage";
 
 // The Todos live in localStorage until a real API exists. To switch:
-// 1. Set VITE_API_BASE_URL in .env.local.
+// 1. Run `pnpm dev` from the repo root: Vite's proxy sends `/api` to the API's dev server.
 // 2. Uncomment the apiClient import and each function's REAL API lines, delete its LOCAL STORAGE lines,
 //    and make the function async.
 // 3. Delete todoStorage.ts and restoreTodos, together with useRestoreTodos and the Restore Demo Todos link in Home.

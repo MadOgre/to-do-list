@@ -8,7 +8,7 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 
 | Place | What the resource has there |
 | --- | --- |
-| `api/package.json` | The DynamoDB packages, which the first resource adds. |
+| `api/package.json` | The other DynamoDB packages, which the first resource adds. `@aws-sdk/client-dynamodb` is already there, for the dev server's AWS sign-in check. |
 | `api/src/<resource>/` | One file per route, its ID rule and its repository. |
 | `api/routes.json` | One entry per route. |
 | `api/src/resource-handlers.ts` | One export line per handler. |
