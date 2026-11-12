@@ -1,0 +1,117 @@
+// Sizes from the Figma frames (docs/planning/todo-list-mvp/design/FIGMA.md): the mobile layout below `sm`, desktop from `sm` up.
+// The row's padding sits on the gutter and the title, so the gutter covers the row's full height.
+
+// A bottom border, so the footer that follows the rows in the card gets a divider above it.
+.row:not(:last-child) {
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.gutter {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-block: mantine.rem(16);
+  padding-inline: mantine.rem(20) mantine.rem(16);
+  cursor: pointer;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding: mantine.rem(24);
+  }
+
+  // Hovering the gutter turns an Active Todo's ring into the check gradient (the interaction frame, 4.png): the card
+  // color fills the inside, and the gradient shows only through the transparent 1px border.
+  @include mantine.hover {
+    .input:not(:checked) {
+      border-color: transparent;
+      background:
+        linear-gradient(var(--mantine-color-body), var(--mantine-color-body)) padding-box,
+        var(--mantine-gradient-check) border-box;
+    }
+  }
+}
+
+.checkbox {
+  --checkbox-size: #{mantine.rem(20)};
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    --checkbox-size: #{mantine.rem(24)};
+  }
+}
+
+// The design's ring in place of Mantine's per-scheme colors when Active, and the gradient when Completed.
+.input {
+  border-color: var(--mantine-color-default-border);
+  background-color: transparent;
+  cursor: pointer;
+
+  &:checked {
+    border-color: transparent;
+    // From the border's outer edge, so the gradient fills the ring too instead of repeating into it.
+    background-origin: border-box;
+    background-image: var(--mantine-gradient-check);
+  }
+}
+
+// The tick at the SVG's own size, centered, instead of Mantine's 60% width.
+.icon {
+  width: auto;
+}
+
+.title {
+  flex: 1;
+  align-self: center;
+  min-width: 0;
+  padding-block: mantine.rem(16);
+  padding-inline-end: mantine.rem(20);
+  overflow-wrap: anywhere;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding-block: mantine.rem(24);
+    padding-inline-end: mantine.rem(24);
+  }
+
+  &[data-completed] {
+    color: var(--mantine-color-completed);
+  }
+}
+
+// With a mouse, the ✕ shows only on the hovered row, or the row that holds keyboard focus. On touch screens (no hover)
+// it is always visible. It stays in the layout and in the tab order while hidden, so the title doesn't reflow and Tab
+// can reach it. `:focus-visible` rather than `:focus-within`: clicking the check focuses it too, and the ✕ would then
+// stay visible after the mouse leaves the row. A plain media query, not `mantine.hover`: that mixin only styles
+// `:hover` itself, and on touch screens it switches to `:active`, which would show the ✕ only while it's pressed.
+@media (hover: hover) {
+  .delete {
+    opacity: 0;
+  }
+
+  .row:hover .delete {
+    opacity: 1;
+  }
+
+  // A rule of its own: a browser without `:has()` drops the whole rule it's in, which would take the hover with it.
+  .row:has(:focus-visible) .delete {
+    opacity: 1;
+  }
+}
+
+// The design's ✕ is 12px on mobile and 18px on desktop, 20px and 24px from the card's edge. The ActionIcon
+// (`--ai-size`) is wider than the ✕, so its margin is that gap less the space on each side of the ✕.
+.delete {
+  --cross-size: #{mantine.rem(12)};
+
+  flex-shrink: 0;
+  align-self: center;
+  margin-inline-end: calc(#{mantine.rem(20)} - (var(--ai-size) - var(--cross-size)) / 2);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    --cross-size: #{mantine.rem(18)};
+
+    margin-inline-end: calc(#{mantine.rem(24)} - (var(--ai-size) - var(--cross-size)) / 2);
+  }
+}
+
+.cross {
+  width: var(--cross-size);
+  height: var(--cross-size);
+}

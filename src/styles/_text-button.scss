@@ -1,0 +1,19 @@
+// Vite injects the `mantine` helpers only into the SCSS files it compiles, not into partials they `@use`.
+@use "mantine";
+
+// A transparent Mantine Button cut down to its text, as the design's footer draws "All", "Active", "Completed" and
+// "Clear Completed": no height or padding, so the surrounding padding sets the row's height, and dimmed text that
+// turns to the text color on hover. Include it in a class set on the Button's root. Its rules override Mantine's
+// Button rules of the same specificity, which come earlier in the CSS.
+@mixin text-button {
+  height: auto;
+  padding: 0;
+  // The Button is only as tall as its capitals, and would otherwise clip the descenders.
+  overflow: visible;
+  color: var(--mantine-color-dimmed);
+  letter-spacing: inherit;
+
+  @include mantine.hover {
+    color: var(--mantine-color-text);
+  }
+}

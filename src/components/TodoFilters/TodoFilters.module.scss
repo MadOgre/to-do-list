@@ -1,0 +1,17 @@
+// Sizes from the Figma frames (docs/planning/todo-list-mvp/design/FIGMA.md): 14px bold text, 16px apart, at every width.
+@use "@/styles/text-button";
+
+.filters {
+  gap: mantine.rem(16);
+}
+
+.filter {
+  @include text-button.text-button;
+
+  font-size: mantine.rem(14);
+  font-weight: 700;
+
+  &[data-selected] {
+    color: var(--mantine-primary-color-filled);
+  }
+}

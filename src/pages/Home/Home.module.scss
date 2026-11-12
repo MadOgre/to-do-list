@@ -1,4 +1,113 @@
-.intro {
-  color: #555;
-  font-style: italic;
+// The design's mobile layout below `sm`, its desktop layout from `sm` up.
+
+// Positions the background image against the page.
+.page {
+  position: relative;
+}
+
+// The full-width image behind the header, with the page color below it.
+.background {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: mantine.rem(200);
+  background-position: center;
+  background-size: cover;
+
+  @include mantine.light {
+    background-image: url("@/images/bg-mobile-light.jpg");
+  }
+
+  @include mantine.dark {
+    background-image: url("@/images/bg-mobile-dark.jpg");
+  }
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    height: mantine.rem(300);
+
+    @include mantine.light {
+      background-image: url("@/images/bg-desktop-light.jpg");
+    }
+
+    @include mantine.dark {
+      background-image: url("@/images/bg-desktop-dark.jpg");
+    }
+  }
+}
+
+// The design's card widths: 540px on desktop, and 327px at 375px wide (24px gutters).
+.main {
+  position: relative;
+  max-width: mantine.rem(588);
+  padding-inline: mantine.rem(24);
+  padding-block: mantine.rem(48);
+  font-size: mantine.rem(12);
+  line-height: 1;
+  letter-spacing: -0.25px;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    font-size: mantine.rem(18);
+  }
+}
+
+.header {
+  margin-bottom: mantine.rem(40);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    margin-bottom: mantine.rem(48);
+  }
+}
+
+// The design draws "TODO" as an image: 162.6 × 30.1px on desktop, 108.1 × 20px on mobile. Josefin Sans Bold's
+// glyph metrics put that at 40px text with 15px letter spacing, and 26.6px text with 10px.
+.title {
+  color: var(--mantine-color-white);
+  font-size: mantine.rem(26.6);
+  font-weight: 700;
+  letter-spacing: mantine.rem(10);
+  line-height: 1;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    font-size: mantine.rem(40);
+    letter-spacing: mantine.rem(15);
+  }
+}
+
+// The gap between the input, the alerts and the list card.
+.content {
+  gap: mantine.rem(16);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    gap: mantine.rem(24);
+  }
+}
+
+// Sits between the rows and the footer, with a divider like a row's.
+.empty {
+  padding: mantine.rem(16) mantine.rem(20);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    padding: mantine.rem(24);
+  }
+}
+
+// The design's 48px card under the list on mobile, with the filters centered in it.
+.filterCard {
+  justify-content: center;
+  height: mantine.rem(48);
+}
+
+// Where the design shows "Drag and drop to reorder list": 14px, centered, 40px below the filter card on mobile and
+// 24px below the list card from `sm` up. The Stack's gap gives 16px on mobile, so the margin adds the rest.
+.restoreLink {
+  align-self: center;
+  margin-top: mantine.rem(24);
+  font-size: mantine.rem(14);
+  // Browsers reset a button's letter spacing, so it would lose the page's -0.25px.
+  letter-spacing: inherit;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    margin-top: 0;
+  }
 }
