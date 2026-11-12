@@ -1,0 +1,28 @@
+{
+  "name": "@to-do-list/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --quiet --watch src --watch dev --watch routes.json --watch .env --ext ts,json --exec \"tsc && node --env-file=.env dev/server.ts\"",
+    "typecheck": "tsc",
+    "lint": "eslint .",
+    "invoke": "node --env-file=.env --enable-source-maps scripts/invoke.ts",
+    "bundle": "esbuild src/index.ts --bundle --platform=node --format=esm --target=node26 --main-fields=module,main --sourcemap --outfile=dist/index.mjs",
+    "build": "pnpm typecheck && pnpm bundle"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^2.36.0",
+    "@aws-sdk/client-dynamodb": "3.1165.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.164",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.11.0",
+    "express": "^5.3.0",
+    "globals": "^17.12.0",
+    "nodemon": "^3.1.14",
+    "typescript-eslint": "^8.70.1"
+  }
+}

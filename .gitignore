@@ -17,3 +17,37 @@ dist
 # OS files
 .DS_Store
 Thumbs.db
+
+# The API's local settings for pnpm dev and pnpm invoke. api/.env.example shows what goes in them
+api/.env
+
+# Terraform's working folder: downloaded providers (hundreds of MB), caches
+.terraform/
+
+# State files: Terraform's record of what it made. Can hold secrets in plain text
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Variable files, which often hold secrets or per-environment values. Commit a terraform.tfvars.example with placeholders instead
+*.tfvars
+*.tfvars.json
+
+# Override files, for local-only changes
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# A temporary file Terraform writes while it holds the state's lock
+.terraform.tfstate.lock.info
+
+# Terraform's own CLI settings files
+.terraformrc
+terraform.rc
+
+# A saved plan, from terraform plan -out=tfplan
+tfplan
