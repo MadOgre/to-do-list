@@ -36,6 +36,10 @@ The frontend listens on localhost only, so it isn't reachable from your network.
 
 Ctrl+C stops both. pnpm may then print `Failed` for a package, which only means it was stopped.
 
+### The proxy
+
+The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api` in `frontend/.env`). Vite's dev server passes every request whose path starts with `/api` on to the API's dev server, with the path unchanged, because the API's routes start with `/api` too. So <http://localhost:9000/api/anything> reaches the API, and answers with the API's 404. The proxy is set in `frontend/vite.config.ts`, and it names port 3000: if you change `PORT` in `api/.env`, change the proxy too.
+
 ## The API's dev server
 
 `api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/index.ts`), and turns the result into an HTTP response. With no routes yet, it answers every request as API Gateway does, with a 404 and `{"message":"Not Found"}`.

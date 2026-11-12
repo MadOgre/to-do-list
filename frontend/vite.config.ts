@@ -23,6 +23,11 @@ export default defineConfig({
     // A fixed, memorable port. Fail instead of silently moving to another one if it's taken.
     port: 9000,
     strictPort: true,
+    // Requests to /api go to the API's dev server (api/dev/server.ts, PORT in api/.env), so the app calls the API
+    // on its own origin. The path isn't rewritten: the API's routes start with /api too.
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
   },
   build: {
     // Vite warns at 500 kB per minified chunk. The app is one Page that loads everything up front, so splitting

@@ -82,8 +82,8 @@ to-do-list/
 │   │                       the shared axios instance, is /api. Override it in a gitignored .env.local
 │   ├── vite.config.ts      Vite config: the React plugin, the checker plugin that shows TypeScript and
 │   │                       ESLint errors during pnpm dev, the dev server on localhost and fixed port
-│   │                       9000, the injection of Mantine's Sass helpers into every SCSS file, and the
-│   │                       @/ alias
+│   │                       9000, the proxy that sends /api to the API's dev server on port 3000, the
+│   │                       injection of Mantine's Sass helpers into every SCSS file, and the @/ alias
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules, the React Hooks and React Refresh rules, and browser globals
 │   ├── tsconfig.json       only references the two configs below, so tsc -b checks both
