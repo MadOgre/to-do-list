@@ -32,7 +32,7 @@ This starts both packages' dev servers side by side, and prefixes each line with
 - **The frontend** on <http://localhost:9000> (`frontend dev:` lines). Vite serves the app with HMR, and shows TypeScript and ESLint errors in the terminal and in the browser overlay.
 - **The API** on <http://localhost:3000> (`api dev:` lines). See [The API's dev server](#the-apis-dev-server).
 
-The frontend listens on localhost only, so it isn't reachable from your network. The API's dev server names no host, so Node listens on every network address of your machine. Both ports are fixed: if one is taken, its server stops with an error rather than moving to another port.
+Both listen on localhost only, so they aren't reachable from your network. This matters most for the API's dev server, which runs with your AWS credentials. Both ports are fixed: if one is taken, its server stops with an error rather than moving to another port.
 
 Ctrl+C stops both. pnpm may then print `Failed` for a package, which only means it was stopped.
 
@@ -64,7 +64,7 @@ Node loads `api/.env` with `--env-file`. A variable already set in your shell wi
 
 | Variable | What it's for |
 | --- | --- |
-| `PORT` | The API dev server's port. |
+| `PORT` | The API dev server's port on `localhost`. |
 | `POWERTOOLS_DEV` | `true` prints each log line as indented JSON. |
 
 When code starts reading a new variable, add it to `api/.env.example`, with a comment, and a placeholder such as `XXXXXXX` for values that differ per person.

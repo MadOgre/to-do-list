@@ -177,7 +177,8 @@ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
   sendGatewayError(res, 500, "Internal Server Error");
 });
 
-app.listen(Number(PORT), (error) => {
+// Only this machine can reach the server: it runs with your AWS credentials, so others on your network mustn't.
+app.listen(Number(PORT), "localhost", (error) => {
   if (error) {
     throw error;
   }
