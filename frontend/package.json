@@ -1,12 +1,8 @@
 {
-  "name": "to-do-list",
+  "name": "@to-do-list/frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@10.34.5",
-  "engines": {
-    "node": "^22.22.0"
-  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

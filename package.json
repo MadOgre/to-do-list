@@ -1,0 +1,14 @@
+{
+  "name": "to-do-list",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "^26.13.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  }
+}
