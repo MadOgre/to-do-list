@@ -10,7 +10,8 @@
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "deploy:dev": "pnpm --filter @to-do-list/api build && terraform -chdir=infra/envs/dev apply"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
