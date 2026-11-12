@@ -184,14 +184,18 @@ to-do-list/
 │   │   │                             handler and writes one log line with the request's outcome
 │   │   ├── resource-handlers.ts      re-exports every route handler, under the name routes.json uses.
 │   │   │                             No exports until the first resource
-│   │   ├── route-handler-types.ts    Route (one entry in routes.json), RouteHandler (the shape every
-│   │   │                             route handler has) and Result (what a handler returns)
+│   │   ├── route-handler-types.ts    Route (one entry in routes.json), HttpMethod (the methods a route
+│   │   │                             can use), RouteHandler (the shape every route handler has) and
+│   │   │                             Result (what a handler returns)
+│   │   ├── routes.ts                 loads routes.json with its type, and checks at startup that every
+│   │   │                             route uses a known method
 │   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs
 │   │   ├── response-builders.ts      json and noContent: build HTTP responses
 │   │   └── logger.ts                 the one Powertools Logger the whole function writes with
 │   ├── dev/
-│   │   └── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│   │                       the router in src/index.ts, and warns when you're not logged in to AWS
+│   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
+│   │   │                   the router in src/index.ts, and warns when you're not logged in to AWS
+│   │   └── local-context.ts  the stand-in Lambda context that server.ts and scripts/invoke.ts pass
 │   ├── scripts/
 │   │   └── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
 │   │                       stand-in Lambda context

@@ -1,8 +1,9 @@
 // Runs the built function (dist/index.mjs) with a sample event, the way Lambda would.
 // Usage, in api/: pnpm invoke sample-events/<resource>/<name>.json
-import type { APIGatewayProxyEventV2, Context } from "aws-lambda";
+import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import { readFile } from "node:fs/promises";
 
+import { makeLocalContext } from "../dev/local-context.ts";
 import type { handler as sourceHandler } from "../src/index.ts";
 
 // What the bundle exports. TypeScript can't read the bundle's types, so this says it:
@@ -21,14 +22,5 @@ const event = JSON.parse(eventText) as APIGatewayProxyEventV2;
 const bundleUrl = new URL("../dist/index.mjs", import.meta.url);
 const bundle = (await import(bundleUrl.href)) as Bundle;
 
-// A stand-in for the context Lambda passes: only the fields the logger reads.
-const context = {
-  functionName: "to-do-list-api-local",
-  functionVersion: "$LATEST",
-  invokedFunctionArn: "local",
-  memoryLimitInMB: "512",
-  awsRequestId: "local-request",
-} as Context;
-
-const result = await bundle.handler(event, context);
+const result = await bundle.handler(event, makeLocalContext("local-request"));
 console.log(JSON.stringify(result, null, 2));

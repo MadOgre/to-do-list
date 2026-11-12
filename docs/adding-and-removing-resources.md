@@ -122,7 +122,7 @@ export const getArticle: RouteHandler = async (event) => {
 
 ### 3. The routes and the handlers
 
-Add one entry per route to `api/routes.json`. Name the path parameter `{id}`: the router logs `pathParameters.id` as the `resource_id` key. Every path starts with `/api`, the prefix that the frontend's requests use.
+Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`, `POST`, `DELETE` and `PATCH`: `api/src/routes.ts` checks it at startup. Name the path parameter `{id}`: the router logs `pathParameters.id` as the `resource_id` key. Every path starts with `/api`, the prefix that the frontend's requests use.
 
 ```json
 [

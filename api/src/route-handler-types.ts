@@ -9,9 +9,12 @@ export type Result = {
   response: APIGatewayProxyStructuredResultV2;
 };
 
+// The HTTP methods a route can use. src/routes.ts checks routes.json against them at startup.
+export type HttpMethod = "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
+
 // One entry in routes.json: the HTTP method and path, and the name of the handler that answers them.
 export type Route = {
-  method: string;
+  method: HttpMethod;
   path: string;
   handler: string;
 };

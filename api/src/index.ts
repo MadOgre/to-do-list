@@ -1,12 +1,9 @@
 import type { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2, Context } from "aws-lambda";
 
-import routesJson from "../routes.json" with { type: "json" };
 import { logger } from "./logger.ts";
 import * as handlers from "./resource-handlers.ts";
-import type { Route, RouteHandler } from "./route-handler-types.ts";
-
-// The type is written out because TypeScript infers never[] for an empty routes.json.
-const routes: Route[] = routesJson;
+import type { RouteHandler } from "./route-handler-types.ts";
+import { routes } from "./routes.ts";
 
 // Look handlers up by the name routes.json gives them.
 const handlersByName: Record<string, RouteHandler> = handlers;

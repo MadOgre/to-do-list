@@ -2,16 +2,14 @@
 // Express plays API Gateway's part: it matches routes.json's routes, builds the event
 // the function would get, and turns the function's result into an HTTP response.
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import type { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2, Context } from "aws-lambda";
+import type { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from "aws-lambda";
 import express, { type NextFunction, type Request, type Response } from "express";
 import { randomUUID } from "node:crypto";
 
-import routesJson from "../routes.json" with { type: "json" };
 import { handler } from "../src/index.ts";
-import type { Route } from "../src/route-handler-types.ts";
-
-// The type is written out because TypeScript infers never[] for an empty routes.json.
-const routes: Route[] = routesJson;
+import type { HttpMethod } from "../src/route-handler-types.ts";
+import { routes } from "../src/routes.ts";
+import { makeLocalContext } from "./local-context.ts";
 
 const { PORT } = process.env;
 if (!PORT) {
@@ -36,6 +34,15 @@ const CREDENTIALS_ERROR_NAMES = ["CredentialsProviderError", "ExpiredTokenExcept
 const isCredentialsError = (error: unknown) => error instanceof Error && CREDENTIALS_ERROR_NAMES.includes(error.name);
 
 type ExpressMethod = "get" | "put" | "post" | "delete" | "patch";
+
+// The name of Express's method for each HTTP method, such as app.get for GET.
+const EXPRESS_METHODS: Record<HttpMethod, ExpressMethod> = {
+  GET: "get",
+  PUT: "put",
+  POST: "post",
+  DELETE: "delete",
+  PATCH: "patch",
+};
 
 // routes.json writes path variables as {id}; Express writes them as :id.
 const toExpressPath = (path: string) => path.replaceAll("{", ":").replaceAll("}", "");
@@ -115,16 +122,6 @@ const toEvent = (req: Request, routeKey: string, requestId: string): APIGatewayP
   return event;
 };
 
-// A stand-in for the context Lambda passes: only the fields the logger reads.
-const makeContext = () =>
-  ({
-    functionName: "to-do-list-api-local",
-    functionVersion: "$LATEST",
-    invokedFunctionArn: "local",
-    memoryLimitInMB: "512",
-    awsRequestId: randomUUID(),
-  }) as Context;
-
 const sendResult = (res: Response, result: APIGatewayProxyStructuredResultV2) => {
   res.status(result.statusCode ?? 200);
   for (const [name, value] of Object.entries(result.headers ?? {})) {
@@ -149,12 +146,12 @@ app.use(express.raw({ type: () => true, limit: "6mb" }));
 
 for (const route of routes) {
   const routeKey = `${route.method} ${route.path}`;
-  const method = route.method.toLowerCase() as ExpressMethod;
+  const method = EXPRESS_METHODS[route.method];
 
   app[method](toExpressPath(route.path), async (req: Request, res: Response) => {
     const requestId = randomUUID();
     res.setHeader("apigw-requestid", requestId);
-    const result = await handler(toEvent(req, routeKey, requestId), makeContext());
+    const result = await handler(toEvent(req, routeKey, requestId), makeLocalContext(randomUUID()));
     sendResult(res, result);
   });
 }
