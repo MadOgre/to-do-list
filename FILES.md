@@ -1,6 +1,6 @@
 # Files
 
-Every committed file and why it's there. `.git`, `node_modules`, the build output (`dist`) and Vagrant's state (`.vagrant`) aren't committed, so they aren't listed. Terms such as Host, Dev VM, Page and API Function are defined in `CONTEXT.md`.
+Every committed file and why it's there. `.git`, `node_modules` and the build output (`dist`) aren't committed, so they aren't listed. Terms such as Page and API Function are defined in `CONTEXT.md`.
 
 When you add, move or delete a file, update this list.
 
@@ -9,15 +9,14 @@ When you add, move or delete a file, update this list.
 | File | Purpose |
 | --- | --- |
 | `.env` | Environment variables for every mode. Sets `VITE_API_BASE_URL`, the base URL of the shared axios instance, to `/api`. Override it in a gitignored `.env.local`. |
-| `.gitattributes` | Normalizes line endings to LF on every OS, so Windows checkouts don't produce noisy diffs or scripts that fail in the Dev VM. |
-| `.gitignore` | Keeps dependencies, build output, local env overrides, editor and OS files, and Vagrant's state out of git. Lets the two shared VS Code files through. |
+| `.gitattributes` | Normalizes line endings to LF on every OS, so Windows checkouts don't produce noisy diffs. |
+| `.gitignore` | Keeps dependencies, build output, local env overrides, and editor and OS files out of git. Lets the two shared VS Code files through. |
 | `.nvmrc` | Pins Node 22 for version managers such as fnm and nvm. |
 | `CLAUDE.md` | Instructions for AI coding agents: where issues, specs and domain docs live, and the working rules for this repo (keep the build green, review until clean, code conventions, grilling sessions). |
-| `CONTEXT.md` | The glossary: the project's terms (Host, Dev VM, Working Copy, Page, Shared Component, API Function, API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and Restore Demo Todos) and the synonyms to avoid. |
+| `CONTEXT.md` | The glossary: the project's terms (Page, Shared Component, API Function, API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and Restore Demo Todos) and the synonyms to avoid. |
 | `FILES.md` | This file. |
-| `GUIDE.md` | The full guide: both ways to run the project on every OS, the Dev VM (Remote-SSH, pushing, slow boots, OS upgrades), the project layout, adding a backend and where the project came from. |
-| `README.md` | The quick start: prerequisites, clone and run, the Dev VM in brief, the scripts, and the main caveats. |
-| `Vagrantfile` | Defines and provisions the Dev VM: box, CPUs and memory, the forwarded dev server port, SSH agent forwarding, and the one-time copy of the Host checkout into the Working Copy. |
+| `GUIDE.md` | The full guide: running the project on every OS, the project layout, adding a backend and where the project came from. |
+| `README.md` | The quick start: prerequisites, clone and run, the scripts, and the main caveats. |
 | `eslint.config.js` | ESLint flat config: typescript-eslint's recommended type-checked rules, React Hooks and React Refresh rules, stylistic rules (double quotes, trailing commas, semicolons, 2-space indent), arrow functions, named exports only, and the import and export order from `CLAUDE.md` through `eslint-plugin-perfectionist`. |
 | `index.html` | The HTML page Vite serves and builds from. Sets the favicon and the "Todo app" title, loads Josefin Sans from Google Fonts, applies the stored or OS color scheme before the app loads (Mantine's `ColorSchemeScript`, inlined), holds the root element and loads `src/main.tsx`. |
 | `package.json` | Project name, pinned Node (`engines`) and pnpm (`packageManager`) versions, the `dev`, `build`, `lint` and `preview` scripts, and the dependencies. |
@@ -38,7 +37,7 @@ When you add, move or delete a file, update this list.
 
 | File | Purpose |
 | --- | --- |
-| `.vscode/extensions.json` | Recommends the ESLint and Remote-SSH extensions when the folder is opened in VS Code. |
+| `.vscode/extensions.json` | Recommends the ESLint extension when the folder is opened in VS Code. |
 | `.vscode/settings.json` | Shared workspace settings: 2-space indentation, ESLint fixes on save instead of a formatter, and the project's own TypeScript version. |
 
 ## `public/`
@@ -85,7 +84,6 @@ When you add, move or delete a file, update this list.
 
 | File | Purpose |
 | --- | --- |
-| `docs/adr/0001-dev-vm-working-copy-inside-vm.md` | Architecture decision record: why the Working Copy lives on the Dev VM's own disk instead of in a shared folder, the options rejected and the consequences. |
 | `docs/adr/0002-mantine-components-with-scss-modules.md` | Architecture decision record: Mantine provides the UI components while custom styles stay in SCSS modules, using Mantine's Sass helpers instead of its PostCSS preset. |
 | `docs/agents/domain.md` | Tells AI coding agents to read `CONTEXT.md` and the ADRs before exploring, and to use the glossary's terms. |
 | `docs/agents/issue-tracker.md` | Tells AI coding agents that issues and specs are markdown files under `docs/planning/`, how they're laid out, and that each feature folder starts from the developer's `INTENT.md`, with its template. |

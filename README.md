@@ -20,17 +20,6 @@ pnpm dev
 
 Open **<http://localhost:9000>**.
 
-## Or run it in the Dev VM
-
-An identical Linux environment on any Host. You need Vagrant 2.4+, VirtualBox (7.1+ on Apple Silicon, which is untested) and VS Code with Remote-SSH.
-
-```sh
-vagrant up
-vagrant ssh-config >> ~/.ssh/config
-```
-
-Then connect VS Code to **`to-do-list`**, open `/home/vagrant/app` and run `pnpm dev`. The app opens at the same <http://localhost:9000> in your Host's browser. On Windows, see the [Remote-SSH setup](GUIDE.md#connect-vs-code-with-remote-ssh) for the right command.
-
 ## Scripts
 
 | Command | Does |
@@ -42,15 +31,11 @@ Then connect VS Code to **`to-do-list`**, open `/home/vagrant/app` and run `pnpm
 
 ## Caveats
 
-> [!WARNING]
-> **`vagrant destroy` deletes the Dev VM's Working Copy**, including every commit you haven't pushed. Push often.
-
-- **Port 9000 is fixed.** A running Dev VM holds it on the Host, so `vagrant halt` or `vagrant suspend` before running `pnpm dev` on the Host.
+- **Port 9000 is fixed.** If it's taken, `pnpm dev` stops with an error rather than moving to another port.
 - **One OS per checkout.** `node_modules` holds binaries for a single OS, so don't install from both Windows and WSL in the same folder.
-- **Slow `vagrant up` on Windows?** The hypervisor is probably on. See [Slow boots on Windows](GUIDE.md#slow-boots-on-windows).
 
 ## More
 
-- [GUIDE.md](GUIDE.md): full setup, the Dev VM, project layout, where the project came from
+- [GUIDE.md](GUIDE.md): full setup, project layout, where the project came from
 - [FILES.md](FILES.md): what every file is for
 - [CONTEXT.md](CONTEXT.md): the project's terms
