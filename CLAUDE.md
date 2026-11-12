@@ -1,3 +1,13 @@
+## Code map
+
+Each subsystem has its own `CLAUDE.md`: a short routing map of its data flow, its entry points and a "where to find" table. Claude Code loads one when you read a file in its folder. To locate code, read the subsystem's map first, and open only the files that it names:
+
+- `frontend/CLAUDE.md`: the React app, from Pages through API Hooks and API Functions to `localStorage`.
+- `api/CLAUDE.md`: the Lambda router, `routes.json`, the dev server and the logs.
+- `infra/CLAUDE.md`: the Terraform configurations, and which resource holds which setting.
+
+For a one-line note on every file, read `docs/structure.md`. For the project's terms, read `CONTEXT.md`.
+
 ## Agent skills
 
 ### Issue tracker

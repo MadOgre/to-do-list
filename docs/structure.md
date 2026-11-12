@@ -25,7 +25,8 @@ to-do-list/
 │                           destructuring, arrow functions, the import and export order (through
 │                           eslint-plugin-perfectionist) and named exports only
 ├── README.md               the quick start: prerequisites, install and run, the scripts, the docs
-├── CLAUDE.md               instructions for AI coding agents: where issues, specs and domain docs live,
+├── CLAUDE.md               instructions for AI coding agents: the code map (pointers to the CLAUDE.md
+│                           in frontend/, api/ and infra/), where issues, specs and domain docs live,
 │                           and the working rules for this repo (workflow, keep the build green, AWS
 │                           and Terraform, review until clean, code conventions, grilling sessions)
 ├── CONTEXT.md              the glossary: the project's terms (Page, Shared Component, API Function,
@@ -74,6 +75,7 @@ to-do-list/
 │   │                       (Vite and its plugins, Sass, the React lint plugins), and its scripts:
 │   │                       dev, build, lint, preview
 │   ├── GUIDE.md            the frontend's layout and conventions, and where the project came from
+│   ├── CLAUDE.md           for AI coding agents: the frontend's data flow and where to find each part
 │   ├── index.html          the HTML page Vite serves and builds from. Sets the favicon and the "Todo
 │   │                       app" title, loads Josefin Sans from Google Fonts, applies the stored or OS
 │   │                       color scheme before the app loads (Mantine's ColorSchemeScript, inlined),
@@ -175,6 +177,7 @@ to-do-list/
 │   │                       rules and Node globals
 │   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
 │   ├── .env                your own copy of .env.example; gitignored
+│   ├── CLAUDE.md           for AI coding agents: the request path and where to find each part
 │   ├── routes.json         the one list of the API's routes (method, path, handler name);
 │   │                       infra/modules/app/ makes one API Gateway route from each entry. Empty
 │   │                       until the first resource
@@ -204,6 +207,9 @@ to-do-list/
 │
 └── infra/                  Terraform, one folder per separate configuration.
     │                       Each has its own state and is planned and applied on its own.
+    │
+    ├── CLAUDE.md           for AI coding agents: each configuration, and which resource holds which
+    │                       setting
     │
     ├── bootstrap/          the S3 bucket that holds the other configurations' state
     │   ├── main.tf                 state kept in a local file, which git ignores
