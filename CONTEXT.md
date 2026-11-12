@@ -2,20 +2,6 @@
 
 A to-do list web app built with React and TypeScript.
 
-## Environments
-
-**Host**:
-The developer's own machine (Windows, macOS or Linux) where the code is checked out.
-_Avoid_: local, laptop
-
-**Dev VM**:
-The Vagrant-managed Linux machine that gives every developer the same runtime, whatever their Host.
-_Avoid_: box, server, guest, WSL
-
-**Working Copy**:
-The one checkout a developer edits, commits and pushes from. When using the Dev VM it lives inside the Dev VM, not on the Host.
-_Avoid_: local copy, synced folder
-
 ## Source layout
 
 **Page**:

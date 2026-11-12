@@ -1,45 +1,23 @@
 {
   "name": "to-do-list",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "packageManager": "pnpm@10.34.5",
   "engines": {
-    "node": "^22.22.0"
+    "node": "^26.13.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@mantine/core": "^9.6.3",
-    "@mantine/hooks": "^9.6.3",
-    "@mantine/modals": "^9.6.3",
-    "@tanstack/react-query": "^5.104.0",
-    "axios": "^1.20.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router": "^8.4.0"
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "deploy:dev": "pnpm --filter @to-do-list/api build && terraform -chdir=infra/envs/dev apply"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@tanstack/react-query-devtools": "^5.104.0",
-    "@types/node": "^22.20.4",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^10.11.0",
     "eslint-plugin-perfectionist": "^5.12.1",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.7",
-    "globals": "^17.12.0",
-    "sass-embedded": "^1.105.0",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.70.1",
-    "vite": "^8.3.0",
-    "vite-plugin-checker": "^0.14.5"
+    "typescript": "6.0.3"
   }
 }

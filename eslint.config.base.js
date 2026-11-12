@@ -2,33 +2,18 @@ import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
 import { Alphabet } from "eslint-plugin-perfectionist/alphabet";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import { defineConfig, globalIgnores } from "eslint/config";
-import globals from "globals";
-import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
 // The import order from CLAUDE.md's Code conventions: lowercase both names, then compare them character by character
 // (by character code), so "eslint-plugin-x" sorts before "eslint/config".
 const characterCodeAlphabet = Alphabet.generateCompleteAlphabet().sortByCharCodeAt().getCharacters();
 
-export default defineConfig([
-  globalIgnores(["dist"]),
+// The rules for every package. Each package's eslint.config.js starts from this base and adds its own parser, globals and
+// framework rules.
+export const baseConfig = defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommendedTypeChecked,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      globals: globals.browser,
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
+    extends: [js.configs.recommended],
     plugins: { "@stylistic": stylistic, perfectionist },
     settings: {
       perfectionist: { type: "custom", alphabet: characterCodeAlphabet, ignoreCase: true },
@@ -67,14 +52,8 @@ export default defineConfig([
     },
   },
   {
-    // Plain JS files (this config) aren't in any tsconfig, so skip type-aware rules for them.
-    files: ["**/*.{js,mjs,cjs}"],
-    extends: [tseslint.configs.disableTypeChecked],
-  },
-  {
-    // Tool config files run in Node and may use default exports.
+    // Tool config files may use default exports, because the tools require them.
     files: ["**/*.config.{js,mjs,cjs,ts}"],
-    languageOptions: { globals: globals.node },
     rules: { "no-restricted-syntax": "off" },
   },
 ]);

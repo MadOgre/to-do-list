@@ -18,13 +18,16 @@ export default defineConfig({
     }),
   ],
   server: {
-    // The Dev VM's provisioning sets DEV_SERVER_HOST=0.0.0.0 so its forwarded port can reach Vite.
-    // On the Host it's unset, and the dev server stays private to localhost.
-    host: process.env.DEV_SERVER_HOST ?? "localhost",
+    // The dev server stays private to this machine, out of reach from the network.
+    host: "localhost",
     // A fixed, memorable port. Fail instead of silently moving to another one if it's taken.
-    // Keep in sync with DEV_SERVER_PORT in the Vagrantfile.
     port: 9000,
     strictPort: true,
+    // Requests to /api go to the API's dev server (api/dev/server.ts, PORT in api/.env), so the app calls the API
+    // on its own origin. The path isn't rewritten: the API's routes start with /api too.
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
   },
   build: {
     // Vite warns at 500 kB per minified chunk. The app is one Page that loads everything up front, so splitting
