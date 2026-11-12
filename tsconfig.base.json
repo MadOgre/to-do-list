@@ -1,0 +1,26 @@
+{
+  // Shared by every package. Each package's own tsconfig.json extends this file
+  // and adds its environment: module system, built-in libraries, global types.
+  "compilerOptions": {
+    // tsc only checks. Vite and esbuild (and Node, for scripts) turn TypeScript into JavaScript.
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+
+    // Each file must make sense on its own, the way esbuild and Node read it.
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+    "moduleDetection": "force",
+    "noUncheckedSideEffectImports": true,
+
+    // How strict the checking is.
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Don't check the type files of installed packages.
+    "skipLibCheck": true
+  }
+}

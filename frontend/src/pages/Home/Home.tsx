@@ -29,7 +29,7 @@ export const Home: FC = () => {
   // change leaves the list as it was, since the list only refetches after a change succeeds.
   const changes = [createTodo, updateTodo, deleteTodo, clearCompletedTodos, restoreTodos];
   const [lastChange] = changes.toSorted((a, b) => b.submittedAt - a.submittedAt);
-  const saveFailed = lastChange.isError;
+  const saveFailed = lastChange?.isError ?? false;
 
   // Derived from the query's data on each render, so there is no list state to keep in sync.
   const allTodos = todos ?? [];
