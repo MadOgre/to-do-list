@@ -34,7 +34,7 @@ After `/code-review`, repeat: fix the findings, verify as above, then have both 
 
 ### Code conventions
 
-Lint enforces style (`eslint.config.js`): double quotes, trailing commas, semicolons, 2-space indent, arrow functions wherever possible, object destructuring, named exports only (default exports only in tool config files), and the import and export order below. Review also checks the conventions lint can't:
+Lint enforces style (`eslint.config.base.js`, which each package's `eslint.config.js` starts from): double quotes, trailing commas, semicolons, 2-space indent, arrow functions wherever possible, object destructuring, named exports only (default exports only in tool config files), and the import and export order below. Review also checks the conventions lint can't:
 
 - **Components are typed with `FC`.** Use `FC` for components without props and `FC<ComponentNameProps>` for components with props. Props interfaces are named `<ComponentName>Props`, never a bare `Props`, because barrels re-export with `export *` and bare names would collide. Import `FC` as a type-only import. The one exception is generic components, which annotate their props parameter instead.
 - **No generics without a reason.** Add a generic type parameter only when it actually links or constrains types that callers rely on. If a type would be erased downstream, or only inferred from the argument and never checked, use `unknown` or a concrete type instead.
