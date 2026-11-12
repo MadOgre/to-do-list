@@ -22,11 +22,15 @@ Whenever you ask the developer for a manual check (a ticket's closing check unde
 
 ### Keep the build green
 
-Before every commit, run `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start with the same `pnpm` and Node the developer uses. Commit only when all of them pass: chain the checks and the commit with `&&`.
+Before every commit, run these from the repo root, with the same `pnpm`, Node and Terraform the developer uses: `pnpm install`, `pnpm -r lint`, `pnpm build` (both packages), and a short `pnpm dev` start, which must serve the frontend on port 9000 and the API on port 3000. When a commit changes files in `infra/`, also run `terraform fmt -check -recursive infra` and `terraform validate` in each changed folder. Commit only when all of them pass: chain the checks and the commit with `&&`.
 
 - A check that passes only through a workaround (another binary, an env var, a manual step) has failed. Report it and agree the fix with the developer before committing. Version bumps to dependencies or tooling must run with the developer's existing tools.
 - Every failure seen while verifying is real, including a one-off that looks environmental. Resolve it with the developer before calling the work done.
-- Ask the developer to stop their `pnpm dev` before installing or removing dependencies. Start a test dev server only while theirs is stopped: every Vite server shares `node_modules/.vite/deps`. Start it as `env -u CLAUDECODE -u AI_AGENT pnpm dev`, which runs Vite as the developer's own `pnpm dev` does (not a workaround): Vite changes its config when it detects an agent, and the deps would be rebuilt each time the two servers alternate. Stop it by its process IDs, never with `pkill -f`.
+- Ask the developer to stop their `pnpm dev` before installing or removing dependencies. Start a test dev server only while theirs is stopped: every Vite server shares `frontend/node_modules/.vite/deps`, and the API's ports are fixed. Start it as `env -u CLAUDECODE -u AI_AGENT pnpm dev`, which runs Vite as the developer's own `pnpm dev` does (not a workaround): Vite changes its config when it detects an agent, and the deps would be rebuilt each time the two servers alternate. Stop it by its process IDs, never with `pkill -f`.
+
+### AWS and Terraform
+
+Anything that changes AWS waits for the developer's yes: `pnpm deploy:dev`, `terraform apply`, `import` and `state` commands, and requests that write data. Read-only commands, such as `terraform plan -lock=false`, need no yes. The API's rules live in `docs/`: [`local-development.md`](docs/local-development.md) (running both servers), [`adding-and-removing-resources.md`](docs/adding-and-removing-resources.md) (every place a resource touches, with code templates), and [`logging.md`](docs/logging.md) (the logs and the outcome codes). When a file or folder is added, moved or removed, update [`docs/structure.md`](docs/structure.md).
 
 ### Review until clean
 
@@ -34,22 +38,22 @@ After `/code-review`, repeat: fix the findings, verify as above, then have both 
 
 ### Code conventions
 
-Lint enforces style (`eslint.config.base.js`, which each package's `eslint.config.js` starts from): double quotes, trailing commas, semicolons, 2-space indent, arrow functions wherever possible, object destructuring, named exports only (default exports only in tool config files), and the import and export order below. Review also checks the conventions lint can't:
+Lint enforces style (`eslint.config.base.js`, which each package's `eslint.config.js` starts from): double quotes, trailing commas, semicolons, 2-space indent, arrow functions wherever possible, object destructuring, named exports only (default exports only in tool config files), and the import and export order below. Review also checks the conventions lint can't. They apply to both packages, except the ones marked as the frontend's:
 
 - **Components are typed with `FC`.** Use `FC` for components without props and `FC<ComponentNameProps>` for components with props. Props interfaces are named `<ComponentName>Props`, never a bare `Props`, because barrels re-export with `export *` and bare names would collide. Import `FC` as a type-only import. The one exception is generic components, which annotate their props parameter instead.
 - **No generics without a reason.** Add a generic type parameter only when it actually links or constrains types that callers rely on. If a type would be erased downstream, or only inferred from the argument and never checked, use `unknown` or a concrete type instead.
-- **Imports** use the `@/` alias for `src/`. They sit in up to three sections, in this order, with one blank line between sections and empty sections left out:
+- **Imports** sit in up to three sections, in this order, with one blank line between sections and empty sections left out:
   1. Packages: `"react"`, `"@mantine/core"`, `"node:url"`.
-  2. The `@/` alias.
+  2. The frontend's `@/` alias for `frontend/src/`.
   3. Relative files: `"./…"` and `"../…"`.
 
   Within a section, sort the imports by their module path, alphabetically: lowercase both paths, then compare them character by character (so `"eslint-plugin-x"` comes before `"eslint/config"`). Sort the names inside braces the same way, ignoring any `type` keyword: `import { alpha, beta, type Gamma } from "lib";`. Re-exports (`export … from`, as in barrels) follow the same order. An `import type` from a module goes right after the value import from the same module. Side-effect imports (`import "./styles.css";`) follow the same rules: `"./styles.css"` sorts into the relative section. When their order matters, comment why it holds, as `main.tsx` does for loading Mantine's styles before ours. Lint enforces this order (`eslint-plugin-perfectionist`), except the `import type` placement, which review checks.
 - **Readable over clever.** Write the plainest code that does the job, so a reader understands it at first glance: an `if` over a dense one-liner, a named variable over a nested expression, a plain comparison over a `reduce` or a chained ternary, and the obvious language feature over a trick. When code still isn't obvious, add a comment saying what it does and why.
-- **Barrels:** each area of `src/` has an `index.ts` barrel, except `styles`, and `components` until its first Shared Component. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
-- **Pages** live one per folder under `src/pages/`, with their SCSS module next to them.
-- **Shared types** go in `src/interfaces/`, one file per type, with the types derived from it in the same file.
-- **Mantine** (ADR-0002): UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
-- **Environment variables** go in `.env` (committed, safe defaults), are typed in `src/vite-env.d.ts`, and are overridden in the gitignored `.env.local`.
+- **Barrels (frontend):** each area of `frontend/src/` has an `index.ts` barrel, except `styles`. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
+- **Pages (frontend)** live one per folder under `frontend/src/pages/`, with their SCSS module next to them.
+- **Shared types (frontend)** go in `frontend/src/interfaces/`, one file per type, with the types derived from it in the same file.
+- **Mantine (frontend,** ADR-0002**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
+- **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `api/.env.example`, with a comment and a placeholder, and each developer's own values in the gitignored `api/.env`.
 
 ### Grilling sessions
 
