@@ -32,7 +32,7 @@ Whenever you ask the developer for a manual check (a ticket's closing check unde
 
 ### Keep the build green
 
-Before every commit, run these from the repo root, with the same `pnpm`, Node and Terraform the developer uses: `pnpm install`, `pnpm -r lint`, `pnpm build` (both packages), and a short `pnpm dev` start, which must serve the frontend on port 9000 and the API on port 3000. When a commit changes files in `infra/`, also run `terraform fmt -check -recursive infra` and `terraform validate` in each changed folder. Commit only when all of them pass: chain the checks and the commit with `&&`.
+Before every commit, run these from the repo root, with the same `pnpm`, Node and Terraform the developer uses: `pnpm install`, `pnpm lint` (the root's files, then both packages), `pnpm build` (both packages), and a short `pnpm dev` start, which must serve the frontend on port 9000 and the API on port 3000. When a commit changes files in `infra/`, also run `terraform fmt -check -recursive infra` and `terraform validate` in each changed folder. Commit only when all of them pass: chain the checks and the commit with `&&`.
 
 - A check that passes only through a workaround (another binary, an env var, a manual step) has failed. Report it and agree the fix with the developer before committing. Version bumps to dependencies or tooling must run with the developer's existing tools.
 - Every failure seen while verifying is real, including a one-off that looks environmental. Resolve it with the developer before calling the work done.

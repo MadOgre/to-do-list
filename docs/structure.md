@@ -22,8 +22,10 @@ to-do-list/
 ├── pnpm-lock.yaml          the exact version of every installed package; written by pnpm, committed
 ├── tsconfig.base.json      the TypeScript settings every package shares
 ├── eslint.config.base.js   the lint rules every package shares: quotes, commas, semicolons, indent,
-│                           destructuring, arrow functions, the import and export order (through
-│                           eslint-plugin-perfectionist) and named exports only
+│                           spaces inside object braces, destructuring, arrow functions, the import
+│                           and export order (through eslint-plugin-perfectionist) and named exports only
+├── eslint.config.js        lints the root's own files (such as eslint.config.base.js) with those rules;
+│                           each package has its own eslint.config.js
 ├── README.md               the quick start: prerequisites, install and run, the scripts, the docs
 ├── CLAUDE.md               instructions for AI coding agents: the code map (pointers to the CLAUDE.md
 │                           in frontend/, api/ and infra/), where issues, specs and domain docs live,
