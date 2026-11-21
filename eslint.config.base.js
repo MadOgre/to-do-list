@@ -24,6 +24,8 @@ export const baseConfig = defineConfig([
       "@stylistic/comma-dangle": ["error", "always-multiline"],
       "@stylistic/semi": ["error", "always"],
       "@stylistic/indent": ["error", 2],
+      // A space inside the braces of objects, destructuring and imports: { id, title }. Arrays stay ["a", "b"].
+      "@stylistic/object-curly-spacing": ["error", "always"],
       "prefer-destructuring": ["error", { object: true, array: false }],
       // Arrow functions wherever possible.
       "func-style": ["error", "expression"],
