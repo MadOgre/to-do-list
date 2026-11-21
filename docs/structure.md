@@ -170,7 +170,8 @@ to-do-list/
 │                                   text, as the footer's filters and Clear Completed are drawn
 │
 ├── api/                    the API's code, as the package @to-do-list/api
-│   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client), its tools
+│   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
+│   │                       client, DynamoDB Toolbox), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint), and
 │   │                       its scripts: dev, typecheck, lint, invoke, bundle, build
 │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
@@ -196,7 +197,12 @@ to-do-list/
 │   │   │                             route uses a known method
 │   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs
 │   │   ├── response-builders.ts      json and noContent: build HTTP responses
-│   │   └── logger.ts                 the one Powertools Logger the whole function writes with
+│   │   ├── logger.ts                 the one Powertools Logger the whole function writes with
+│   │   └── todos/
+│   │       ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox): creates,
+│   │       │                         completes, deletes and lists Todos; the table name comes from
+│   │       │                         TODOS_TABLE. Not used by any handler yet
+│   │       └── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
 │   ├── dev/
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
 │   │   │                   the router in src/index.ts, and warns when you're not logged in to AWS
