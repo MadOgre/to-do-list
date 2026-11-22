@@ -66,7 +66,9 @@ Powertools adds `level`, `timestamp`, `service` (`to-do-list-api`, the same in e
 ## Outcome codes
 
 The full list, with when each happens, is the `RequestOutcomeCode` type in
-`api/src/request-outcome-codes.ts`. The code is type-checked against it, so it's always
+`api/src/request-outcome-codes.ts`. Its error codes with a body (`not_found`, `version_conflict`,
+`invalid_id` and `invalid_body`) come from `errorOutcomeSchema` in `common/src/error-body.ts`,
+because the frontend reads them too. The code is type-checked against it, so it's always
 current. For example, to find every request for a missing item in a Log Analytics query:
 `filter outcome = "not_found"`.
 

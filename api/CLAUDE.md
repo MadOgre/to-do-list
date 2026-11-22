@@ -20,6 +20,7 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts` → 
 | Add or remove a resource (routes, handlers, table, policy, env var, sample events, docs) | `docs/adding-and-removing-resources.md`: it lists every place, with templates |
 | Handler, route and result types | `src/route-handler-types.ts` |
 | Build a response | `src/response-builders.ts` |
-| Outcome codes and the log format | `src/request-outcome-codes.ts`, `docs/logging.md` |
+| Outcome codes and the log format | `src/request-outcome-codes.ts` (its error codes come from `common/src/error-body.ts`), `docs/logging.md` |
+| The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
 | How the dev server differs from Lambda | `docs/local-development.md` |
 | Run the built function with a sample event | `scripts/invoke.ts` (`pnpm invoke`), `sample-events/` |

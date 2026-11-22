@@ -4,6 +4,7 @@ Each subsystem has its own `CLAUDE.md`: a short routing map of its data flow, it
 
 - `frontend/CLAUDE.md`: the React app, from Pages through API Hooks and API Functions to `localStorage`.
 - `api/CLAUDE.md`: the Lambda router, `routes.json`, the dev server and the logs.
+- `common/CLAUDE.md`: the zod schemas and types that `api/` and `frontend/` share.
 - `infra/CLAUDE.md`: the Terraform configurations, and which resource holds which setting.
 
 For a one-line note on every file, read `docs/structure.md`. For the project's terms, read `CONTEXT.md`.

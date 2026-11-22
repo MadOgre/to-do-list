@@ -12,7 +12,7 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 | `api/src/<resource>/` | One file per route, its ID rule and its repository. |
 | `api/routes.json` | One entry per route. |
 | `api/src/resource-handlers.ts` | One export line per handler. |
-| `api/src/request-outcome-codes.ts` | Only the codes it alone uses, if any. |
+| `api/src/request-outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
 | `api/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
 | `api/.env.example` | Its table's variable. |
 | `infra/modules/app/dynamodb.tf` | Its table. |
@@ -138,7 +138,7 @@ export { getArticle } from "./articles/get-article.ts";
 
 ### 4. The outcome codes
 
-Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their comments are generic, so `api/src/request-outcome-codes.ts` doesn't change. Add a new code only for an ending no existing code describes, with a generic comment like the others: the kind of request, the status, and what happened.
+Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their comments are generic, so neither file changes. Add a new code only for an ending no existing code describes, with a generic comment like the others: the kind of request, the status, and what happened. A success code goes in `api/src/request-outcome-codes.ts`. An error code goes in `errorOutcomeSchema` in `common/src/error-body.ts`, because the frontend reads it too.
 
 ### 5. The table, its policy and its variable, in `infra/modules/app/`
 
@@ -236,7 +236,7 @@ Update `docs/structure.md`.
 
 1. Remove its entries from `api/routes.json` and its lines from `api/src/resource-handlers.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
 2. Delete `api/src/articles/` and `api/sample-events/articles/`.
-3. In `api/src/request-outcome-codes.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src`, with the code in place of `XXXXXXX`.
+3. In `api/src/request-outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
 4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `api/.env.example` and `api/.env` too.
 5. Deploy: `pnpm deploy:dev`. Read the plan before answering `yes`: the table and the policy destroyed, one route destroyed per removed entry, and the function updated. **Destroying the table deletes every item in it.** No undo. See [Its data goes with the table](#its-data-goes-with-the-table).
 6. If it was the last resource, also delete `infra/modules/app/dynamodb.tf`, and remove `@aws-sdk/lib-dynamodb` and `dynamodb-toolbox` from the API, with your dev server stopped: `pnpm --filter @to-do-list/api remove @aws-sdk/lib-dynamodb dynamodb-toolbox`.

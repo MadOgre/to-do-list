@@ -29,8 +29,8 @@ Run them from the repo root.
 | --- | --- |
 | `pnpm dev` | Starts the frontend's and the API's dev servers side by side |
 | `pnpm build` | Type-checks and builds both packages, into `frontend/dist/` and `api/dist/` |
-| `pnpm typecheck` | Type-checks the API |
-| `pnpm lint` | Runs ESLint on the root's own files, then in both packages |
+| `pnpm typecheck` | Type-checks the API and the shared package, `common/` |
+| `pnpm lint` | Runs ESLint on the root's own files, then in each package |
 | `pnpm deploy:dev` | Builds the API, then deploys the dev environment with `terraform apply` |
 
 Each package has its own scripts too, such as `pnpm preview` in `frontend/` and `pnpm invoke` in `api/`.

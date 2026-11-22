@@ -13,6 +13,7 @@
     "@mantine/hooks": "^9.6.3",
     "@mantine/modals": "^9.6.3",
     "@tanstack/react-query": "^5.104.0",
+    "@to-do-list/common": "workspace:*",
     "axios": "^1.20.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

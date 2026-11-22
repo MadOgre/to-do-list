@@ -1,0 +1,19 @@
+{
+  "name": "@to-do-list/common",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "eslint": "^10.11.0",
+    "typescript-eslint": "^8.70.1"
+  }
+}

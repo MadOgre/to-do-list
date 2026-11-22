@@ -1,6 +1,7 @@
 # The workspace's packages. pnpm installs them together, with one lockfile at the root.
 packages:
   - api
+  - common
   - frontend
 
 # Install scripts that pnpm skips. Each one is safe to skip:

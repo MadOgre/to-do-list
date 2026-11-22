@@ -75,7 +75,7 @@ to-do-list/
 │                               sizes and colors measured from it, so Figma needn't be queried again)
 │
 ├── frontend/               the React app, as the package @to-do-list/frontend
-│   ├── package.json        its libraries (React, Mantine, React Router, React Query, axios), its tools
+│   ├── package.json        its libraries (React, Mantine, React Router, React Query, axios, the shared schemas from common/), its tools
 │   │                       (Vite and its plugins, Sass, the React lint plugins), and its scripts:
 │   │                       dev, build, lint, preview
 │   ├── GUIDE.md            the frontend's layout and conventions, and where the project came from
@@ -173,7 +173,7 @@ to-do-list/
 │
 ├── api/                    the API's code, as the package @to-do-list/api
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
-│   │                       client, DynamoDB Toolbox), its tools
+│   │                       client, DynamoDB Toolbox, the shared schemas from common/), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint), and
 │   │                       its scripts: dev, typecheck, lint, invoke, bundle, build
 │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
@@ -197,7 +197,7 @@ to-do-list/
 │   │   │                             Result (what a handler returns)
 │   │   ├── routes.ts                 loads routes.json with its type, and checks at startup that every
 │   │   │                             route uses a known method
-│   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs
+│   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs; the error codes come from common/
 │   │   ├── response-builders.ts      json and noContent: build HTTP responses
 │   │   ├── logger.ts                 the one Powertools Logger the whole function writes with
 │   │   └── todos/
@@ -215,6 +215,21 @@ to-do-list/
 │   │                       stand-in Lambda context
 │   └── sample-events/      sample API Gateway events, one folder per resource. Empty until the first
 │                           resource
+│
+├── common/                 the shared contract, as the package @to-do-list/common: the zod schemas
+│   │                       that api/ and frontend/ both import. No build of its own: esbuild, Vite
+│   │                       and Node read its TypeScript as it is
+│   ├── package.json        its library (zod), its lint tools, its scripts (typecheck, lint), and
+│   │                       exports, which points to src/index.ts
+│   ├── tsconfig.json       extends tsconfig.base.json with no Node or browser types, because both
+│   │                       sides run this code
+│   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
+│   │                       rules
+│   ├── CLAUDE.md           for AI coding agents: where to find each schema
+│   └── src/
+│       ├── index.ts        the package's one entry point: re-exports every schema and type
+│       ├── error-body.ts   the body of every API error ({ outcome, message }) and its outcome codes
+│       └── todos.ts        the Todo, and the bodies of POST /api/todos and PATCH /api/todos/{todo_id}
 │
 └── infra/                  Terraform, one folder per separate configuration.
     │                       Each has its own state and is planned and applied on its own.
