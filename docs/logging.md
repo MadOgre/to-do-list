@@ -6,9 +6,9 @@ How the API's logs work, and how to follow one request through them.
 
 Each environment has two, named after it. In the dev environment:
 
-- `to-do-list-dev-api-access`: API Gateway's access log. One line per request, including
+- `tdl-dev-api-access`: API Gateway's access log. One line per request, including
   requests that never reach the function, such as a 404 for a missing route or a 429.
-- `/aws/lambda/to-do-list-dev-api`: the function's log. One outcome line per request, written
+- `/aws/lambda/tdl-dev-api`: the function's log. One outcome line per request, written
   by Powertools Logger, plus Lambda's own records, such as `platform.start` and
   `platform.report`.
 
@@ -36,7 +36,7 @@ Both logs store it under the key `correlation_id`, so one filter finds the reque
 
    ```sh
    RID="PASTE-THE-ID"
-   aws logs tail /aws/lambda/to-do-list-dev-api --since 1h --filter-pattern "{ \$.correlation_id = \"$RID\" }"
+   aws logs tail /aws/lambda/tdl-dev-api --since 1h --filter-pattern "{ \$.correlation_id = \"$RID\" }"
    ```
 
 To see Lambda's own `platform.start` and `platform.report` records for the same request,

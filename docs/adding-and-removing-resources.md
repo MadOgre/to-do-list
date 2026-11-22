@@ -142,11 +142,11 @@ Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their c
 
 ### 5. The table, its policy and its variable, in `infra/modules/app/`
 
-Add the table to `dynamodb.tf`. Create the file for the first resource. Its name includes the environment, so each environment has its own table. Give it one `attribute` block for each key attribute, and only for those: a non-key attribute fails the plan.
+Add the table to `dynamodb.tf`. Create the file for the first resource. Its name starts with `local.prefix` (`tdl-<environment>`), so each environment has its own table. Give it one `attribute` block for each key attribute, and only for those: a non-key attribute fails the plan.
 
 ```hcl
 resource "aws_dynamodb_table" "articles" {
-  name         = "to-do-list-${var.environment}-articles"
+  name         = "${local.prefix}-articles"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
 
@@ -195,7 +195,7 @@ Add the variable to `api/.env.example`, with a comment, and to your own `api/.en
 
 ```sh
 # The articles table, named in infra/modules/app/dynamodb.tf.
-ARTICLES_TABLE=to-do-list-dev-articles
+ARTICLES_TABLE=tdl-dev-articles
 ```
 
 ### 7. Deploy
@@ -247,7 +247,7 @@ Update `docs/structure.md`.
 A resource's items live only in its table, so removing the table removes the data. To keep a copy, save the items to a file before you deploy the removal:
 
 ```sh
-aws dynamodb scan --table-name to-do-list-dev-articles > articles-backup.json
+aws dynamodb scan --table-name tdl-dev-articles > articles-backup.json
 ```
 
 The file has the items in DynamoDB's typed JSON. To keep the data in AWS instead, keep the table: remove the code and the routes first, and the table in a later change.

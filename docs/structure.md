@@ -234,14 +234,15 @@ to-do-list/
     │
     ├── modules/
     │   └── app/            the app's AWS resources for one environment, named
-    │       │               to-do-list-<environment>-api: the function's role, its log group (kept 14
+    │       │               tdl-<environment>-api: the function's role, its log group (kept 14
     │       │               days), and the function itself, uploaded as a zip of api/dist/ (Node.js 26,
     │       │               arm64, 512 MB, 10 seconds); the HTTP API in front of it, with one route for
     │       │               each entry in api/routes.json, its access log group (kept 14 days, keys in
     │       │               snake_case, the request ID as correlation_id) and a request limit of 10 per
     │       │               second (burst 20); and the permission that lets API Gateway call the
     │       │               function
-    │       ├── main.tf
+    │       ├── main.tf             the function, its role and its policies (logs, and the todos table), and the HTTP API
+    │       ├── dynamodb.tf         the todos table, tdl-<environment>-todos: partition key owner_id, sort key todo_id
     │       ├── variables.tf        the module's input: environment
     │       └── outputs.tf          the module's output: api_url
     │
