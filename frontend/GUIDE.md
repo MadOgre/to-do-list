@@ -40,7 +40,7 @@ src/
 - **Named exports only.** Lint rejects default exports, except in tool config files.
 - **Barrels:** each area except `styles` has an `index.ts` that re-exports it.
 - **Components** are typed with `FC`, or `FC<ComponentNameProps>` when they take props.
-- **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, which can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See [ADR-0002](../docs/adr/0002-mantine-components-with-scss-modules.md).
+- **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, which can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See [ADR-0001](../docs/adr/0001-mantine-components-with-scss-modules.md).
 - **Environment variables** go in `.env` (committed, with safe defaults) and are typed in `src/vite-env.d.ts`. Override them in `.env.local`, which is gitignored. `VITE_API_BASE_URL` sets the base URL of the shared axios instance.
 
 ### Local storage instead of an API

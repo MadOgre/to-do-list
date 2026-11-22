@@ -7,7 +7,7 @@ Settled in round 2:
 - `global.scss` stays, with only its header comment, imported after `@mantine/core/styles.css`.
 - Home shows one `Card` per Item.
 - `Home.module.scss` stays, with `.intro` using Mantine's CSS variables.
-- ADR-0002 records the decision. A Mantine bullet goes into `CLAUDE.md` Code conventions during implementation.
+- ADR-0001 records the decision. A Mantine bullet goes into `CLAUDE.md` Code conventions during implementation.
 
 Facts I checked since (no decision needed):
 

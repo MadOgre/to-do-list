@@ -1,6 +1,6 @@
 # 06: Restore Demo Todos link
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** 04
 
@@ -28,3 +28,4 @@
   - `restoreTodos` joins the changes that drive the "Could not save your change." alert.
   - The Figma MCP was at its call limit, so the hint's mobile size was read from `2.png` and recorded in `design/FIGMA.md`.
   - The developer did the manual check on `/` and reports that all of it passes.
+- 2026-11-21: Closed. Every box is checked, and the manual check is recorded above.

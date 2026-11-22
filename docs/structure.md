@@ -34,6 +34,8 @@ to-do-list/
 ├── CONTEXT.md              the glossary: the project's terms (Page, Shared Component, API Function,
 │                           API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and
 │                           Restore Demo Todos) and the synonyms to avoid
+├── CODE_AUDIT.md           the audit of 2026-11-21: files that may be extraneous, inconsistencies
+│                           between the docs and the code, and the state of each finding
 │
 ├── .claude/
 │   └── settings.json       shared Claude Code project settings: enables the official Figma plugin, so
@@ -50,7 +52,7 @@ to-do-list/
 │   ├── adding-and-removing-resources.md   every place a resource touches, the steps to add or
 │   │                                      remove one, and a code template for each file
 │   ├── adr/                architecture decision records, one per decision: NNNN-<decision>.md
-│   │   └── 0002-mantine-components-with-scss-modules.md   Mantine provides the UI components, and
+│   │   └── 0001-mantine-components-with-scss-modules.md   Mantine provides the UI components, and
 │   │                                                       custom styles stay in SCSS modules, using
 │   │                                                       Mantine's Sass helpers
 │   ├── agents/
@@ -200,8 +202,9 @@ to-do-list/
 │   │   ├── logger.ts                 the one Powertools Logger the whole function writes with
 │   │   └── todos/
 │   │       ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox): creates,
-│   │       │                         completes, deletes and lists Todos; the table name comes from
-│   │       │                         TODOS_TABLE. Not used by any handler yet
+│   │       │                         deletes and lists Todos, and marks one Completed or Active;
+│   │       │                         the table name comes from TODOS_TABLE. Not used by any
+│   │       │                         handler yet
 │   │       └── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
 │   ├── dev/
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls

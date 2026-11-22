@@ -2,7 +2,7 @@ Status: ready-for-agent
 
 # Spec: Todo list MVP
 
-Derived from `INTENT.md` and grilling rounds 1–4 in this folder. Follows ADR-0002 (Mantine provides the components; custom styles stay in SCSS modules). Terms are as defined in `CONTEXT.md`: Todo, Active, Completed, Demo Todos, Restore Demo Todos, Page, Shared Component, API Function, API Hook.
+Derived from `INTENT.md` and grilling rounds 1–4 in this folder. Follows ADR-0001 (Mantine provides the components; custom styles stay in SCSS modules). Terms are as defined in `CONTEXT.md`: Todo, Active, Completed, Demo Todos, Restore Demo Todos, Page, Shared Component, API Function, API Hook.
 
 `INTENT.md` says "no saving functionality". Grilling round 2 replaced that with `localStorage` persistence through the Todo API. Where they disagree, the rounds and this spec win. `INTENT.md` stays as the developer wrote it.
 
@@ -205,7 +205,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
   - **Dark:** page Navy 950; cards Navy 900; text Purple 300; hover Purple 100; dimmed Purple 600; Completed title Purple 700; dividers Purple 800.
 
   Match the screenshots where the style guide leaves a role open. The green primary color goes. `defaultRadius` and breakpoints stay as they are.
-- **SCSS modules use only Mantine CSS variables and the injected `mantine` helpers** (ADR-0002): `mantine.rem()`, `@include mantine.light` / `mantine.dark` for the theme-dependent background images, `@include mantine.hover`, and `mantine.smaller-than(mantine.$mantine-breakpoint-sm)` / `larger-than` for the mobile/desktop switch. No hard-coded colors.
+- **SCSS modules use only Mantine CSS variables and the injected `mantine` helpers** (ADR-0001): `mantine.rem()`, `@include mantine.light` / `mantine.dark` for the theme-dependent background images, `@include mantine.hover`, and `mantine.smaller-than(mantine.$mantine-breakpoint-sm)` / `larger-than` for the mobile/desktop switch. No hard-coded colors.
 - **Check gradient:** `hsl(192, 100%, 67%)` to `hsl(280, 87%, 65%)`, from the style guide.
 - **Background images:** the light/dark × mobile/desktop images from the images area. They are full-width at the top of the page behind the header, with the page color below, as in the screenshots.
 - **Typography** follows the design's text presets: 18px body on desktop with -0.25px letter spacing, and smaller presets (14px / 12px) on mobile and in the footer. The header "TODO" is bold, white and widely letter-spaced.

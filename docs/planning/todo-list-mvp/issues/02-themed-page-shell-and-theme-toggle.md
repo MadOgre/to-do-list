@@ -1,10 +1,10 @@
 # 02: Themed page shell and light/dark toggle
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** 01
 
-**Spec:** `docs/planning/todo-list-mvp/spec.md` · **ADR:** ADR-0002
+**Spec:** `docs/planning/todo-list-mvp/spec.md` · **ADR:** ADR-0001
 
 **What to build:** The page looks like the design around the list. The style guide's colors and Josefin Sans come from the Mantine theme. The "TODO" header sits over the design's background image, which changes with light/dark and mobile/desktop. The list from ticket 01 sits in the centered, responsive card column. A sun/moon toggle switches the theme. The app starts in the OS setting, remembers the choice, and doesn't flash the wrong theme on load. The browser tab shows the design's favicon and "Todo app".
 
@@ -51,3 +51,4 @@
   - "TODO" is an image in the design. Josefin Sans Bold's glyph metrics put it at 40px text with 15px letter spacing on desktop, and 26.6px with 10px on mobile.
   - Other review-driven changes, made at the developer's request: the row dividers are drawn in SCSS instead of with `withBorder`; the dead `min-height` is gone; the letter spacing is in px.
 - 2026-10-05: The developer did the manual check on `/` and reports that all of it passes.
+- 2026-11-21: Closed. Every box is checked, and the manual check is recorded above.

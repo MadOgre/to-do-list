@@ -1,10 +1,10 @@
 # 01: Mantine across the app, with Home rebuilt as the demo
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** None (can start immediately)
 
-**Spec:** `docs/planning/mantine-install/spec.md` · **ADR:** ADR-0002
+**Spec:** `docs/planning/mantine-install/spec.md` · **ADR:** ADR-0001
 
 **What to build:** Mantine is installed and configured once for the whole app, so any Page can import its components directly. The Home Page is rebuilt with Mantine to demonstrate it on real data: opening `/` shows a Mantine loader while the Items load, then one green-themed card per Item in Mantine's typography, inside a centered container. If loading fails, a Mantine alert shows the existing error message.
 
@@ -26,3 +26,4 @@
 ## Comments
 
 - 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. Code review (Standards + Spec) is clean after round 1, whose only fix was a GUIDE.md wording change. The developer did the manual check on `/`: the page loads, and the theme's primary color resolves to green.
+- 2026-11-21: Closed. Every box is checked, and the manual check is recorded above.

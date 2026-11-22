@@ -42,7 +42,7 @@ export const createTodo = async (id: string, title: string) => {
     .send();
 };
 
-export const setCompleted = async(id: string, completed: boolean) => {
+export const setCompleted = async (id: string, completed: boolean) => {
   await Todo.build(UpdateItemCommand)
     .item({ id, completed })
     .options({ condition: { attr: "id", exists: true } })

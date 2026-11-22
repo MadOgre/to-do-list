@@ -1,10 +1,10 @@
 # 05: Footer: count, filters, empty states, Clear Completed
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** 04
 
-**Spec:** `docs/planning/todo-list-mvp/spec.md` · **ADR:** ADR-0002
+**Spec:** `docs/planning/todo-list-mvp/spec.md` · **ADR:** ADR-0001
 
 **What to build:** The list card ends in a footer:
 - **Count:** how many Active Todos are left ("1 item left" / "N items left"), the same whichever filter is selected.
@@ -43,3 +43,4 @@ When nothing matches, the card shows a dimmed message. On mobile, the filters mo
   - Figma's footer spacing and the filters' size are now in `design/FIGMA.md`.
   - The manual check on `/` is left to the developer.
 - 2026-10-05: The developer did the manual check on `/`, including the hover colors with a mouse, and reports that all of it passes.
+- 2026-11-21: Closed. Every box is checked, and the manual check is recorded above.

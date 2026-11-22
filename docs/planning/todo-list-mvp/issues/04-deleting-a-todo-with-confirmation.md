@@ -26,7 +26,7 @@
   - `@mantine/modals` keeps the `^9.6.3` range, but the lockfile resolves 9.6.3. The newest match, 9.7.0, requires `@mantine/core` and `@mantine/hooks` at exactly 9.7.0, and both are on 9.6.3.
   - The ✕ is hidden with a plain `@media (hover: hover)` rather than `@include mantine.hover`: on touch screens that mixin switches to `:active`, which would show the ✕ only while it's pressed. While hidden, the ✕ stays in the tab order, so focusing it shows it.
   - The modal pushed the main JS chunk to about 542 kB (about 170 kB gzipped), past Vite's 500 kB warning. At the developer's request, `build.chunkSizeWarningLimit` is 600 in `vite.config.ts`, with a comment: lazy-load Pages by route once there's a second one.
-  - ADR-0002 now lists `@mantine/modals` with Mantine's packages.
+  - ADR-0001 now lists `@mantine/modals` with Mantine's packages.
   - The manual check on `/` is left to the developer.
 - 2026-10-05: Two fixes at the developer's request:
   - The ✕ now sits 20px from the card's edge on mobile and 24px on desktop, as in the Figma frames (now in `design/FIGMA.md`). The margin had counted from the ActionIcon's box, which is wider than the ✕, so the gap was 8px too wide on mobile and 5px on desktop.

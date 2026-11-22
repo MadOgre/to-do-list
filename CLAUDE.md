@@ -16,7 +16,7 @@ Issues and specs are local markdown files under `docs/planning/`, one folder per
 
 ### Triage labels
 
-Default vocabulary: needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix. See `docs/agents/triage-labels.md`.
+Default vocabulary: needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix, and done for a finished ticket. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
@@ -62,7 +62,7 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **Barrels (frontend):** each area of `frontend/src/` has an `index.ts` barrel, except `styles`. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
 - **Pages (frontend)** live one per folder under `frontend/src/pages/`, with their SCSS module next to them.
 - **Shared types (frontend)** go in `frontend/src/interfaces/`, one file per type, with the types derived from it in the same file.
-- **Mantine (frontend,** ADR-0002**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
+- **Mantine (frontend,** ADR-0001**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
 - **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `api/.env.example`, with a comment and a placeholder, and each developer's own values in the gitignored `api/.env`.
 
 ### Grilling sessions

@@ -1,10 +1,10 @@
 # 03: Adding and completing Todos
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** 02
 
-**Spec:** `docs/planning/todo-list-mvp/spec.md` · **ADR:** ADR-0002
+**Spec:** `docs/planning/todo-list-mvp/spec.md` · **ADR:** ADR-0001
 
 **What to build:** The user types a Todo into "Create a new todo…" and presses Enter. It appears at the top of the list as Active, and the input clears. The user completes a Todo by clicking its round check (or the gutter around it). The check fills with the design's gradient and tick, and the title is struck through and faded. Clicking the check again makes the Todo Active again. Clicking the title does nothing. Every change goes through the Todo API and survives a reload. If a change fails, "Could not save your change." shows above the list, and the list stays as it was.
 
@@ -21,7 +21,7 @@
 - [x] A failed create or update shows a red Mantine `Alert` "Could not save your change." above the list, and the list stays as it was
 - [x] Home renders the input above the list card and one Todo row per Todo, replacing ticket 01's plain rows
 - [x] Keyboard: Tab reaches the input and every check, and Space toggles a check
-- [x] Styling follows ADR-0002 (Mantine CSS variables and `mantine` helpers only), in both themes
+- [x] Styling follows ADR-0001 (Mantine CSS variables and `mantine` helpers only), in both themes
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
 - [x] Manual check on `/`:
   - Enter adds a trimmed Todo at the top and clears the input. Empty or spaces-only input adds nothing.
@@ -42,3 +42,4 @@
   - The manual check on `/` is left to the developer.
 - 2026-10-05: At the developer's request, an Active Todo's check now shows the check gradient as its ring on hover (of the check or its gutter), as in the interaction frame (`4.png`).
 - 2026-10-05: The developer did the manual check on `/`, including the hover ring, and reports that all of it passes. The "change failed" alert was also triggered for real: with invalid JSON under the storage key, adding a Todo shows it and keeps the typed text.
+- 2026-11-21: Closed. Every box is checked, and the manual check is recorded above.

@@ -1,6 +1,6 @@
 # 01: Todos stored in localStorage, shown on Home
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** None (can start immediately)
 
@@ -33,3 +33,4 @@
 - 2026-10-05: Implemented. `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start pass with pnpm 10.34.5 and Node 22.23.3. Code review (Standards + Spec) is clean after round 2. Round 1's fixes: FILES.md and `apiClient.ts` no longer say the API Functions use `apiClient` today, and the storage module gained `removeTodos()` so the storage key stays private to it. With invalid stored JSON, React Query's default 3 retries delay the load-error alert by about 7 seconds. The manual check on `/` is left to the developer.
 - 2026-10-05: The developer did the manual check on `/`: the six Demo Todos show with nothing stored, and invalid JSON under the `todos` key shows the load-error alert after a reload. The alert took 5–10 seconds because of React Query's retries, so at the developer's request `useTodos` now sets `retry: false`, marked demo-only. Switch step 4 in `todos.ts` says to remove it.
 - 2026-10-05: At the developer's request, `useTodo` sets `retry: false` too, so no Todo API Hook retries while the Todos live in `localStorage`. Mutations already don't retry by default. Switch step 4 now names both hooks.
+- 2026-11-21: Closed. Every box is checked, and the manual check is recorded above.
