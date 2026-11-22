@@ -49,13 +49,13 @@ export const Home: FC = () => {
   };
   const emptyMessage = getEmptyMessage();
 
-  const confirmDelete = ({ id, title }: Todo) =>
+  const confirmDelete = ({ todo_id, title }: Todo) =>
     modals.openConfirmModal({
       title: "Delete todo?",
       children: <Text size="sm">“{title}” will be deleted.</Text>,
       labels: { confirm: "Delete", cancel: "Cancel" },
       confirmProps: { color: "red" },
-      onConfirm: () => deleteTodo.mutate(id),
+      onConfirm: () => deleteTodo.mutate(todo_id),
     });
 
   // With no Completed Todo there is nothing to clear, so no dialog opens.
@@ -103,9 +103,9 @@ export const Home: FC = () => {
               <Card shadow="card" padding={0}>
                 {visibleTodos.map((todo) => (
                   <TodoRow
-                    key={todo.id}
+                    key={todo.todo_id}
                     todo={todo}
-                    onToggle={(completed) => updateTodo.mutate({ id: todo.id, input: { completed } })}
+                    onToggle={(completed) => updateTodo.mutate({ id: todo.todo_id, input: { completed } })}
                     onDelete={() => confirmDelete(todo)}
                   />
                 ))}

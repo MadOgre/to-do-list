@@ -11,7 +11,7 @@ import { readTodos, removeTodos, writeTodos } from "./todoStorage";
 // 4. Remove `retry: false` from useTodos and useTodo.
 
 const findTodo = (todos: Todo[], id: string) => {
-  const todo = todos.find((candidate) => candidate.id === id);
+  const todo = todos.find((candidate) => candidate.todo_id === id);
   if (!todo) {
     throw new Error(`Todo ${id} not found`);
   }
@@ -44,7 +44,7 @@ export const createTodo = (input: CreateTodoInput) => {
   // return data;
 
   // LOCAL STORAGE:
-  const todo: Todo = { id: crypto.randomUUID(), completed: false, ...input };
+  const todo: Todo = { todo_id: crypto.randomUUID(), completed: false, ...input };
   writeTodos([todo, ...readTodos()]);
   return Promise.resolve(todo);
 };
@@ -57,7 +57,7 @@ export const updateTodo = (id: string, input: UpdateTodoInput) => {
   // LOCAL STORAGE:
   const todos = readTodos();
   const todo = { ...findTodo(todos, id), ...input };
-  writeTodos(todos.map((candidate) => (candidate.id === id ? todo : candidate)));
+  writeTodos(todos.map((candidate) => (candidate.todo_id === id ? todo : candidate)));
   return Promise.resolve(todo);
 };
 
@@ -66,7 +66,7 @@ export const deleteTodo = (id: string) => {
   // await apiClient.delete(`/todos/${id}`);
 
   // LOCAL STORAGE:
-  writeTodos(readTodos().filter((todo) => todo.id !== id));
+  writeTodos(readTodos().filter((todo) => todo.todo_id !== id));
   return Promise.resolve();
 };
 

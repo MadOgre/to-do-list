@@ -1,10 +1,10 @@
 export interface Todo {
-  id: string;
+  todo_id: string;
   title: string;
   completed: boolean;
 }
 
-// A new Todo is always Active, and a real server sets its id.
+// A new Todo is always Active, and a real server sets its todo_id.
 export type CreateTodoInput = Pick<Todo, "title">;
 
-export type UpdateTodoInput = Partial<Omit<Todo, "id">>;
+export type UpdateTodoInput = Partial<Omit<Todo, "todo_id">>;

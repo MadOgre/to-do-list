@@ -6,12 +6,12 @@ import type { Todo } from "@/interfaces";
 const TODOS_STORAGE_KEY = "todos";
 
 const demoTodos: Todo[] = [
-  { id: "demo-1", title: "Complete online JavaScript course", completed: true },
-  { id: "demo-2", title: "Jog around the park 3x", completed: false },
-  { id: "demo-3", title: "10 minutes meditation", completed: false },
-  { id: "demo-4", title: "Read for 1 hour", completed: false },
-  { id: "demo-5", title: "Pick up groceries", completed: false },
-  { id: "demo-6", title: "Complete Todo App on Frontend Mentor", completed: false },
+  { todo_id: "demo-1", title: "Complete online JavaScript course", completed: true },
+  { todo_id: "demo-2", title: "Jog around the park 3x", completed: false },
+  { todo_id: "demo-3", title: "10 minutes meditation", completed: false },
+  { todo_id: "demo-4", title: "Read for 1 hour", completed: false },
+  { todo_id: "demo-5", title: "Pick up groceries", completed: false },
+  { todo_id: "demo-6", title: "Complete Todo App on Frontend Mentor", completed: false },
 ];
 
 // The Demo Todos until a list is stored, then the stored list, even an empty one.
