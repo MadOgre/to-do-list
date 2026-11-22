@@ -1,1 +1,4 @@
-[]
+[
+  { "method": "GET", "path": "/api/todos", "handler": "listTodos" },
+  { "method": "POST", "path": "/api/todos", "handler": "createTodo" }
+]

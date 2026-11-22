@@ -10,6 +10,7 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 | --- | --- |
 | `api/package.json` | The other DynamoDB packages, which the first resource adds. `@aws-sdk/client-dynamodb` is already there, for the dev server's AWS sign-in check. |
 | `api/src/<resource>/` | One file per route, its ID rule and its repository. |
+| `common/src/<resource>.ts` | Its schemas: the item and each request body. `common/src/index.ts` exports them. |
 | `api/routes.json` | One entry per route. |
 | `api/src/resource-handlers.ts` | One export line per handler. |
 | `api/src/request-outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
@@ -88,7 +89,7 @@ export const findArticle = async (id: string) => {
 One file per route, such as `get-article.ts`. Each exports a `RouteHandler` (from `api/src/route-handler-types.ts`) that takes the whole event and returns a `Result`: the outcome code, a message for the log, and the response.
 
 ```ts
-import { json } from "../response-builders.ts";
+import { errorResult, json } from "../response-builders.ts";
 import type { RouteHandler } from "../route-handler-types.ts";
 import { isValidArticleId } from "./article-id.ts";
 import { findArticle } from "./articles-repository.ts";
@@ -96,20 +97,12 @@ import { findArticle } from "./articles-repository.ts";
 export const getArticle: RouteHandler = async (event) => {
   const id = event.pathParameters?.id;
   if (!isValidArticleId(id)) {
-    return {
-      outcome: "invalid_id",
-      message: "the ID isn't 1 to 64 letters, digits or hyphens",
-      response: json(400, { error: "the id must be 1 to 64 letters, digits or hyphens" }),
-    };
+    return errorResult(400, "invalid_id", "the ID isn't 1 to 64 letters, digits or hyphens");
   }
 
   const article = await findArticle(id);
   if (article === null) {
-    return {
-      outcome: "not_found",
-      message: `no article with ID ${id}`,
-      response: json(404, { error: "article not found", id }),
-    };
+    return errorResult(404, "not_found", `no article with ID ${id}`);
   }
 
   return {
@@ -119,6 +112,18 @@ export const getArticle: RouteHandler = async (event) => {
   };
 };
 ```
+
+A route with a body checks it with `readJsonBody` (from `api/src/request-body.ts`) and the route's schema from `@to-do-list/common`. On a bad body, `readJsonBody` gives the whole 400 result, so the handler returns it as it is:
+
+```ts
+const check = readJsonBody(event, createArticleBodySchema);
+if (!check.ok) {
+  return check.result;
+}
+// check.body is the checked body, with the schema's type.
+```
+
+The schemas go in `common/src/articles.ts`, one per request body, each with its type from `z.infer`, and `common/src/index.ts` exports them. The frontend uses the same types. See `common/src/todos.ts` for an example.
 
 ### 3. The routes and the handlers
 
@@ -235,7 +240,7 @@ Update `docs/structure.md`.
 ## Removing a resource
 
 1. Remove its entries from `api/routes.json` and its lines from `api/src/resource-handlers.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
-2. Delete `api/src/articles/` and `api/sample-events/articles/`.
+2. Delete `api/src/articles/`, `api/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
 3. In `api/src/request-outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
 4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `api/.env.example` and `api/.env` too.
 5. Deploy: `pnpm deploy:dev`. Read the plan before answering `yes`: the table and the policy destroyed, one route destroyed per removed entry, and the function updated. **Destroying the table deletes every item in it.** No undo. See [Its data goes with the table](#its-data-goes-with-the-table).

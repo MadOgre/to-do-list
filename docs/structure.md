@@ -173,7 +173,7 @@ to-do-list/
 │
 ├── api/                    the API's code, as the package @to-do-list/api
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
-│   │                       client, DynamoDB Toolbox, the shared schemas from common/), its tools
+│   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint), and
 │   │                       its scripts: dev, typecheck, lint, invoke, bundle, build
 │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
@@ -184,27 +184,31 @@ to-do-list/
 │   ├── .env                your own copy of .env.example; gitignored
 │   ├── CLAUDE.md           for AI coding agents: the request path and where to find each part
 │   ├── routes.json         the one list of the API's routes (method, path, handler name);
-│   │                       infra/modules/app/ makes one API Gateway route from each entry. Empty
-│   │                       until the first resource
+│   │                       infra/modules/app/ makes one API Gateway route from each entry
 │   ├── src/
 │   │   ├── index.ts                  the function's entry point and router: checks at startup that every
 │   │   │                             route in routes.json has a handler, then sends each request to its
 │   │   │                             handler and writes one log line with the request's outcome
-│   │   ├── resource-handlers.ts      re-exports every route handler, under the name routes.json uses.
-│   │   │                             No exports until the first resource
+│   │   ├── resource-handlers.ts      re-exports every route handler, under the name routes.json uses
 │   │   ├── route-handler-types.ts    Route (one entry in routes.json), HttpMethod (the methods a route
 │   │   │                             can use), RouteHandler (the shape every route handler has) and
 │   │   │                             Result (what a handler returns)
 │   │   ├── routes.ts                 loads routes.json with its type, and checks at startup that every
 │   │   │                             route uses a known method
 │   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs; the error codes come from common/
-│   │   ├── response-builders.ts      json and noContent: build HTTP responses
+│   │   ├── request-body.ts           readJsonBody: reads a request body as JSON and checks it against a
+│   │   │                             schema from @to-do-list/common, or gives the 400 result
+│   │   ├── response-builders.ts      json, noContent and errorResult (a failed request's whole result,
+│   │   │                             with the error body): build HTTP responses
 │   │   ├── logger.ts                 the one Powertools Logger the whole function writes with
 │   │   └── todos/
-│   │       ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox): creates,
-│   │       │                         deletes and lists Todos, and marks one Completed or Active;
-│   │       │                         the table name comes from TODOS_TABLE. Not used by any
-│   │       │                         handler yet
+│   │       ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
+│   │       │                         DEMO_OWNER_ID, the one owner until the login: creates Todos,
+│   │       │                         lists one owner's Todos newest first, deletes them, and marks one
+│   │       │                         Completed or Active; the table name comes from TODOS_TABLE
+│   │       ├── list-todos.ts         GET /api/todos: the owner's Todos, newest first
+│   │       ├── create-todo.ts        POST /api/todos: checks the body, makes the ID (a version 7 UUID),
+│   │       │                         writes the Todo and returns it with 201
 │   │       └── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
 │   ├── dev/
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
@@ -213,8 +217,8 @@ to-do-list/
 │   ├── scripts/
 │   │   └── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
 │   │                       stand-in Lambda context
-│   └── sample-events/      sample API Gateway events, one folder per resource. Empty until the first
-│                           resource
+│   └── sample-events/      sample API Gateway events for pnpm invoke, one folder per resource
+│       └── todos/          list-todos.json, create-todo.json and create-todo-invalid-body.json
 │
 ├── common/                 the shared contract, as the package @to-do-list/common: the zod schemas
 │   │                       that api/ and frontend/ both import. No build of its own: esbuild, Vite

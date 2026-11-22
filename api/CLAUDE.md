@@ -2,7 +2,7 @@
 
 A routing map for this package. Read a file only when this map points there. For a one-line note on each file, read the `api/` part of `docs/structure.md`.
 
-**Status:** the API has no resources yet. `routes.json` is `[]` and `src/resource-handlers.ts` exports nothing. The frontend keeps its Todos in `localStorage` until a todos resource exists.
+**Status:** the API has one resource, todos, with `GET /api/todos` and `POST /api/todos` so far. The frontend still keeps its Todos in `localStorage` until it switches to the API.
 
 ## Request path
 
@@ -19,7 +19,8 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts` → 
 | --- | --- |
 | Add or remove a resource (routes, handlers, table, policy, env var, sample events, docs) | `docs/adding-and-removing-resources.md`: it lists every place, with templates |
 | Handler, route and result types | `src/route-handler-types.ts` |
-| Build a response | `src/response-builders.ts` |
+| Build a response, or a failed request's whole result | `src/response-builders.ts` |
+| Read and check a JSON request body | `src/request-body.ts` (`readJsonBody`) |
 | Outcome codes and the log format | `src/request-outcome-codes.ts` (its error codes come from `common/src/error-body.ts`), `docs/logging.md` |
 | The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
 | How the dev server differs from Lambda | `docs/local-development.md` |

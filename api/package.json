@@ -15,7 +15,8 @@
     "@aws-sdk/client-dynamodb": "3.1165.0",
     "@aws-sdk/lib-dynamodb": "3.1165.0",
     "@to-do-list/common": "workspace:*",
-    "dynamodb-toolbox": "^2.11.1"
+    "dynamodb-toolbox": "^2.11.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.164",
