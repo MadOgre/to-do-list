@@ -1,3 +1,4 @@
+// Loads routes.json and checks it at startup. The routes themselves are in api/routes.json: add or change a route there.
 import routesJson from "../../routes.json" with { type: "json" };
 
 // The HTTP methods a route can use. The startup check below checks routes.json against them.
