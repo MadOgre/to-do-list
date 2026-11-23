@@ -99,13 +99,15 @@ to-do-list/
 │   ├── public/
 │   │   └── favicon-32x32.png   the design's 32×32 favicon, served as is
 │   └── src/
-│       ├── main.tsx        the entry point. Loads Mantine's base styles, then the global styles, and
+│       ├── main.tsx        the entry point. Loads Mantine's styles, then the global styles, and
 │       │                   renders the app with the Mantine provider (the theme, its CSS variables
-│       │                   resolver, and the color scheme starting from the OS setting), the React
-│       │                   Query provider, the router and React Query Devtools (development only)
+│       │                   resolver, and the color scheme starting from the OS setting), the pop-up
+│       │                   messages, the React Query provider, the router and React Query Devtools
+│       │                   (development only)
 │       ├── routes.tsx      every route, in React Router's data mode: the Home Page at / and the
 │       │                   NotFound Page for anything else
-│       ├── queryClient.ts  the React Query client, in one place so its defaults are easy to change
+│       ├── queryClient.ts  the React Query client. Its MutationCache shows a red pop-up message for
+│       │                   every failed change, with the text from api/errorText.ts
 │       ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
 │       │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
 │       │                   that sets the design's light and dark colors, the check gradient and the
@@ -116,19 +118,16 @@ to-do-list/
 │       ├── vite-env.d.ts   types the environment variables, and makes reading an undeclared one a
 │       │                   type error
 │       ├── api/
-│       │   ├── apiClient.ts    the shared axios instance the API Functions use once a real API exists,
-│       │   │                   with its base URL from VITE_API_BASE_URL
-│       │   ├── todos.ts        the Todo API Functions (list, get one, create, update, delete, clear
-│       │   │                   Completed, and the demo-only Restore Demo Todos). Each keeps its real
-│       │   │                   axios call commented out above the localStorage code, and the comment
-│       │   │                   at the top lists the steps to switch to a real API
-│       │   ├── todoStorage.ts  demo only: the localStorage key, the six Demo Todos and the helpers that
-│       │   │                   read, write and remove the stored list. Deleted at the switch
-│       │   └── index.ts        barrel for the API Functions and the shared axios instance
+│       │   ├── apiClient.ts    the shared axios instance that the API Functions use, with its base URL
+│       │   │                   from VITE_API_BASE_URL
+│       │   ├── errorText.ts    the text that people see for each error outcome of the API, and
+│       │   │                   getErrorText, which reads the outcome from a failed request's error body
+│       │   ├── todos.ts        the Todo API Functions, one request each: list, create, update, delete,
+│       │   │                   clear Completed, and the temporary Restore Demo Todos
+│       │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
 │       ├── apiHooks/
-│       │   ├── todos.ts        the Todo API Hooks: two queries and five mutations. Each mutation
-│       │   │                   refreshes the Todo list when it succeeds. While the list lives in
-│       │   │                   localStorage, the queries don't retry a failed read
+│       │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
+│       │   │                   refreshes the Todo list when it settles, whether it worked or failed
 │       │   └── index.ts        barrel for the API Hooks
 │       ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
 │       │   │               styles in <Name>/<Name>.module.scss
@@ -148,17 +147,16 @@ to-do-list/
 │       │   │                                     the Completed check, and the ✕ for deleting
 │       │   └── index.ts        barrel for the images imported from TypeScript
 │       ├── interfaces/     shared types, one file per type and the types derived from it
-│       │   ├── Todo.ts         the Todo type, with its create and update input types
+│       │   ├── Todo.ts         the Todo type and its create and update input types, from common/
 │       │   ├── TodoFilter.ts   which Todos the list shows: all, active or completed
 │       │   └── index.ts        barrel for the shared types
 │       ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
 │       │   │               <Name>/<Name>.module.scss
 │       │   ├── Home/       the "TODO" header with the theme toggle over the background image, the
 │       │   │               new-todo input, the Todo rows and footer in a card (with the filters in
-│       │   │               a card of their own below the small breakpoint), and the demo-only
+│       │   │               a card of their own below the small breakpoint), and the temporary
 │       │   │               Restore Demo Todos link. Asks before deleting, clearing or restoring.
-│       │   │               Shows an error alert if the Todos can't be loaded or a change can't be
-│       │   │               saved
+│       │   │               Shows an error alert if the Todos can't be loaded
 │       │   ├── NotFound/   shown for any unknown URL, with a link back home
 │       │   └── index.ts    barrel for the Pages
 │       └── styles/

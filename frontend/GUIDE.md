@@ -43,9 +43,9 @@ src/
 - **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, which can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See [ADR-0001](../docs/adr/0001-mantine-components-with-scss-modules.md).
 - **Environment variables** go in `.env` (committed, with safe defaults) and are typed in `src/vite-env.d.ts`. Override them in `.env.local`, which is gitignored. `VITE_API_BASE_URL` sets the base URL of the shared axios instance.
 
-### Local storage instead of an API
+### Errors from the API
 
-The API has no todos resource yet, so the Todo API Functions keep the list in the browser's `localStorage`, through the demo-only helpers in `src/api/todoStorage.ts`. Each function keeps its real axios call commented out as a `REAL API` block above its `LOCAL STORAGE` block. When the API's todos resource is ready, follow the switch steps in the comment at the top of `src/api/todos.ts`.
+The API Functions in `src/api/todos.ts` call the API through the shared axios instance. A failed change shows a red pop-up message from one place, the `MutationCache` in `src/queryClient.ts`. API Hooks and Pages don't show errors of changes. The text for each error code is in `src/api/errorText.ts`. When `common/` gets a new error code, the build fails until `ERROR_TEXTS` has a text for it.
 
 ### Barrels and lazy-loaded routes
 

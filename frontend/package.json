@@ -9,9 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mantine/core": "^9.6.3",
-    "@mantine/hooks": "^9.6.3",
-    "@mantine/modals": "^9.6.3",
+    "@mantine/core": "^9.8.2",
+    "@mantine/hooks": "^9.8.2",
+    "@mantine/modals": "^9.8.2",
+    "@mantine/notifications": "^9.8.2",
     "@tanstack/react-query": "^5.104.0",
     "@to-do-list/common": "workspace:*",
     "axios": "^1.20.0",
