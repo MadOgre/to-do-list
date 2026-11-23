@@ -186,40 +186,51 @@ to-do-list/
 │   ├── routes.json         the one list of the API's routes (method, path, handler name);
 │   │                       infra/modules/app/ makes one API Gateway route from each entry
 │   ├── src/
-│   │   ├── index.ts                  the function's entry point and router: checks at startup that every
-│   │   │                             route in routes.json has a handler, then sends each request to its
-│   │   │                             handler and writes one log line with the request's outcome
-│   │   ├── resource-handlers.ts      re-exports every route handler, under the name routes.json uses
-│   │   ├── route-handler-types.ts    Route (one entry in routes.json), HttpMethod (the methods a route
-│   │   │                             can use), RouteHandler (the shape every route handler has) and
-│   │   │                             Result (what a handler returns)
-│   │   ├── routes.ts                 loads routes.json with its type, and checks at startup that every
-│   │   │                             route uses a known method
-│   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs; the error codes come from common/
-│   │   ├── request-body.ts           readJsonBody: reads a request body as JSON and checks it against a
-│   │   │                             schema from @to-do-list/common, or gives the 400 result
-│   │   ├── response-builders.ts      json, noContent and errorResult (a failed request's whole result,
-│   │   │                             with the error body): build HTTP responses
-│   │   ├── logger.ts                 the one Powertools Logger the whole function writes with
-│   │   └── todos/
-│   │       ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
-│   │       │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
-│   │       │                         changes and deletes one owner's Todos; the table name comes from
-│   │       │                         TODOS_TABLE
-│   │       ├── list-todos.ts         GET /api/todos: the owner's Todos, newest first
-│   │       ├── create-todo.ts        POST /api/todos: checks the body, makes the ID (a version 7 UUID),
-│   │       │                         writes the Todo and returns it with 201
-│   │       ├── set-todo-completed.ts PATCH /api/todos/{todo_id}: sets completed if the version is the
-│   │       │                         stored one, and returns the Todo; 409 for a stale version
-│   │       ├── delete-todo.ts        DELETE /api/todos/{todo_id}: 204, also when there's no such Todo
-│   │       ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed Todo
-│   │       ├── restore-demo-todos.ts POST /api/demo-todos/restore: replaces every Todo with the Demo
-│   │       │                         Todos. Temporary, for the frontend's Restore Demo Todos link
-│   │       ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
-│   │       └── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
+│   │   ├── index.ts                  the function's entry point: Lambda calls index.handler, which is the
+│   │   │                             router's handler
+│   │   ├── router/                   runs for every request
+│   │   │   ├── router.ts             checks at startup that every route in routes.json has a route handler,
+│   │   │   │                         then sends each request to its route handler and writes one log line
+│   │   │   │                         with the request's outcome
+│   │   │   ├── routes.ts             Route (one entry in routes.json) and HttpMethod (the methods a route
+│   │   │   │                         can use); loads routes.json, and checks at startup that every route
+│   │   │   │                         uses a known method
+│   │   │   ├── handler-registry.ts   re-exports every route handler, under the name routes.json uses
+│   │   │   └── logger.ts             the one Powertools Logger the whole function writes with
+│   │   ├── route-handler-tools/      what a route handler uses to read the request and write the response
+│   │   │   ├── route-handler.ts      RouteHandler (the shape every route handler has) and Result (what a
+│   │   │   │                         route handler returns)
+│   │   │   ├── outcome-codes.ts      every outcome a request can end with, as used in the logs; the error
+│   │   │   │                         codes come from common/
+│   │   │   ├── json-body.ts          readJsonBody: reads a request body as JSON and checks it against a
+│   │   │   │                         schema from @to-do-list/common, or gives the 400 result
+│   │   │   └── responses.ts          json, noContent and errorResult (a failed request's whole result, with
+│   │   │                             the error body): build HTTP responses
+│   │   └── resources/                one folder per resource
+│   │       └── todos/
+│   │           ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
+│   │           │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
+│   │           │                         changes and deletes one owner's Todos; the table name comes from
+│   │           │                         TODOS_TABLE
+│   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
+│   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
+│   │           └── route-handlers/       one file per route
+│   │               ├── list-todos.ts             GET /api/todos: the owner's Todos, newest first
+│   │               ├── create-todo.ts            POST /api/todos: checks the body, makes the ID (a version
+│   │               │                             7 UUID), writes the Todo and returns it with 201
+│   │               ├── set-todo-completed.ts     PATCH /api/todos/{todo_id}: sets completed if the version
+│   │               │                             is the stored one, and returns the Todo; 409 for a stale
+│   │               │                             version
+│   │               ├── delete-todo.ts            DELETE /api/todos/{todo_id}: 204, also when there's no
+│   │               │                             such Todo
+│   │               ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
+│   │               │                             Todo
+│   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
+│   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
+│   │                                             Todos link
 │   ├── dev/
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│   │   │                   the router in src/index.ts, and warns when you're not logged in to AWS
+│   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
 │   │   └── local-context.ts  the stand-in Lambda context that server.ts and scripts/invoke.ts pass
 │   ├── scripts/
 │   │   └── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a

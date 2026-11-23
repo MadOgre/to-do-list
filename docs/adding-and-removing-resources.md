@@ -1,6 +1,6 @@
 # Adding and Removing Resources
 
-A resource is one kind of thing the API stores and serves, such as todos. Each resource has its own folders, its own DynamoDB table, plus a few lines in shared files. The router (`api/src/index.ts`), the response builders, the logger and Terraform's route block are shared by every resource and don't change.
+A resource is one kind of thing the API stores and serves, such as todos. Each resource has its own folders, its own DynamoDB table, plus a few lines in shared files. The router (`api/src/router/`), the route handler tools (`api/src/route-handler-tools/`) and Terraform's route block are shared by every resource and don't change.
 
 The examples add a resource called `articles`, with one route, `GET /api/articles/{article_id}`, and its handler `getArticle`. Other routes follow the same pattern.
 
@@ -9,11 +9,11 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 | Place | What the resource has there |
 | --- | --- |
 | `api/package.json` | The other DynamoDB packages, which the first resource adds. `@aws-sdk/client-dynamodb` is already there, for the dev server's AWS sign-in check. |
-| `api/src/<resource>/` | One file per route, its ID rule and its repository. |
+| `api/src/resources/<resource>/` | Its repository and its ID rule, and `route-handlers/`, with one file per route. |
 | `common/src/<resource>.ts` | Its schemas: the item and each request body. `common/src/index.ts` exports them. |
 | `api/routes.json` | One entry per route. |
-| `api/src/resource-handlers.ts` | One export line per handler. |
-| `api/src/request-outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
+| `api/src/router/handler-registry.ts` | One export line per route handler. |
+| `api/src/route-handler-tools/outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
 | `api/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
 | `api/.env.example` | Its table's variable. |
 | `infra/modules/app/dynamodb.tf` | Its table. |
@@ -30,7 +30,7 @@ The first resource brings the DynamoDB packages: `@aws-sdk/lib-dynamodb` and `dy
 pnpm --filter @to-do-list/api add @aws-sdk/lib-dynamodb@XXXXXXX dynamodb-toolbox
 ```
 
-### 2. The code, in `api/src/articles/`
+### 2. The code, in `api/src/resources/articles/`
 
 The ID rule, `article-id.ts`. Each handler checks its own ID; the router doesn't.
 
@@ -86,13 +86,13 @@ export const findArticle = async (id: string) => {
 };
 ```
 
-One file per route, such as `get-article.ts`. Each exports a `RouteHandler` (from `api/src/route-handler-types.ts`) that takes the whole event and returns a `Result`: the outcome code, a message for the log, and the response.
+One file per route, in `route-handlers/`, such as `route-handlers/get-article.ts`. Name the file after its route handler. Each exports a `RouteHandler` (from `api/src/route-handler-tools/route-handler.ts`) that takes the whole event and returns a `Result`: the outcome code, a message for the log, and the response.
 
 ```ts
-import { errorResult, json } from "../response-builders.ts";
-import type { RouteHandler } from "../route-handler-types.ts";
-import { isValidArticleId } from "./article-id.ts";
-import { findArticle } from "./articles-repository.ts";
+import { errorResult, json } from "../../../route-handler-tools/responses.ts";
+import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+import { isValidArticleId } from "../article-id.ts";
+import { findArticle } from "../articles-repository.ts";
 
 export const getArticle: RouteHandler = async (event) => {
   const articleId = event.pathParameters?.article_id;
@@ -113,7 +113,7 @@ export const getArticle: RouteHandler = async (event) => {
 };
 ```
 
-A route with a body checks it with `readJsonBody` (from `api/src/request-body.ts`) and the route's schema from `@to-do-list/common`. On a bad body, `readJsonBody` gives the whole 400 result, so the handler returns it as it is:
+A route with a body checks it with `readJsonBody` (from `api/src/route-handler-tools/json-body.ts`) and the route's schema from `@to-do-list/common`. On a bad body, `readJsonBody` gives the whole 400 result, so the handler returns it as it is:
 
 ```ts
 const check = readJsonBody(event, createArticleBodySchema);
@@ -127,7 +127,7 @@ The schemas go in `common/src/articles.ts`, one per request body, each with its 
 
 ### 3. The routes and the handlers
 
-Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`, `POST`, `DELETE` and `PATCH`: `api/src/routes.ts` checks it at startup. Name the path parameter after the resource, such as `{article_id}`. The router logs the first path parameter as the `resource_id` key, whatever its name, so give a route at most one. Every path starts with `/api`, the prefix that the frontend's requests use.
+Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`, `POST`, `DELETE` and `PATCH`: `api/src/router/routes.ts` checks it at startup. Name the path parameter after the resource, such as `{article_id}`. The router logs the first path parameter as the `resource_id` key, whatever its name, so give a route at most one. Every path starts with `/api`, the prefix that the frontend's requests use.
 
 ```json
 [
@@ -135,15 +135,15 @@ Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`,
 ]
 ```
 
-Export each handler from `api/src/resource-handlers.ts`, one line each, sorted by module path, as lint requires. Replace the file's `export {};` with the first one:
+Export each route handler from `api/src/router/handler-registry.ts`, one line each, sorted by module path, as lint requires. Replace the file's `export {};` with the first one:
 
 ```ts
-export { getArticle } from "./articles/get-article.ts";
+export { getArticle } from "../resources/articles/route-handlers/get-article.ts";
 ```
 
 ### 4. The outcome codes
 
-Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their comments are generic, so neither file changes. Add a new code only for an ending no existing code describes, with a generic comment like the others: the kind of request, the status, and what happened. A success code goes in `api/src/request-outcome-codes.ts`. An error code goes in `errorOutcomeSchema` in `common/src/error-body.ts`, because the frontend reads it too.
+Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their comments are generic, so neither file changes. Add a new code only for an ending no existing code describes, with a generic comment like the others: the kind of request, the status, and what happened. A success code goes in `api/src/route-handler-tools/outcome-codes.ts`. An error code goes in `errorOutcomeSchema` in `common/src/error-body.ts`, because the frontend reads it too.
 
 ### 5. The table, its policy and its variable, in `infra/modules/app/`
 
@@ -232,16 +232,16 @@ Update `docs/structure.md`.
 ### What catches mistakes
 
 - `pnpm typecheck` (part of `pnpm deploy:dev`): a handler that doesn't match `RouteHandler`, or an outcome code that isn't in `RequestOutcomeCode`.
-- The startup check in `api/src/index.ts`: a `routes.json` entry whose handler isn't exported. Every route then answers 500, and the function's log says `routes.json: no handler named …`.
+- The startup check in `api/src/router/router.ts`: a `routes.json` entry whose handler isn't exported. Every route then answers 500, and the function's log says `routes.json: no handler named …`.
 - The repository's startup check: a missing `ARTICLES_TABLE` stops the function, and every route answers 500.
 - Nothing catches an exported handler that no route names. It's never called.
 - Nothing catches a missing permission before a request uses it: the function's log says `is not authorized to perform: dynamodb:…`, with the action and the ARN.
 
 ## Removing a resource
 
-1. Remove its entries from `api/routes.json` and its lines from `api/src/resource-handlers.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
-2. Delete `api/src/articles/`, `api/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
-3. In `api/src/request-outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
+1. Remove its entries from `api/routes.json` and its lines from `api/src/router/handler-registry.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
+2. Delete `api/src/resources/articles/`, `api/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
+3. In `api/src/route-handler-tools/outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
 4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `api/.env.example` and `api/.env` too.
 5. Deploy: `pnpm deploy:dev`. Read the plan before answering `yes`: the table and the policy destroyed, one route destroyed per removed entry, and the function updated. **Destroying the table deletes every item in it.** No undo. See [Its data goes with the table](#its-data-goes-with-the-table).
 6. If it was the last resource, also delete `infra/modules/app/dynamodb.tf`, and remove `@aws-sdk/lib-dynamodb` and `dynamodb-toolbox` from the API, with your dev server stopped: `pnpm --filter @to-do-list/api remove @aws-sdk/lib-dynamodb dynamodb-toolbox`.

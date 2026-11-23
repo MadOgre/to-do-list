@@ -1,5 +1,14 @@
-import routesJson from "../routes.json" with { type: "json" };
-import type { HttpMethod, Route } from "./route-handler-types.ts";
+import routesJson from "../../routes.json" with { type: "json" };
+
+// The HTTP methods a route can use. The startup check below checks routes.json against them.
+export type HttpMethod = "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
+
+// One entry in routes.json: the HTTP method and path, and the name of the route handler that answers them.
+export type Route = {
+  method: HttpMethod;
+  path: string;
+  handler: string;
+};
 
 // The methods a route in routes.json can use.
 const HTTP_METHODS: HttpMethod[] = ["GET", "PUT", "POST", "DELETE", "PATCH"];

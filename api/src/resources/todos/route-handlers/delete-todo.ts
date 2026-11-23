@@ -1,7 +1,7 @@
-import { errorResult, noContent } from "../response-builders.ts";
-import type { RouteHandler } from "../route-handler-types.ts";
-import { isValidTodoId } from "./todo-id.ts";
-import * as todosRepository from "./todos-repository.ts";
+import { errorResult, noContent } from "../../../route-handler-tools/responses.ts";
+import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+import { isValidTodoId } from "../todo-id.ts";
+import * as todosRepository from "../todos-repository.ts";
 
 export const deleteTodo: RouteHandler = async (event) => {
   const todoId = event.pathParameters?.todo_id;

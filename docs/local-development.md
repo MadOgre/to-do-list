@@ -42,7 +42,7 @@ The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api`
 
 ## The API's dev server
 
-`api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/index.ts`), and turns the result into an HTTP response. With no routes yet, it answers every request as API Gateway does, with a 404 and `{"message":"Not Found"}`.
+`api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/router/router.ts`), and turns the result into an HTTP response. With no routes yet, it answers every request as API Gateway does, with a 404 and `{"message":"Not Found"}`.
 
 Only the code is local. Once a resource uses AWS, the code reads and writes the real resources in AWS, with your own credentials. If you're not signed in, the server says so when it starts and when a request fails for that reason.
 

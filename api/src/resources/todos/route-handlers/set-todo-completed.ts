@@ -1,10 +1,10 @@
 import { setTodoCompletedBodySchema } from "@to-do-list/common";
 
-import { readJsonBody } from "../request-body.ts";
-import { errorResult, json } from "../response-builders.ts";
-import type { RouteHandler } from "../route-handler-types.ts";
-import { isValidTodoId } from "./todo-id.ts";
-import * as todosRepository from "./todos-repository.ts";
+import { readJsonBody } from "../../../route-handler-tools/json-body.ts";
+import { errorResult, json } from "../../../route-handler-tools/responses.ts";
+import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+import { isValidTodoId } from "../todo-id.ts";
+import * as todosRepository from "../todos-repository.ts";
 
 export const setTodoCompleted: RouteHandler = async (event) => {
   const todoId = event.pathParameters?.todo_id;

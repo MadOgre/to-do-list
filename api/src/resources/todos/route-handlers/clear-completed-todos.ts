@@ -1,6 +1,6 @@
-import { errorResult, noContent } from "../response-builders.ts";
-import type { RouteHandler } from "../route-handler-types.ts";
-import * as todosRepository from "./todos-repository.ts";
+import { errorResult, noContent } from "../../../route-handler-tools/responses.ts";
+import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+import * as todosRepository from "../todos-repository.ts";
 
 export const clearCompletedTodos: RouteHandler = async (event) => {
   // Only ?completed=true clears. Without the filter, DELETE /api/todos would read as "delete every Todo".

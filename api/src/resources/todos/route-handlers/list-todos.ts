@@ -1,6 +1,6 @@
-import { json } from "../response-builders.ts";
-import type { RouteHandler } from "../route-handler-types.ts";
-import * as todosRepository from "./todos-repository.ts";
+import { json } from "../../../route-handler-tools/responses.ts";
+import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+import * as todosRepository from "../todos-repository.ts";
 
 export const listTodos: RouteHandler = async () => {
   const todos = await todosRepository.listTodos(todosRepository.DEMO_OWNER_ID);

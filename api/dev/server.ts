@@ -1,4 +1,4 @@
-// The local dev server: runs the real router (src/index.ts) on your machine.
+// The local dev server: runs the real router (src/router/router.ts, through src/index.ts) on your machine.
 // Express plays API Gateway's part: it matches routes.json's routes, builds the event
 // the function would get, and turns the function's result into an HTTP response.
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
@@ -7,8 +7,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import { randomUUID } from "node:crypto";
 
 import { handler } from "../src/index.ts";
-import type { HttpMethod } from "../src/route-handler-types.ts";
-import { routes } from "../src/routes.ts";
+import { type HttpMethod, routes } from "../src/router/routes.ts";
 import { makeLocalContext } from "./local-context.ts";
 
 const { PORT } = process.env;

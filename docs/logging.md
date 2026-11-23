@@ -46,7 +46,7 @@ that's Lambda's own ID, and Lambda's records keep it under `record.requestId`.
 ## The function's outcome line
 
 The router writes it once per request, after the handler returns
-(`api/src/index.ts`). Errors are logged at level `ERROR` with `outcome` `error`, then
+(`api/src/router/router.ts`). Errors are logged at level `ERROR` with `outcome` `error`, then
 thrown again, so Lambda counts a failure and the client gets API Gateway's 500.
 
 | Key | What it holds |
@@ -66,7 +66,7 @@ Powertools adds `level`, `timestamp`, `service` (`to-do-list-api`, the same in e
 ## Outcome codes
 
 The full list, with when each happens, is the `RequestOutcomeCode` type in
-`api/src/request-outcome-codes.ts`. Its error codes with a body (`not_found`, `version_conflict`,
+`api/src/route-handler-tools/outcome-codes.ts`. Its error codes with a body (`not_found`, `version_conflict`,
 `invalid_id`, `invalid_body` and `invalid_query`) come from `errorOutcomeSchema` in `common/src/error-body.ts`,
 because the frontend reads them too. The code is type-checked against it, so it's always
 current. For example, to find every request for a missing item in a Log Analytics query:

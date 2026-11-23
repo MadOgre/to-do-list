@@ -1,10 +1,10 @@
 import type { Todo } from "@to-do-list/common";
 import { randomUUIDv7 } from "node:crypto";
 
-import { noContent } from "../response-builders.ts";
-import type { RouteHandler } from "../route-handler-types.ts";
-import { DEMO_TODOS } from "./demo-todos.ts";
-import * as todosRepository from "./todos-repository.ts";
+import { noContent } from "../../../route-handler-tools/responses.ts";
+import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+import { DEMO_TODOS } from "../demo-todos.ts";
+import * as todosRepository from "../todos-repository.ts";
 
 // Temporary: the frontend's Restore Demo Todos link calls this route. Delete the route together with the link.
 export const restoreDemoTodos: RouteHandler = async () => {

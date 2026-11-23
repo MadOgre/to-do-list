@@ -1,7 +1,7 @@
 import type { ErrorBody, ErrorOutcome } from "@to-do-list/common";
 import type { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
 
-import type { Result } from "./route-handler-types.ts";
+import type { Result } from "./route-handler.ts";
 
 const JSON_CONTENT_TYPE = "application/json";
 

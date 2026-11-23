@@ -1,8 +1,8 @@
 import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import * as z from "zod";
 
-import { errorResult } from "./response-builders.ts";
-import type { Result } from "./route-handler-types.ts";
+import { errorResult } from "./responses.ts";
+import type { Result } from "./route-handler.ts";
 
 // What readJsonBody gives back: the checked body, or the 400 result for the route handler to return.
 type BodyCheck<Body> = { ok: true; body: Body } | { ok: false; result: Result };
