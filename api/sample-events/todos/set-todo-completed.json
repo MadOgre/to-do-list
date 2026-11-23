@@ -1,0 +1,8 @@
+{
+  "routeKey": "PATCH /api/todos/{todo_id}",
+  "rawPath": "/api/todos/00000000-0000-7000-8000-000000000000",
+  "requestContext": { "requestId": "local-set-todo-completed" },
+  "pathParameters": { "todo_id": "00000000-0000-7000-8000-000000000000" },
+  "body": "{\"completed\":true,\"version\":1}",
+  "isBase64Encoded": false
+}

@@ -2,7 +2,7 @@
 
 A resource is one kind of thing the API stores and serves, such as todos. Each resource has its own folders, its own DynamoDB table, plus a few lines in shared files. The router (`api/src/index.ts`), the response builders, the logger and Terraform's route block are shared by every resource and don't change.
 
-The examples add a resource called `articles`, with one route, `GET /api/articles/{id}`, and its handler `getArticle`. Other routes follow the same pattern.
+The examples add a resource called `articles`, with one route, `GET /api/articles/{article_id}`, and its handler `getArticle`. Other routes follow the same pattern.
 
 ## Where a resource lives
 
@@ -95,14 +95,14 @@ import { isValidArticleId } from "./article-id.ts";
 import { findArticle } from "./articles-repository.ts";
 
 export const getArticle: RouteHandler = async (event) => {
-  const id = event.pathParameters?.id;
-  if (!isValidArticleId(id)) {
+  const articleId = event.pathParameters?.article_id;
+  if (!isValidArticleId(articleId)) {
     return errorResult(400, "invalid_id", "the ID isn't 1 to 64 letters, digits or hyphens");
   }
 
-  const article = await findArticle(id);
+  const article = await findArticle(articleId);
   if (article === null) {
-    return errorResult(404, "not_found", `no article with ID ${id}`);
+    return errorResult(404, "not_found", `no article with ID ${articleId}`);
   }
 
   return {
@@ -127,11 +127,11 @@ The schemas go in `common/src/articles.ts`, one per request body, each with its 
 
 ### 3. The routes and the handlers
 
-Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`, `POST`, `DELETE` and `PATCH`: `api/src/routes.ts` checks it at startup. Name the path parameter `{id}`: the router logs `pathParameters.id` as the `resource_id` key. Every path starts with `/api`, the prefix that the frontend's requests use.
+Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`, `POST`, `DELETE` and `PATCH`: `api/src/routes.ts` checks it at startup. Name the path parameter after the resource, such as `{article_id}`. The router logs the first path parameter as the `resource_id` key, whatever its name, so give a route at most one. Every path starts with `/api`, the prefix that the frontend's requests use.
 
 ```json
 [
-  { "method": "GET", "path": "/api/articles/{id}", "handler": "getArticle" }
+  { "method": "GET", "path": "/api/articles/{article_id}", "handler": "getArticle" }
 ]
 ```
 
@@ -213,10 +213,10 @@ Add one sample event per route to `api/sample-events/articles/`, such as `get-ar
 
 ```json
 {
-  "routeKey": "GET /api/articles/{id}",
+  "routeKey": "GET /api/articles/{article_id}",
   "rawPath": "/api/articles/first-article",
   "requestContext": { "requestId": "local-get-article" },
-  "pathParameters": { "id": "first-article" },
+  "pathParameters": { "article_id": "first-article" },
   "isBase64Encoded": false
 }
 ```

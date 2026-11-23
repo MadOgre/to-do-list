@@ -1,0 +1,8 @@
+{
+  "routeKey": "DELETE /api/todos",
+  "rawPath": "/api/todos",
+  "rawQueryString": "completed=true",
+  "requestContext": { "requestId": "local-clear-completed-todos" },
+  "queryStringParameters": { "completed": "true" },
+  "isBase64Encoded": false
+}

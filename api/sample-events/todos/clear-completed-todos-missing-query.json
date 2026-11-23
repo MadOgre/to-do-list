@@ -1,0 +1,6 @@
+{
+  "routeKey": "DELETE /api/todos",
+  "rawPath": "/api/todos",
+  "requestContext": { "requestId": "local-clear-completed-todos-missing-query" },
+  "isBase64Encoded": false
+}

@@ -203,12 +203,19 @@ to-do-list/
 │   │   ├── logger.ts                 the one Powertools Logger the whole function writes with
 │   │   └── todos/
 │   │       ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
-│   │       │                         DEMO_OWNER_ID, the one owner until the login: creates Todos,
-│   │       │                         lists one owner's Todos newest first, deletes them, and marks one
-│   │       │                         Completed or Active; the table name comes from TODOS_TABLE
+│   │       │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
+│   │       │                         changes and deletes one owner's Todos; the table name comes from
+│   │       │                         TODOS_TABLE
 │   │       ├── list-todos.ts         GET /api/todos: the owner's Todos, newest first
 │   │       ├── create-todo.ts        POST /api/todos: checks the body, makes the ID (a version 7 UUID),
 │   │       │                         writes the Todo and returns it with 201
+│   │       ├── set-todo-completed.ts PATCH /api/todos/{todo_id}: sets completed if the version is the
+│   │       │                         stored one, and returns the Todo; 409 for a stale version
+│   │       ├── delete-todo.ts        DELETE /api/todos/{todo_id}: 204, also when there's no such Todo
+│   │       ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed Todo
+│   │       ├── restore-demo-todos.ts POST /api/demo-todos/restore: replaces every Todo with the Demo
+│   │       │                         Todos. Temporary, for the frontend's Restore Demo Todos link
+│   │       ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
 │   │       └── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
 │   ├── dev/
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
@@ -218,7 +225,8 @@ to-do-list/
 │   │   └── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
 │   │                       stand-in Lambda context
 │   └── sample-events/      sample API Gateway events for pnpm invoke, one folder per resource
-│       └── todos/          list-todos.json, create-todo.json and create-todo-invalid-body.json
+│       └── todos/          one file per route, and the bad requests: create-todo-invalid-body.json
+│                           and clear-completed-todos-missing-query.json
 │
 ├── common/                 the shared contract, as the package @to-do-list/common: the zod schemas
 │   │                       that api/ and frontend/ both import. No build of its own: esbuild, Vite

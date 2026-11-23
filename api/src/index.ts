@@ -26,7 +26,9 @@ export const handler = async (
   logger.resetKeys();
   logger.addContext(context);
   logger.setCorrelationId(event.requestContext.requestId);
-  logger.appendKeys({ route: event.routeKey, resource_id: event.pathParameters?.id });
+  // resource_id: the ID in the path, whatever its name, such as {todo_id}. Every route has at most one.
+  const resourceId = Object.values(event.pathParameters ?? {})[0];
+  logger.appendKeys({ route: event.routeKey, resource_id: resourceId });
 
   try {
     const routeHandler = handlersByRouteKey.get(event.routeKey);

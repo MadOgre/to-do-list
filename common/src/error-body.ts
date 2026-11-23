@@ -7,6 +7,7 @@ export const errorOutcomeSchema = z.enum([
   "version_conflict", // change one item by ID: 409, the item changed after the client read it.
   "invalid_id",       // any request with an ID: 400, the ID breaks its resource's ID rule.
   "invalid_body",     // create or change: 400, the body isn't JSON, or doesn't match the resource's schema.
+  "invalid_query",    // any request with a query string: 400, a query parameter is missing or has a wrong value.
 ]);
 
 export type ErrorOutcome = z.infer<typeof errorOutcomeSchema>;
