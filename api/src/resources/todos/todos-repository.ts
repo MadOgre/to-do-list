@@ -1,6 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import type { Todo } from "@to-do-list/common";
 import { Entity } from "dynamodb-toolbox/entity";
 import { DeleteItemCommand } from "dynamodb-toolbox/entity/actions/delete";
 import { PutItemCommand } from "dynamodb-toolbox/entity/actions/put";
@@ -12,6 +11,8 @@ import { string } from "dynamodb-toolbox/schema/string";
 import { Table } from "dynamodb-toolbox/table";
 import { DeletePartitionCommand } from "dynamodb-toolbox/table/actions/deletePartition";
 import { QueryCommand } from "dynamodb-toolbox/table/actions/query";
+
+import type { Todo } from "@to-do-list/common";
 
 const { TODOS_TABLE } = process.env;
 if (!TODOS_TABLE) {

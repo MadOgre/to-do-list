@@ -1,5 +1,6 @@
-import { errorBodySchema, type ErrorOutcome } from "@to-do-list/common";
 import { isAxiosError } from "axios";
+
+import { errorBodySchema, type ErrorOutcome } from "@to-do-list/common";
 
 // The text that people see for each error outcome of the API. The API's own message is for developers.
 // The Record type needs a text for every code, so a new code in common/ fails the build until it has one.

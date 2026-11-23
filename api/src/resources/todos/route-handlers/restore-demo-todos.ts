@@ -1,5 +1,6 @@
-import type { Todo } from "@to-do-list/common";
 import { randomUUIDv7 } from "node:crypto";
+
+import type { Todo } from "@to-do-list/common";
 
 import { noContent } from "../../../route-handler-tools/responses.ts";
 import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";

@@ -1,5 +1,6 @@
-import type { ErrorBody, ErrorOutcome } from "@to-do-list/common";
 import type { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
+
+import type { ErrorBody, ErrorOutcome } from "@to-do-list/common";
 
 import type { Result } from "./route-handler.ts";
 
