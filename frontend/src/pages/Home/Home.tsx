@@ -6,9 +6,9 @@ import {
   useClearCompletedTodos,
   useCreateTodo,
   useDeleteTodo,
-  useRestoreTodos,
-  useTodos,
-  useUpdateTodo,
+  useListTodos,
+  useRestoreDemoTodos,
+  useSetTodoCompleted,
 } from "@/apiHooks";
 import { NewTodoInput, ThemeToggle, TodoFilters, TodoFooter, TodoRow } from "@/components";
 import type { Todo, TodoFilter } from "@/interfaces";
@@ -16,12 +16,12 @@ import type { Todo, TodoFilter } from "@/interfaces";
 import classes from "./Home.module.scss";
 
 export const Home: FC = () => {
-  const { data: todos, isError } = useTodos();
+  const { data: todos, isError } = useListTodos();
   const createTodo = useCreateTodo();
-  const updateTodo = useUpdateTodo();
+  const setTodoCompleted = useSetTodoCompleted();
   const deleteTodo = useDeleteTodo();
   const clearCompletedTodos = useClearCompletedTodos();
-  const restoreTodos = useRestoreTodos();
+  const restoreDemoTodos = useRestoreDemoTodos();
   // Starts at All on every load: the filter isn't stored or put in the URL.
   const [filter, setFilter] = useState<TodoFilter>("all");
 
@@ -77,7 +77,7 @@ export const Home: FC = () => {
       children: <Text size="sm">Your current todos will be replaced by the six demo todos.</Text>,
       labels: { confirm: "Restore", cancel: "Cancel" },
       confirmProps: { color: "red" },
-      onConfirm: () => restoreTodos.mutate(),
+      onConfirm: () => restoreDemoTodos.mutate(),
     });
 
   return (
@@ -98,7 +98,7 @@ export const Home: FC = () => {
                   <TodoRow
                     key={todo.todo_id}
                     todo={todo}
-                    onToggle={(completed) => updateTodo.mutate({ todoId: todo.todo_id, input: { completed, version: todo.version } })}
+                    onToggle={(completed) => setTodoCompleted.mutate({ todoId: todo.todo_id, input: { completed, version: todo.version } })}
                     onDelete={() => confirmDelete(todo)}
                   />
                 ))}
@@ -120,8 +120,8 @@ export const Home: FC = () => {
               </Card>
             </>
           )}
-          {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreTodos and
-              useRestoreTodos. Shown even when the list fails to load. */}
+          {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreDemoTodos and
+              useRestoreDemoTodos. Shown even when the list fails to load. */}
           <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={classes.restoreLink}>
             Restore demo todos
           </Anchor>

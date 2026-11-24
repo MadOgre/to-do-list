@@ -4,15 +4,15 @@ import {
   clearCompletedTodos,
   createTodo,
   deleteTodo,
-  getTodos,
-  restoreTodos,
-  updateTodo,
+  listTodos,
+  restoreDemoTodos,
+  setTodoCompleted,
 } from "@/api";
-import type { UpdateTodoInput } from "@/interfaces";
+import type { SetTodoCompletedBody } from "@/interfaces";
 
 const todosQueryKey = ["todos"] as const;
 
-export const useTodos = () => useQuery({ queryKey: todosQueryKey, queryFn: getTodos });
+export const useListTodos = () => useQuery({ queryKey: todosQueryKey, queryFn: listTodos });
 
 // Each mutation invalidates the Todo list once it ends, whether it worked or failed, so the list refetches.
 // After a 409 or a 404, the refetch shows the Todos as the API stores them.
@@ -25,10 +25,10 @@ export const useCreateTodo = () => {
   });
 };
 
-export const useUpdateTodo = () => {
+export const useSetTodoCompleted = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ todoId, input }: { todoId: string; input: UpdateTodoInput }) => updateTodo(todoId, input),
+    mutationFn: ({ todoId, input }: { todoId: string; input: SetTodoCompletedBody }) => setTodoCompleted(todoId, input),
     onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
   });
 };
@@ -49,11 +49,11 @@ export const useClearCompletedTodos = () => {
   });
 };
 
-// Temporary: delete it together with restoreTodos and the Restore Demo Todos link.
-export const useRestoreTodos = () => {
+// Temporary: delete it together with restoreDemoTodos and the Restore Demo Todos link.
+export const useRestoreDemoTodos = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: restoreTodos,
+    mutationFn: restoreDemoTodos,
     onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
   });
 };

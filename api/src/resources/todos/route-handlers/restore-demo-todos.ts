@@ -20,7 +20,7 @@ export const restoreDemoTodos: RouteHandler = async () => {
     }
     return { todo_id: todoId, ...demoTodo, version: 1 };
   });
-  await todosRepository.replaceTodos(todosRepository.DEMO_OWNER_ID, todos);
+  await todosRepository.restoreDemoTodos(todosRepository.DEMO_OWNER_ID, todos);
 
   return {
     outcome: "restored",

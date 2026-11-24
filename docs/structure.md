@@ -115,8 +115,8 @@ to-do-list/
 │       │   │                   from VITE_API_BASE_URL
 │       │   ├── errorText.ts    the text that people see for each error outcome of the API, and
 │       │   │                   getErrorText, which reads the outcome from a failed request's error body
-│       │   ├── todos.ts        the Todo API Functions, one request each: list, create, update, delete,
-│       │   │                   clear Completed, and the temporary Restore Demo Todos
+│       │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
+│       │   │                   delete, clear Completed, and the temporary Restore Demo Todos
 │       │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
 │       ├── apiHooks/
 │       │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
@@ -140,7 +140,7 @@ to-do-list/
 │       │   │                                     the Completed check, and the ✕ for deleting
 │       │   └── index.ts        barrel for the images imported from TypeScript
 │       ├── interfaces/     shared types, one file per type and the types derived from it
-│       │   ├── Todo.ts         the Todo type and its create and update input types, from common/
+│       │   ├── Todo.ts         the Todo type and the two request bodies' types, from common/
 │       │   ├── TodoFilter.ts   which Todos the list shows: all, active or completed
 │       │   └── index.ts        barrel for the shared types
 │       ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
