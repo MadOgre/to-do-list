@@ -98,6 +98,7 @@ export const setTodoCompleted = async (
     if (Attributes === undefined) {
       throw new Error(`no attributes returned for todo ${todoId}`);
     }
+    // UpdateItem can't choose which attributes it sends back, so copy a Todo's four attributes, without owner_id.
     const todo: Todo = {
       todo_id: Attributes.todo_id,
       title: Attributes.title,
