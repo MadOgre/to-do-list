@@ -9,16 +9,18 @@ A routing map for the Terraform code. Each folder below is a separate configurat
 | `modules/app/` | Every AWS resource of the app, for one environment | (a module, no state) |
 | `envs/dev/` | The dev environment: uses `modules/app` once and sets the tags | S3, `envs/dev/terraform.tfstate` |
 
-## Where to find, in `modules/app/main.tf`
+## Where to find, in `modules/app/`
 
 | Task | Resource |
 | --- | --- |
-| Lambda runtime, memory, timeout, env vars | `aws_lambda_function.api` |
-| The zip of `api/dist/` | `data.archive_file.api` |
-| Function permissions | `aws_iam_role.api` and its policy attachments |
-| Routes (one per entry in `api/routes.json`) | `aws_apigatewayv2_route.api` |
-| Throttling and the access log format | `aws_apigatewayv2_stage.default` |
-| Log retention | `aws_cloudwatch_log_group.api`, `aws_cloudwatch_log_group.api_access` |
+| Lambda runtime, memory, timeout, env vars | `aws_lambda_function.api` in `main.tf` |
+| The zip of `api/dist/` | `data.archive_file.api` in `main.tf` |
+| Function permissions | `aws_iam_role.api` and its policy attachments in `main.tf` |
+| The todos table's access | `aws_iam_role_policy.api_todos_table` in `main.tf` |
+| The todos table: its name and keys | `aws_dynamodb_table.todos` in `dynamodb.tf` |
+| Routes (one per entry in `api/routes.json`) | `aws_apigatewayv2_route.api` in `main.tf` |
+| Throttling and the access log format | `aws_apigatewayv2_stage.default` in `main.tf` |
+| Log retention | `aws_cloudwatch_log_group.api`, `aws_cloudwatch_log_group.api_access` in `main.tf` |
 
 - `pnpm deploy:dev` (repo root) builds the API, then runs `terraform apply` in `envs/dev/`.
-- A new resource's DynamoDB table goes in `modules/app/dynamodb.tf`, which the first resource creates. See `docs/adding-and-removing-resources.md`.
+- `modules/app/dynamodb.tf` holds one DynamoDB table per resource. A new resource adds its table there. See `docs/adding-and-removing-resources.md`.

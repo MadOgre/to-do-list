@@ -1,4 +1,4 @@
-// Theme-wide overrides of Mantine components, attached through `classNames` in src/theme.ts.
+// Theme-wide overrides of Mantine components, attached through `classNames` in theme.ts, next to this file.
 
 // Centers a Button's text on its capitals. Mantine trims the label's text to the cap height and the baseline
 // (`text-box-trim: trim-both` and `text-box-edge: cap alphabetic`), but the label is a flex container, where the trim

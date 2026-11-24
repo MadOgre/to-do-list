@@ -17,7 +17,7 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
    - **Check:** `pnpm --version` in the repo prints the pinned version.
 3. **Install the packages,** from the repo root: `pnpm install`. If it fails with `EACCES` errors on WSL, close VS Code and run it again: VS Code's file watching can block the install.
 4. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
-5. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials. Until the API has a resource, nothing calls AWS, and the dev server only warns when you're not signed in.
+5. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
 
 ## Running it
 
@@ -42,9 +42,9 @@ The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api`
 
 ## The API's dev server
 
-`api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/router/router.ts`), and turns the result into an HTTP response. With no routes yet, it answers every request as API Gateway does, with a 404 and `{"message":"Not Found"}`.
+`api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/router/router.ts`), and turns the result into an HTTP response. A request that matches no route gets API Gateway's own answer: a 404 and `{"message":"Not Found"}`.
 
-Only the code is local. Once a resource uses AWS, the code reads and writes the real resources in AWS, with your own credentials. If you're not signed in, the server says so when it starts and when a request fails for that reason.
+Only the code is local. The todos routes read and write the real table in AWS, with your own credentials. If you're not signed in, the server says so when it starts and when a request fails for that reason.
 
 Send requests from another terminal:
 
@@ -52,11 +52,11 @@ Send requests from another terminal:
 curl -sS http://localhost:3000/api/anything
 ```
 
-Saving a `.ts` or `.json` file in `api/src/` or `api/dev/`, or saving `api/routes.json` or `api/.env`, restarts the server. `tsc` checks the code before each start. When a change breaks the type check or the server, the terminal shows the error and the server waits. Fixing the file starts it again.
+Saving a `.ts` or `.json` file in `api/src/` or `api/dev/` (except the sample events), or saving `api/routes.json` or `api/.env`, restarts the server. `tsc` checks the code before each start. When a change breaks the type check or the server, the terminal shows the error and the server waits. Fixing the file starts it again.
 
 The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true` in `api/.env`), with the same keys as in CloudWatch. Each response's `apigw-requestid` header is the `correlation_id` of its lines, as in AWS (see [logging.md](logging.md)).
 
-`pnpm invoke` (from `api/`) runs the built function, `api/dist/index.mjs`, with a sample event: `pnpm invoke sample-events/<resource>/<name>.json`. It reads `api/.env` too. Build first with `pnpm build`.
+`pnpm invoke` (from `api/`) runs the built function, `api/dist/index.mjs`, with a sample event: `pnpm invoke dev/sample-events/<resource>/<name>.json`. It reads `api/.env` too. Build first with `pnpm build`.
 
 ## Settings
 
@@ -66,6 +66,7 @@ Node loads `api/.env` with `--env-file`. A variable already set in your shell wi
 | --- | --- |
 | `PORT` | The API dev server's port on `localhost`. |
 | `POWERTOOLS_DEV` | `true` prints each log line as indented JSON. |
+| `TODOS_TABLE` | The todos table's name. Locally, the code uses the dev environment's table, `tdl-dev-todos`. |
 
 When code starts reading a new variable, add it to `api/.env.example`, with a comment, and a placeholder such as `XXXXXXX` for values that differ per person.
 

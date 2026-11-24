@@ -1,8 +1,8 @@
-Status: ready-for-agent
+**Status:** done
 
 # Spec: Todo list MVP
 
-Derived from `INTENT.md` and grilling rounds 1–4 in this folder. Follows ADR-0001 (Mantine provides the components; custom styles stay in SCSS modules). Terms are as defined in `CONTEXT.md`: Todo, Active, Completed, Demo Todos, Restore Demo Todos, Page, Shared Component, API Function, API Hook.
+Derived from `INTENT.md` and grilling rounds 1–4 in this folder. Follows ADR-0001 (Mantine provides the components; custom styles stay in SCSS modules). Terms are as defined in `GLOSSARY.md`: Todo, Active, Completed, Demo Todos, Restore Demo Todos, Page, Shared Component, API Function, API Hook.
 
 `INTENT.md` says "no saving functionality". Grilling round 2 replaced that with `localStorage` persistence through the Todo API. Where they disagree, the rounds and this spec win. `INTENT.md` stays as the developer wrote it.
 
@@ -225,7 +225,7 @@ Until the user changes anything, the list shows the six **Demo Todos** from the 
 
 ### Domain glossary
 
-- `CONTEXT.md` already has Todo, Active, Completed, Demo Todos and Restore Demo Todos, and no longer has Item. No further change.
+- `GLOSSARY.md` already has Todo, Active, Completed, Demo Todos and Restore Demo Todos, and no longer has Item. No further change.
 
 ## Testing Decisions
 

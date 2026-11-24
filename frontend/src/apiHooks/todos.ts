@@ -28,7 +28,7 @@ export const useCreateTodo = () => {
 export const useUpdateTodo = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: UpdateTodoInput }) => updateTodo(id, input),
+    mutationFn: ({ todoId, input }: { todoId: string; input: UpdateTodoInput }) => updateTodo(todoId, input),
     onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
   });
 };

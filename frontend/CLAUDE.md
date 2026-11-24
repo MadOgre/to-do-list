@@ -21,8 +21,8 @@ Page or Shared Component → API Hook (`src/apiHooks/todos.ts`, React Query, key
 | The to-do screen: filter state, counts, empty states, confirm dialogs, the load-error alert | `src/pages/Home/Home.tsx` |
 | One UI piece (input, row, filters, footer, theme toggle) | `src/components/<Name>/<Name>.tsx` and its `.module.scss` |
 | Todo and filter types | `src/interfaces/Todo.ts`, `src/interfaces/TodoFilter.ts` |
-| Colors, font, radius, light and dark CSS variables | `src/theme.ts` |
-| Theme-wide overrides of Mantine components | `src/theme.module.scss` |
+| Colors, font, radius, light and dark CSS variables | `src/theme/theme.ts` |
+| Theme-wide overrides of Mantine components | `src/theme/theme.module.scss` |
 | Sass helpers and breakpoints (they must match the theme) | `src/styles/_mantine.scss` |
 | Design sizes and colors from Figma | `docs/planning/todo-list-mvp/design/FIGMA.md` and `STYLEGUIDE.md` |
 | Dev server port, `/api` proxy, `@/` alias, Sass injection, chunk-size warning limit | `vite.config.ts` |

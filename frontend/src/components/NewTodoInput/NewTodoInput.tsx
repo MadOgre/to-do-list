@@ -2,7 +2,7 @@ import { TextInput } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import type { FC, KeyboardEvent } from "react";
 
-import styles from "./NewTodoInput.module.scss";
+import classes from "./NewTodoInput.module.scss";
 
 export interface NewTodoInputProps {
   // Creates the Todo. The input clears once the returned promise resolves, and keeps the text if it rejects.
@@ -32,8 +32,8 @@ export const NewTodoInput: FC<NewTodoInputProps> = ({ onCreate }) => {
       value={value}
       onChange={setValue}
       onKeyDown={handleKeyDown}
-      leftSection={<span className={styles.circle} />}
-      classNames={{ input: styles.input, section: styles.section }}
+      leftSection={<span className={classes.circle} />}
+      classNames={{ input: classes.input, section: classes.section }}
     />
   );
 };

@@ -1,6 +1,6 @@
 # Folder structure
 
-A map of this repo: what each folder and file is for. It shows what exists today, not plans. Update it whenever a file or folder is added, moved or removed. Files that repeat (one per component, one per planning round) are described by their pattern instead of listed one by one. Terms such as Page, Shared Component, API Function and API Hook are defined in `CONTEXT.md`.
+A map of this repo: what each folder and file is for. It shows what exists today, not plans. Update it whenever a file or folder is added, moved or removed. Files that repeat (one per component, one per planning round) are described by their pattern instead of listed one by one. Terms such as Page, Shared Component, API Function and API Hook are defined in `GLOSSARY.md`.
 
 Generated files aren't listed: `node_modules/` (installed packages), `dist/` (build output, including the zip Terraform uploads), Terraform's `.terraform/` folders (downloaded providers) and the local state file in `infra/bootstrap/`. All are gitignored.
 
@@ -18,24 +18,24 @@ to-do-list/
 │                           in infra/envs/dev),
 │                           and the tools every package shares (TypeScript, ESLint and its plugins)
 ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
-│                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip
+│                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip,
+│                           and the catalog: the one version of each dependency that two or more
+│                           packages list, as "catalog:" (TypeScript locked to one exact version)
 ├── pnpm-lock.yaml          the exact version of every installed package; written by pnpm, committed
 ├── tsconfig.base.json      the TypeScript settings every package shares
 ├── eslint.config.base.js   the lint rules every package shares: quotes, commas, semicolons, indent,
-│                           spaces inside object braces, destructuring, arrow functions, the import
+│                           spaces inside object braces and after async, destructuring, arrow functions, the import
 │                           and export order (through eslint-plugin-perfectionist) and named exports only
 ├── eslint.config.js        lints the root's own files (such as eslint.config.base.js) with those rules;
 │                           each package has its own eslint.config.js
 ├── README.md               the quick start: prerequisites, install and run, the scripts, the docs
 ├── CLAUDE.md               instructions for AI coding agents: the code map (pointers to the CLAUDE.md
-│                           in frontend/, api/ and infra/), where issues, specs and domain docs live,
+│                           in frontend/, api/, common/ and infra/), where issues, specs and domain docs live,
 │                           and the working rules for this repo (workflow, keep the build green, AWS
 │                           and Terraform, review until clean, code conventions, grilling sessions)
-├── CONTEXT.md              the glossary: the project's terms (Page, Shared Component, API Function,
+├── GLOSSARY.md             the project's terms (Page, Shared Component, API Function,
 │                           API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and
 │                           Restore Demo Todos) and the synonyms to avoid
-├── CODE_AUDIT.md           the audit of 2026-11-21: files that may be extraneous, inconsistencies
-│                           between the docs and the code, and the state of each finding
 │
 ├── .claude/
 │   └── settings.json       shared Claude Code project settings: enables the official Figma plugin, so
@@ -56,7 +56,7 @@ to-do-list/
 │   │                                                       custom styles stay in SCSS modules, using
 │   │                                                       Mantine's Sass helpers
 │   ├── agents/
-│   │   ├── domain.md       tells AI coding agents to read CONTEXT.md and the ADRs before exploring,
+│   │   ├── domain.md       tells AI coding agents to read GLOSSARY.md and the ADRs before exploring,
 │   │   │                   and to use the glossary's terms
 │   │   ├── issue-tracker.md   tells AI coding agents that issues and specs are markdown files under
 │   │   │                      docs/planning/, how they're laid out, and that each feature folder
@@ -78,7 +78,7 @@ to-do-list/
 │   ├── package.json        its libraries (React, Mantine, React Router, React Query, axios, the shared schemas from common/), its tools
 │   │                       (Vite and its plugins, Sass, the React lint plugins), and its scripts:
 │   │                       dev, build, lint, preview
-│   ├── GUIDE.md            the frontend's layout and conventions, and where the project came from
+│   ├── GUIDE.md            the frontend's conventions, and where the project came from
 │   ├── CLAUDE.md           for AI coding agents: the frontend's data flow and where to find each part
 │   ├── index.html          the HTML page Vite serves and builds from. Sets the favicon and the "Todo
 │   │                       app" title, loads Josefin Sans from Google Fonts, applies the stored or OS
@@ -108,13 +108,6 @@ to-do-list/
 │       │                   NotFound Page for anything else
 │       ├── queryClient.ts  the React Query client. Its MutationCache shows a red pop-up message for
 │       │                   every failed change, with the text from api/errorText.ts
-│       ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
-│       │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
-│       │                   that sets the design's light and dark colors, the check gradient and the
-│       │                   card shadow
-│       ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
-│       │                       classNames in theme.ts: Button labels centered on their capitals, and
-│       │                       cards in the design's card color
 │       ├── vite-env.d.ts   types the environment variables, and makes reading an undeclared one a
 │       │                   type error
 │       ├── api/
@@ -159,23 +152,32 @@ to-do-list/
 │       │   │               Shows an error alert if the Todos can't be loaded
 │       │   ├── NotFound/   shown for any unknown URL, with a link back home
 │       │   └── index.ts    barrel for the Pages
-│       └── styles/
-│           ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's
-│           │                   base styles: the page's own background color
-│           ├── _mantine.scss   Mantine's Sass helpers (rem, the breakpoints and the hover,
-│           │                   smaller-than, larger-than, light, dark, rtl and ltr mixins), copied
-│           │                   from Mantine's "Usage with Sass" guide. vite.config.ts injects it into
-│           │                   every SCSS file as mantine. Its breakpoints must match the theme's
-│           └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
-│                                   text, as the footer's filters and Clear Completed are drawn
+│       ├── styles/
+│       │   ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's
+│       │   │                   base styles: the page's own background color
+│       │   ├── _mantine.scss   Mantine's Sass helpers (rem, the breakpoints and the hover,
+│       │   │                   smaller-than, larger-than, light, dark, rtl and ltr mixins), copied
+│       │   │                   from Mantine's "Usage with Sass" guide. vite.config.ts injects it into
+│       │   │                   every SCSS file as mantine. Its breakpoints must match the theme's
+│       │   └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
+│       │                           text, as the footer's filters and Clear Completed are drawn
+│       └── theme/
+│           ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
+│           │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
+│           │                   that sets the design's light and dark colors, the check gradient and the
+│           │                   card shadow
+│           ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
+│           │                       classNames in theme.ts: Button labels centered on their capitals, and
+│           │                       cards in the design's card color
+│           └── index.ts        barrel for the theme and its CSS variables resolver
 │
 ├── api/                    the API's code, as the package @to-do-list/api
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
 │   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint), and
 │   │                       its scripts: dev, typecheck, lint, invoke, bundle, build
-│   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
-│   │                       scripts/ and dev/
+│   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/
+│   │                       and dev/
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules and Node globals
 │   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
@@ -226,15 +228,15 @@ to-do-list/
 │   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
 │   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
 │   │                                             Todos link
-│   ├── dev/
-│   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
-│   │   └── local-context.ts  the stand-in Lambda context that server.ts and scripts/invoke.ts pass
-│   ├── scripts/
-│   │   └── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
-│   │                       stand-in Lambda context
-│   └── sample-events/      sample API Gateway events for pnpm invoke, one folder per resource
-│       └── todos/          one file per route, and the bad requests: create-todo-invalid-body.json
+│   └── dev/                the tools that run only on your machine, never in Lambda
+│       ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
+│       │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
+│       ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
+│       │                   stand-in Lambda context
+│       ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+│       └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
+│           │               The dev server doesn't restart when one changes
+│           └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json
 │                           and clear-completed-todos-missing-query.json
 │
 ├── common/                 the shared contract, as the package @to-do-list/common: the zod schemas

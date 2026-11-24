@@ -26,6 +26,8 @@ export const baseConfig = defineConfig([
       "@stylistic/indent": ["error", 2],
       // A space inside the braces of objects, destructuring and imports: { id, title }. Arrays stay ["a", "b"].
       "@stylistic/object-curly-spacing": ["error", "always"],
+      // A space after async in an async arrow function: async (id) =>, not async(id) =>.
+      "@stylistic/space-before-function-paren": ["error", { anonymous: "ignore", named: "ignore", asyncArrow: "always" }],
       "prefer-destructuring": ["error", { object: true, array: false }],
       // Arrow functions wherever possible.
       "func-style": ["error", "expression"],

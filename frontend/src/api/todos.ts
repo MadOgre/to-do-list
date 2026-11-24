@@ -14,13 +14,13 @@ export const createTodo = async (input: CreateTodoInput) => {
   return data;
 };
 
-export const updateTodo = async (id: string, input: UpdateTodoInput) => {
-  const { data } = await apiClient.patch<Todo>(`/todos/${id}`, input);
+export const updateTodo = async (todoId: string, input: UpdateTodoInput) => {
+  const { data } = await apiClient.patch<Todo>(`/todos/${todoId}`, input);
   return data;
 };
 
-export const deleteTodo = async (id: string) => {
-  await apiClient.delete(`/todos/${id}`);
+export const deleteTodo = async (todoId: string) => {
+  await apiClient.delete(`/todos/${todoId}`);
 };
 
 export const clearCompletedTodos = async () => {

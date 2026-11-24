@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 import { moonIcon, sunIcon } from "@/images";
 
-import styles from "./ThemeToggle.module.scss";
+import classes from "./ThemeToggle.module.scss";
 
 // Shows the moon in light and the sun in dark, as in the design. The color scheme may be "auto", so the icon follows the computed one.
 export const ThemeToggle: FC = () => {
@@ -17,7 +17,7 @@ export const ThemeToggle: FC = () => {
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       onClick={() => setColorScheme(isDark ? "light" : "dark")}
     >
-      <Image src={isDark ? sunIcon : moonIcon} alt="" className={styles.icon} />
+      <Image src={isDark ? sunIcon : moonIcon} alt="" className={classes.icon} />
     </ActionIcon>
   );
 };

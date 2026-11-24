@@ -22,17 +22,17 @@
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.104.0",
-    "@types/node": "^26.6.6",
+    "@types/node": "catalog:",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
-    "eslint": "^10.11.0",
+    "eslint": "catalog:",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
-    "globals": "^17.12.0",
+    "globals": "catalog:",
     "sass-embedded": "^1.105.0",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.70.1",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vite": "^8.3.0",
     "vite-plugin-checker": "^0.14.5"
   }

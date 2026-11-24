@@ -23,17 +23,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# Who Terraform runs as, read at run time, so no account ID is written in this file.
-data "aws_caller_identity" "current" {}
-
-output "caller_arn" {
-  value = data.aws_caller_identity.current.arn
-}
-
-output "account_id" {
-  value = data.aws_caller_identity.current.account_id
-}
-
 variable "alert_email" {
   type        = string
   description = "The email address that AWS Budgets sends cost alerts to"

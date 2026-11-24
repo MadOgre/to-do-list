@@ -5,7 +5,7 @@ import type { FC } from "react";
 import { TodoFilters } from "@/components/TodoFilters/TodoFilters";
 import type { TodoFilter } from "@/interfaces";
 
-import styles from "./TodoFooter.module.scss";
+import classes from "./TodoFooter.module.scss";
 
 export interface TodoFooterProps {
   activeCount: number;
@@ -16,14 +16,14 @@ export interface TodoFooterProps {
 
 // The list card's last row. From `sm` up the filters sit in the middle; below it, Home shows them in their own card.
 export const TodoFooter: FC<TodoFooterProps> = ({ activeCount, filter, onFilterChange, onClearCompleted }) => (
-  <div className={styles.footer}>
+  <div className={classes.footer}>
     <Text c="dimmed" fz="inherit" lh="inherit">
       {activeCount === 1 ? "1 item left" : `${activeCount} items left`}
     </Text>
     <Box visibleFrom="sm">
       <TodoFilters filter={filter} onFilterChange={onFilterChange} />
     </Box>
-    <Button variant="transparent" onClick={onClearCompleted} className={styles.clear}>
+    <Button variant="transparent" onClick={onClearCompleted} className={classes.clear}>
       Clear Completed
     </Button>
   </div>

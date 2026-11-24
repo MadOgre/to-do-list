@@ -7,15 +7,15 @@
     "module": "esnext",
     "types": ["vite/client"],
 
-    /* Bundler mode */
+    // Bundler mode
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
 
-    /* Linting */
+    // Linting
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
-    /* Path alias, mirrored in vite.config.ts */
+    // Path alias, mirrored in vite.config.ts
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -4,7 +4,7 @@ Settled in round 1:
 
 - Drag and drop and its hint text are out for now. Drag and drop is planned for later, so nothing should get in its way.
 - The list starts with the six todos from the design. Nothing is saved, so every reload starts over.
-- **Todo** replaces **Item** (now in `CONTEXT.md`, with **Active** and **Completed**). The placeholder Item layers are renamed to Todo, and the mock routes and logic stay in place for a future API.
+- **Todo** replaces **Item** (now in `GLOSSARY.md`, with **Active** and **Completed**). The placeholder Item layers are renamed to Todo, and the mock routes and logic stay in place for a future API.
 - The light/dark switch follows the OS setting at first. Mantine remembers the user's choice in `localStorage`, as it does by default.
 - Enter adds the trimmed text to the **top** of the list as an Active Todo and clears the input. Empty input adds nothing. The circle in the input is decorative.
 - Only the check and the area around it complete a Todo, not the text. Deleting asks for confirmation. No editing.

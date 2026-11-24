@@ -25,4 +25,4 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 | Outcome codes and the log format | `src/route-handler-tools/outcome-codes.ts` (its error codes come from `common/src/error-body.ts`), `docs/logging.md` |
 | The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
 | How the dev server differs from Lambda | `docs/local-development.md` |
-| Run the built function with a sample event | `scripts/invoke.ts` (`pnpm invoke`), `sample-events/` |
+| Run the built function with a sample event | `dev/invoke.ts` (`pnpm invoke`), `dev/sample-events/` |

@@ -8,13 +8,13 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 
 | Place | What the resource has there |
 | --- | --- |
-| `api/package.json` | The other DynamoDB packages, which the first resource adds. `@aws-sdk/client-dynamodb` is already there, for the dev server's AWS sign-in check. |
+| `api/package.json` | Nothing new: the DynamoDB packages are already there, for the todos resource. |
 | `api/src/resources/<resource>/` | Its repository and its ID rule, and `route-handlers/`, with one file per route. |
 | `common/src/<resource>.ts` | Its schemas: the item and each request body. `common/src/index.ts` exports them. |
 | `api/routes.json` | One entry per route. |
 | `api/src/router/handler-registry.ts` | One export line per route handler. |
 | `api/src/route-handler-tools/outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
-| `api/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
+| `api/dev/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
 | `api/.env.example` | Its table's variable. |
 | `infra/modules/app/dynamodb.tf` | Its table. |
 | `infra/modules/app/main.tf` | Its table's policy, and its table's variable in the function. |
@@ -22,9 +22,11 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 
 ## Adding a resource
 
-### 1. The packages, for the first resource only
+### 1. The packages
 
-The first resource brings the DynamoDB packages: `@aws-sdk/lib-dynamodb` and `dynamodb-toolbox`. Replace `XXXXXXX` with the version of `@aws-sdk/client-dynamodb` in `api/package.json`, so the two AWS SDK packages match. Add them to the API's dependencies, from the repo root, with your dev server stopped:
+The DynamoDB packages (`@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb` and `dynamodb-toolbox`) are already in `api/package.json`, so a new resource adds no package.
+
+If the last resource was removed, its removal also removed `@aws-sdk/lib-dynamodb` and `dynamodb-toolbox`. Then add them back. Replace `XXXXXXX` with the version of `@aws-sdk/client-dynamodb` in `api/package.json`, so the two AWS SDK packages match. Run this from the repo root, with your dev server stopped:
 
 ```sh
 pnpm --filter @to-do-list/api add @aws-sdk/lib-dynamodb@XXXXXXX dynamodb-toolbox
@@ -135,7 +137,7 @@ Add one entry per route to `api/routes.json`. The method is one of `GET`, `PUT`,
 ]
 ```
 
-Export each route handler from `api/src/router/handler-registry.ts`, one line each, sorted by module path, as lint requires. Replace the file's `export {};` with the first one:
+Export each route handler from `api/src/router/handler-registry.ts`, one line each, sorted by module path, as lint requires. If the file has only `export {};` (no resource is left), replace that line with the first export:
 
 ```ts
 export { getArticle } from "../resources/articles/route-handlers/get-article.ts";
@@ -147,7 +149,9 @@ Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their c
 
 ### 5. The table, its policy and its variable, in `infra/modules/app/`
 
-Add the table to `dynamodb.tf`. Create the file for the first resource. Its name starts with `local.prefix` (`tdl-<environment>`), so each environment has its own table. Give it one `attribute` block for each key attribute, and only for those: a non-key attribute fails the plan.
+Add the table to `dynamodb.tf`, next to the todos table. If the file doesn't exist (no resource is left), create it. The table's name starts with `local.prefix` (`tdl-<environment>`), so each environment has its own table. Give it one `attribute` block for each key attribute, and only for those: a non-key attribute fails the plan.
+
+The template's table has one key, `id`. The todos table in `dynamodb.tf` is the real example of a table whose items belong to an owner: its partition key is `owner_id`, and its sort key is `todo_id`.
 
 ```hcl
 resource "aws_dynamodb_table" "articles" {
@@ -209,7 +213,7 @@ From the repo root: `pnpm deploy:dev`. Read the plan before answering `yes`. Exp
 
 ### 8. Try it
 
-Add one sample event per route to `api/sample-events/articles/`, such as `get-article.json`:
+Add one sample event per route to `api/dev/sample-events/articles/`, such as `get-article.json`:
 
 ```json
 {
@@ -221,7 +225,7 @@ Add one sample event per route to `api/sample-events/articles/`, such as `get-ar
 }
 ```
 
-Try it from `api/`, after a build: `pnpm invoke sample-events/articles/get-article.json`. `pnpm invoke` uses the real table: an event that writes or deletes changes real data.
+Try it from `api/`, after a build: `pnpm invoke dev/sample-events/articles/get-article.json`. `pnpm invoke` uses the real table: an event that writes or deletes changes real data.
 
 You can also run `pnpm dev` from the repo root and send requests with curl: the local server reads `routes.json`, so the new routes work there with no other change. Both run with your credentials, so a missing permission works locally and fails only in AWS.
 
@@ -240,7 +244,7 @@ Update `docs/structure.md`.
 ## Removing a resource
 
 1. Remove its entries from `api/routes.json` and its lines from `api/src/router/handler-registry.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
-2. Delete `api/src/resources/articles/`, `api/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
+2. Delete `api/src/resources/articles/`, `api/dev/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
 3. In `api/src/route-handler-tools/outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
 4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `api/.env.example` and `api/.env` too.
 5. Deploy: `pnpm deploy:dev`. Read the plan before answering `yes`: the table and the policy destroyed, one route destroyed per removed entry, and the function updated. **Destroying the table deletes every item in it.** No undo. See [Its data goes with the table](#its-data-goes-with-the-table).

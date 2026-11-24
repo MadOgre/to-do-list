@@ -37,7 +37,7 @@ A Todo the user has marked as done.
 _Avoid_: done, finished, checked
 
 **Demo Todos**:
-The six Todos from the design that the list shows until the user's own list is saved, and that Restore Demo Todos brings back. They exist only until the app has a real API.
+The six Todos from the design that Restore Demo Todos puts in the list. They exist only until the app has logins.
 _Avoid_: original, default, seed, sample, starter todos
 
 **Restore Demo Todos**:

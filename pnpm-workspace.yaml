@@ -12,3 +12,13 @@ packages:
 ignoredBuiltDependencies:
   - "@parcel/watcher"
   - esbuild
+
+# One version for each dependency that two or more packages list. Each package lists it as "catalog:".
+# TypeScript is locked to one version, because its minor releases can bring new type errors.
+catalog:
+  "@types/node": ^26.6.6
+  eslint: ^10.11.0
+  globals: ^17.12.0
+  typescript: 6.0.3
+  typescript-eslint: ^8.70.1
+  zod: ^4.6.7

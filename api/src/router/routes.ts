@@ -5,11 +5,11 @@ import routesJson from "../../routes.json" with { type: "json" };
 export type HttpMethod = "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
 
 // One entry in routes.json: the HTTP method and path, and the name of the route handler that answers them.
-export type Route = {
+interface Route {
   method: HttpMethod;
   path: string;
   handler: string;
-};
+}
 
 // The methods a route in routes.json can use.
 const HTTP_METHODS: HttpMethod[] = ["GET", "PUT", "POST", "DELETE", "PATCH"];

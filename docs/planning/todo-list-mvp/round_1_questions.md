@@ -37,7 +37,7 @@ as recommended
 
 ---
 
-❓ **Q3** - **Name of the thing in the list**: `CONTEXT.md` defines **Item** as the placeholder resource and lists "todo" under _Avoid_ for it, because Item was never meant to be a to-do. The design says "todo" ("Create a new todo…") but also "5 items left". I'd add **Todo** to the glossary as the real thing a user adds, completes and deletes, keep **Item** as the placeholder it already is, and treat "items left" as UI copy only. Is **Todo** the term (rather than Task, Entry, …)?
+❓ **Q3** - **Name of the thing in the list**: `GLOSSARY.md` defines **Item** as the placeholder resource and lists "todo" under _Avoid_ for it, because Item was never meant to be a to-do. The design says "todo" ("Create a new todo…") but also "5 items left". I'd add **Todo** to the glossary as the real thing a user adds, completes and deletes, keep **Item** as the placeholder it already is, and treat "items left" as UI copy only. Is **Todo** the term (rather than Task, Entry, …)?
 
 ➡️ Yes: **Todo**, with "task" and "item" under _Avoid_ for it.
 

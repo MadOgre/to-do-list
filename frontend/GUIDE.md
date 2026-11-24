@@ -1,46 +1,22 @@
 # Frontend guide
 
-The frontend's layout and conventions. To install and run the app, see [`docs/local-development.md`](../docs/local-development.md). For the short version, see the root [`README.md`](../README.md).
+The frontend's conventions. To install and run the app, see [`docs/local-development.md`](../docs/local-development.md). For the short version, see the root [`README.md`](../README.md).
 
 A to-do list web app in React + TypeScript, built on Vite, with Mantine, React Router, React Query and axios. ESLint and TypeScript check the code in the editor, in the browser overlay while the dev server runs, and on the command line. SCSS and SCSS modules work out of the box.
 
-The terms used here (Page, Shared Component, API Function, API Hook, Todo) are defined in [`CONTEXT.md`](../CONTEXT.md). Every committed file is explained in [`docs/structure.md`](../docs/structure.md).
+The terms used here (Page, Shared Component, API Function, API Hook, Todo) are defined in [`GLOSSARY.md`](../GLOSSARY.md). Every committed file is explained in [`docs/structure.md`](../docs/structure.md).
 
 ## Scripts
 
-The frontend package's own scripts, run in `frontend/`. From the repo root, `pnpm dev`, `pnpm build` and `pnpm lint` run them together with the API's.
+The frontend's own scripts are `dev`, `build`, `lint` and `preview`, in `package.json`. The root's scripts run them together with the API's: see the [Scripts](../README.md#scripts) table in the README. There is no test runner and no test script: add the testing setup you choose.
 
-| Command | What it does |
-| --- | --- |
-| `pnpm dev` | Serves the app at <http://localhost:9000> with HMR. TypeScript and ESLint errors show in the terminal and the browser overlay. |
-| `pnpm build` | Type-checks, then builds for production into `dist/`. |
-| `pnpm lint` | Runs ESLint over the project. |
-| `pnpm preview` | Serves the production build from `dist/`. |
-
-There is no test runner and no test script: add the testing setup you choose.
-
-## Project layout
-
-```
-src/
-  main.tsx          entry point: providers, router, Mantine and global styles
-  routes.tsx        every route, in React Router's data mode
-  queryClient.ts    the React Query client and its defaults
-  theme.ts          the Mantine theme, with theme.module.scss for its component overrides
-  pages/            one folder per Page, e.g. pages/Home/Home.tsx + Home.module.scss
-  components/       Shared Components, one folder each, e.g. components/TodoRow/TodoRow.tsx + TodoRow.module.scss
-  api/              the shared axios instance and the API Functions
-  apiHooks/         the API Hooks, built on React Query
-  images/           the design's background images and icons
-  interfaces/       shared types, one file per type and the types derived from it
-  styles/           global.scss, loaded once at startup, _mantine.scss, Mantine's Sass helpers, and _text-button.scss
-```
+## Conventions
 
 - **Imports** use the `@/` alias for `src/`, for example `import { Home } from "@/pages"`.
 - **Named exports only.** Lint rejects default exports, except in tool config files.
 - **Barrels:** each area except `styles` has an `index.ts` that re-exports it.
 - **Components** are typed with `FC`, or `FC<ComponentNameProps>` when they take props.
-- **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, which can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See [ADR-0001](../docs/adr/0001-mantine-components-with-scss-modules.md).
+- **Styles:** UI components come from Mantine. Custom styles go in SCSS modules, imported as `classes` (`import classes from "./Home.module.scss";`), as Mantine's docs do. They can use Mantine's CSS variables and its Sass helpers under the `mantine` namespace, injected into every SCSS file: `mantine.rem(16px)`, `@include mantine.hover { … }`, `@include mantine.smaller-than(mantine.$mantine-breakpoint-md) { … }`. Mantine's docs examples use its PostCSS preset's syntax, so translate them to these forms. See [ADR-0001](../docs/adr/0001-mantine-components-with-scss-modules.md).
 - **Environment variables** go in `.env` (committed, with safe defaults) and are typed in `src/vite-env.d.ts`. Override them in `.env.local`, which is gitignored. `VITE_API_BASE_URL` sets the base URL of the shared axios instance.
 
 ### Errors from the API

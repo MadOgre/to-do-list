@@ -1,6 +1,6 @@
 # 04: Deleting a Todo, with confirmation
 
-**Status:** ready-for-agent
+**Status:** done
 
 **Blocked by:** 03
 
@@ -15,7 +15,7 @@
 - [x] The ✕ opens `modals.openConfirmModal`: title "Delete todo?", body "“<title>” will be deleted.", **Cancel** and a red **Delete**
 - [x] Confirming calls `useDeleteTodo`. A failure shows the "Could not save your change." alert from ticket 03
 - [x] `pnpm install`, `pnpm lint`, `pnpm build` and a short `pnpm dev` start all pass with the developer's pnpm and Node
-- [ ] Manual check on `/`:
+- [x] Manual check on `/`:
   - The ✕ shows on hover with a mouse, and always in a touch-emulated view.
   - The dialog names the Todo. Cancel keeps it, Delete removes it, and the deletion survives a reload.
   - Deleting every Todo and reloading leaves the list empty, with no Demo Todos.
@@ -32,3 +32,5 @@
   - The ✕ now sits 20px from the card's edge on mobile and 24px on desktop, as in the Figma frames (now in `design/FIGMA.md`). The margin had counted from the ActionIcon's box, which is wider than the ✕, so the gap was 8px too wide on mobile and 5px on desktop.
   - Button text now centers on its capitals. Mantine trims a Button's label to the cap height and the baseline, but the label is a flex container, where the trim doesn't apply. Josefin Sans then sat the text about 0.1em high: 1.5px at 14px, measured in headless Chrome. The theme (`src/theme.ts`, with `src/theme.module.scss`) makes every Button's label a block, so the trim applies; this also covers ticket 05's footer Buttons. Measured again in the built app, the dialog's Cancel and Delete text sits within 0.01px of center.
 - 2026-10-05: At the developer's request, the ✕ no longer stays visible after a mouse click on the row's check. Showing it for a focused row was meant for keyboard users, but `:focus-within` matched the check that the click had focused. The row now shows the ✕ on hover, or when it holds keyboard focus (`:has(:focus-visible)`). Checked in headless Chrome on the built app, with real input: after the click the ✕ hides once the mouse leaves the row, and tabbing to a check still shows its ✕.
+- 2026-11-23: The developer reports that the manual check on `/` was done and passes.
+- 2026-11-23: Closed. Every box is checked, and the manual check is recorded above.

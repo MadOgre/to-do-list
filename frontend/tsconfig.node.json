@@ -6,10 +6,10 @@
     "lib": ["ES2023"],
     "types": ["node"],
 
-    /* Node-style module resolution for config files */
+    // Node-style module resolution for config files
     "module": "nodenext",
 
-    /* Linting */
+    // Linting
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },

@@ -1,25 +1,12 @@
-import type { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
-
 import type { ErrorBody, ErrorOutcome } from "@to-do-list/common";
 
 import type { Result } from "./route-handler.ts";
 
-const JSON_CONTENT_TYPE = "application/json";
-
-const buildResponse = (
-  statusCode: number,
-  body: string,
-  contentType: string,
-): APIGatewayProxyStructuredResultV2 => ({
+export const json = (statusCode: number, body: unknown) => ({
   statusCode,
-  headers: {
-    "content-type": contentType,
-  },
-  body,
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify(body),
 });
-
-export const json = (statusCode: number, body: unknown) =>
-  buildResponse(statusCode, JSON.stringify(body), JSON_CONTENT_TYPE);
 
 export const noContent = () => ({ statusCode: 204 });
 

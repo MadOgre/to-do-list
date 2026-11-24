@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { checkIcon, crossIcon } from "@/images";
 import type { Todo } from "@/interfaces";
 
-import styles from "./TodoRow.module.scss";
+import classes from "./TodoRow.module.scss";
 
 export interface TodoRowProps {
   todo: Todo;
@@ -18,23 +18,23 @@ const CheckIcon: CheckboxIconComponent = ({ className }) => <img src={checkIcon}
 
 // Only the check and the gutter around it toggle the Todo. The title stays outside the label, so clicking it does nothing.
 export const TodoRow: FC<TodoRowProps> = ({ todo: { title, completed }, onToggle, onDelete }) => (
-  <Group wrap="nowrap" gap={0} align="stretch" className={styles.row}>
-    <label className={styles.gutter}>
+  <Group wrap="nowrap" gap={0} align="stretch" className={classes.row}>
+    <label className={classes.gutter}>
       <Checkbox
         aria-label={title}
         checked={completed}
         onChange={(event) => onToggle(event.currentTarget.checked)}
         radius="xl"
         icon={CheckIcon}
-        classNames={{ root: styles.checkbox, input: styles.input, icon: styles.icon }}
+        classNames={{ root: classes.checkbox, input: classes.input, icon: classes.icon }}
       />
     </label>
-    <Text fz="inherit" lh="inherit" td={completed ? "line-through" : undefined} mod={{ completed }} className={styles.title}>
+    <Text fz="inherit" lh="inherit" td={completed ? "line-through" : undefined} mod={{ completed }} className={classes.title}>
       {title}
     </Text>
     {/* Shown on the hovered or focused row with a mouse, and always on touch screens (see the SCSS module). */}
-    <ActionIcon variant="transparent" aria-label={`Delete “${title}”`} onClick={onDelete} className={styles.delete}>
-      <img src={crossIcon} alt="" className={styles.cross} />
+    <ActionIcon variant="transparent" aria-label={`Delete “${title}”`} onClick={onDelete} className={classes.delete}>
+      <img src={crossIcon} alt="" className={classes.cross} />
     </ActionIcon>
   </Group>
 );

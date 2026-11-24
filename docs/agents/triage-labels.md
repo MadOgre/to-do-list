@@ -14,4 +14,6 @@ When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the 
 
 When a ticket is finished, set its status to `done`: every box is checked, and the developer's manual check is recorded in its comments. This label is this repo's own and has no role in the skills.
 
+Wayfinder tickets (see "Wayfinding operations" in `issue-tracker.md`) don't use these labels: their `Status:` line is `claimed` or `resolved`, because each one is a decision, not implementation work.
+
 Edit the right-hand column to match whatever vocabulary you actually use.

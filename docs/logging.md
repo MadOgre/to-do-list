@@ -54,7 +54,7 @@ thrown again, so Lambda counts a failure and the client gets API Gateway's 500.
 | `message` | What happened, for people to read. Wording may change; don't filter on it. |
 | `outcome` | One fixed code for how the request ended. Filter on this. |
 | `status` | The status code returned (a number). |
-| `route` | The route key, such as `GET /api/articles/{article_id}`. |
+| `route` | The route key, such as `PATCH /api/todos/{todo_id}`. |
 | `resource_id` | The ID from the path, whatever its name, such as `{todo_id}`. Missing on routes without one. |
 | `correlation_id` | API Gateway's request ID. |
 | `error` | On errors only: the error's `name`, `message` and `stack`. |
@@ -79,7 +79,7 @@ Set in `infra/modules/app/main.tf`, in the stage's `access_log_settings`.
 | Key | What it holds |
 | --- | --- |
 | `correlation_id` | API Gateway's request ID (`$context.requestId`). |
-| `route_key` | The route key API Gateway matched, such as `GET /api/articles/{article_id}`. |
+| `route_key` | The route key API Gateway matched, such as `PATCH /api/todos/{todo_id}`. |
 | `path` | The path the client asked for. |
 | `status` | The status sent to the client (a string). |
 | `integration_status` | Lambda's answer to API Gateway's call: 200 when the function ran. |
