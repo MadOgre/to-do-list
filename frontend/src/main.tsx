@@ -12,7 +12,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 
-import { queryClient } from "@/queryClient";
+import { queryClient } from "@/query-client";
 import { router } from "@/routes";
 import "@/styles/global.scss";
 import { cssVariablesResolver, theme } from "@/theme";
@@ -21,7 +21,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* "auto" starts from the OS setting; Mantine's default manager remembers the choice in localStorage. */}
     <MantineProvider theme={theme} cssVariablesResolver={cssVariablesResolver} defaultColorScheme="auto">
-      {/* Renders the pop-up messages that `notifications.show` opens: one for each failed change (see queryClient.ts). */}
+      {/* Renders the pop-up messages that `notifications.show` opens: one for each failed change (see query-client.ts). */}
       <Notifications />
       {/* Renders the dialogs that `modals.openConfirmModal` opens. */}
       <ModalsProvider>

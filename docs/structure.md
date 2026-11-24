@@ -33,9 +33,9 @@ to-do-list/
 │                           in frontend/, api/, common/ and infra/), where issues, specs and domain docs live,
 │                           and the working rules for this repo (workflow, keep the build green, AWS
 │                           and Terraform, review until clean, code conventions, grilling sessions)
-├── GLOSSARY.md             the project's terms (Page, Shared Component, API Function,
-│                           API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and
-│                           Restore Demo Todos) and the synonyms to avoid
+├── GLOSSARY.md             the project's terms and the synonyms to avoid, in five sections: the
+│                           source layout, data access, the API, the to-do list, and the operations
+│                           on Todos, one name for each through every layer
 │
 ├── .claude/
 │   └── settings.json       shared Claude Code project settings: enables the official Figma plugin, so
@@ -106,19 +106,19 @@ to-do-list/
 │       │                   (development only)
 │       ├── routes.tsx      every route, in React Router's data mode: the Home Page at / and the
 │       │                   NotFound Page for anything else
-│       ├── queryClient.ts  the React Query client. Its MutationCache shows a red pop-up message for
-│       │                   every failed change, with the text from api/errorText.ts
+│       ├── query-client.ts the React Query client. Its MutationCache shows a red pop-up message for
+│       │                   every failed change, with the text from api/error-text.ts
 │       ├── vite-env.d.ts   types the environment variables, and makes reading an undeclared one a
 │       │                   type error
 │       ├── api/
-│       │   ├── apiClient.ts    the shared axios instance that the API Functions use, with its base URL
+│       │   ├── api-client.ts   the shared axios instance that the API Functions use, with its base URL
 │       │   │                   from VITE_API_BASE_URL
-│       │   ├── errorText.ts    the text that people see for each error outcome of the API, and
+│       │   ├── error-text.ts   the text that people see for each error outcome of the API, and
 │       │   │                   getErrorText, which reads the outcome from a failed request's error body
 │       │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
 │       │   │                   delete, clear Completed, and the temporary Restore Demo Todos
 │       │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
-│       ├── apiHooks/
+│       ├── api-hooks/
 │       │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
 │       │   │                   refreshes the Todo list when it settles, whether it worked or failed
 │       │   └── index.ts        barrel for the API Hooks
@@ -139,10 +139,6 @@ to-do-list/
 │       │   ├── icon-{moon,sun,check,cross}.svg   the design's icons: the theme toggle's moon and sun,
 │       │   │                                     the Completed check, and the ✕ for deleting
 │       │   └── index.ts        barrel for the images imported from TypeScript
-│       ├── interfaces/     shared types, one file per type and the types derived from it
-│       │   ├── Todo.ts         the Todo type and the two request bodies' types, from common/
-│       │   ├── TodoFilter.ts   which Todos the list shows: all, active or completed
-│       │   └── index.ts        barrel for the shared types
 │       ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
 │       │   │               <Name>/<Name>.module.scss
 │       │   ├── Home/       the "TODO" header with the theme toggle over the background image, the
@@ -161,15 +157,19 @@ to-do-list/
 │       │   │                   every SCSS file as mantine. Its breakpoints must match the theme's
 │       │   └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
 │       │                           text, as the footer's filters and Clear Completed are drawn
-│       └── theme/
-│           ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
-│           │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
-│           │                   that sets the design's light and dark colors, the check gradient and the
-│           │                   card shadow
-│           ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
-│           │                       classNames in theme.ts: Button labels centered on their capitals, and
-│           │                       cards in the design's card color
-│           └── index.ts        barrel for the theme and its CSS variables resolver
+│       ├── theme/
+│       │   ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
+│       │   │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
+│       │   │                   that sets the design's light and dark colors, the check gradient and the
+│       │   │                   card shadow
+│       │   ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
+│       │   │                       classNames in theme.ts: Button labels centered on their capitals, and
+│       │   │                       cards in the design's card color
+│       │   └── index.ts        barrel for the theme and its CSS variables resolver
+│       └── types/          shared types, one file per type and the types derived from it
+│           ├── todo.ts         the Todo type and the two request bodies' types, from common/
+│           ├── todo-filter.ts  which Todos the list shows: all, active or completed
+│           └── index.ts        barrel for the shared types
 │
 ├── api/                    the API's code, as the package @to-do-list/api
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document

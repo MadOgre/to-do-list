@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 // From its own file, not the `@/components` barrel, which re-exports this file too.
 import { TodoFilters } from "@/components/TodoFilters/TodoFilters";
-import type { TodoFilter } from "@/interfaces";
+import type { TodoFilter } from "@/types";
 
 import classes from "./TodoFooter.module.scss";
 

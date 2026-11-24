@@ -1,6 +1,6 @@
-import type { CreateTodoBody, SetTodoCompletedBody, Todo } from "@/interfaces";
+import type { CreateTodoBody, SetTodoCompletedBody, Todo } from "@/types";
 
-import { apiClient } from "./apiClient";
+import { apiClient } from "./api-client";
 
 // Each API Function sends one request to the todos API. apiClient adds the /api prefix.
 

@@ -1,7 +1,7 @@
 import { Button, Group } from "@mantine/core";
 import type { FC } from "react";
 
-import type { TodoFilter } from "@/interfaces";
+import type { TodoFilter } from "@/types";
 
 import classes from "./TodoFilters.module.scss";
 

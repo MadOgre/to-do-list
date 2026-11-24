@@ -1,3 +1,3 @@
-export * from "./apiClient";
-export * from "./errorText";
+export * from "./api-client";
+export * from "./error-text";
 export * from "./todos";

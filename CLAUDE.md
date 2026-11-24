@@ -55,6 +55,14 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **Components are typed with `FC`.** Use `FC` for components without props and `FC<ComponentNameProps>` for components with props. Props interfaces are named `<ComponentName>Props`, never a bare `Props`, because barrels re-export with `export *` and bare names would collide. Import `FC` as a type-only import. The one exception is generic components, which annotate their props parameter instead.
 - **No generics without a reason.** Add a generic type parameter only when it actually links or constrains types that callers rely on. If a type would be erased downstream, or only inferred from the argument and never checked, use `unknown` or a concrete type instead.
 - **`interface` for an object shape.** Write a hand-written object shape as an `interface`. Use `type` for everything else: unions, function types, and the types that come from `z.infer`.
+- **File names (a guideline).** Name files and folders in kebab-case: `todos-repository.ts`, `api-hooks/`, `local-development.md`. The usual exceptions:
+  - A React component's folder and files are PascalCase, after the component: `TodoRow/TodoRow.tsx`.
+  - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`.
+  - A tool's config keeps the name that the tool looks for: `vite.config.ts`, `tsconfig.app.json`.
+  - A Sass partial starts with `_`: `_mantine.scss`.
+  - The grilling rounds keep the name `round_<N>_questions.md`.
+
+  Another exception is fine when a tool, a library or a clear reason needs it. Say why in the commit message.
 - **Imports** sit in up to four sections, in this order, with one blank line between sections and empty sections left out. One blank line follows the last import:
   1. Packages from outside the repo: `"react"`, `"@mantine/core"`, `"axios"`, `"node:url"`.
   2. The workspace packages: `"@to-do-list/common"`.
@@ -65,7 +73,7 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **Readable over clever.** Write the plainest code that does the job, so a reader understands it at first glance: an `if` over a dense one-liner, a named variable over a nested expression, a plain comparison over a `reduce` or a chained ternary, and the obvious language feature over a trick. When code still isn't obvious, add a comment saying what it does and why.
 - **Barrels (frontend):** each area of `frontend/src/` has an `index.ts` barrel, except `styles`. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
 - **Pages (frontend)** live one per folder under `frontend/src/pages/`, with their SCSS module next to them.
-- **Shared types (frontend)** go in `frontend/src/interfaces/`, one file per type, with the types derived from it in the same file.
+- **Shared types (frontend)** go in `frontend/src/types/`, one file per type, with the types derived from it in the same file.
 - **Mantine (frontend,** ADR-0001**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, imported as `classes` (`import classes from "./Home.module.scss";`), as Mantine's docs do. The styles use Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
 - **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `api/.env.example`, with a comment and a placeholder, and each developer's own values in the gitignored `api/.env`.
 

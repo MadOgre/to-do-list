@@ -8,7 +8,7 @@ import {
   restoreDemoTodos,
   setTodoCompleted,
 } from "@/api";
-import type { SetTodoCompletedBody } from "@/interfaces";
+import type { SetTodoCompletedBody } from "@/types";
 
 const todosQueryKey = ["todos"] as const;
 
@@ -16,7 +16,7 @@ export const useListTodos = () => useQuery({ queryKey: todosQueryKey, queryFn: l
 
 // Each mutation invalidates the Todo list once it ends, whether it worked or failed, so the list refetches.
 // After a 409 or a 404, the refetch shows the Todos as the API stores them.
-// queryClient.ts shows the error of a failed mutation.
+// query-client.ts shows the error of a failed mutation.
 export const useCreateTodo = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -2,7 +2,7 @@ import { ActionIcon, Checkbox, type CheckboxIconComponent, Group, Text } from "@
 import type { FC } from "react";
 
 import { checkIcon, crossIcon } from "@/images";
-import type { Todo } from "@/interfaces";
+import type { Todo } from "@/types";
 
 import classes from "./TodoRow.module.scss";
 

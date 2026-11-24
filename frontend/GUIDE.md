@@ -21,7 +21,7 @@ The frontend's own scripts are `dev`, `build`, `lint` and `preview`, in `package
 
 ### Errors from the API
 
-The API Functions in `src/api/todos.ts` call the API through the shared axios instance. A failed change shows a red pop-up message from one place, the `MutationCache` in `src/queryClient.ts`. API Hooks and Pages don't show errors of changes. The text for each error code is in `src/api/errorText.ts`. When `common/` gets a new error code, the build fails until `ERROR_TEXTS` has a text for it.
+The API Functions in `src/api/todos.ts` call the API through the shared axios instance. A failed change shows a red pop-up message from one place, the `MutationCache` in `src/query-client.ts`. API Hooks and Pages don't show errors of changes. The text for each error code is in `src/api/error-text.ts`. When `common/` gets a new error code, the build fails until `ERROR_TEXTS` has a text for it.
 
 ### Barrels and lazy-loaded routes
 

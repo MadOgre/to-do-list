@@ -21,7 +21,7 @@ export const NewTodoInput: FC<NewTodoInputProps> = ({ onCreate }) => {
     onCreate(title)
       .then(() => setValue(""))
       .catch(() => {
-        // queryClient.ts shows the error. Keep the typed text so the user can try again.
+        // query-client.ts shows the error. Keep the typed text so the user can try again.
       });
   };
 

@@ -9,9 +9,9 @@ import {
   useListTodos,
   useRestoreDemoTodos,
   useSetTodoCompleted,
-} from "@/apiHooks";
+} from "@/api-hooks";
 import { NewTodoInput, ThemeToggle, TodoFilters, TodoFooter, TodoRow } from "@/components";
-import type { Todo, TodoFilter } from "@/interfaces";
+import type { Todo, TodoFilter } from "@/types";
 
 import classes from "./Home.module.scss";
 
