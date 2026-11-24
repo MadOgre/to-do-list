@@ -47,7 +47,7 @@ _Avoid_: status, result code, error code
 ## To-do list
 
 **Todo**:
-Something the user wants to do, added to the list by typing it in. Every Todo is either Active or Completed.
+Something a User wants to do, added to the list by typing it in. Every Todo is either Active or Completed.
 _Avoid_: task, item, entry
 
 **Active**:
@@ -55,12 +55,15 @@ A Todo that is not yet done. "Items left" counts the Active Todos.
 _Avoid_: open, pending, incomplete
 
 **Completed**:
-A Todo the user has marked as done.
+A Todo a User has marked as done.
 _Avoid_: done, finished, checked
 
 **Owner**:
 The person a Todo belongs to. Until the app has logins, every Todo has the same Owner, the Demo Owner.
-_Avoid_: user, account
+_Avoid_: account; and user for the Owner of a Todo (see User)
+
+**User**:
+A person who uses the app. Once the app has logins, a User signs in, and is the Owner of their own Todos.
 
 **Version**:
 A number on each Todo that grows by one with each change. A change that names an older Version fails, so two tabs can't overwrite each other's changes.
@@ -93,5 +96,5 @@ Deleting every Completed Todo of one Owner at once.
 _Avoid_: purge, delete completed
 
 **Restore Demo Todos**:
-Replacing the user's whole list with the Demo Todos.
+Replacing every Todo of one Owner with the Demo Todos.
 _Avoid_: reset, clear all
