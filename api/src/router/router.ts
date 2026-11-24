@@ -5,7 +5,8 @@ import * as handlers from "./handler-registry.ts";
 import { logger } from "./logger.ts";
 import { routes } from "./routes.ts";
 
-// Look handlers up by the name routes.json gives them.
+// `import * as` gives one object with a key for each export of handler-registry.ts,
+// so the route handlers can be looked up by the name that routes.json gives them.
 const handlersByName: Record<string, RouteHandler> = handlers;
 
 // Startup check: every route in routes.json names a handler that exists.
