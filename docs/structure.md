@@ -192,9 +192,9 @@ to-do-list/
 │   │   │   ├── router.ts             checks at startup that every route in routes.json has a route handler,
 │   │   │   │                         then sends each request to its route handler and writes one log line
 │   │   │   │                         with the request's outcome
-│   │   │   ├── routes.ts             Route (one entry in routes.json) and HttpMethod (the methods a route
-│   │   │   │                         can use); loads routes.json, and checks at startup that every route
-│   │   │   │                         uses a known method
+│   │   │   ├── routes.ts             HttpMethod (the methods a route can use); loads routes.json, and
+│   │   │   │                         checks each entry at startup with a zod schema: a known method, a
+│   │   │   │                         path and a handler name
 │   │   │   ├── handler-registry.ts   re-exports every route handler, under the name routes.json uses
 │   │   │   └── logger.ts             the one Powertools Logger the whole function writes with
 │   │   ├── route-handler-tools/      what a route handler uses to read the request and write the response

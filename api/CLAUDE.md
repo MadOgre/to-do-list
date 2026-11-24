@@ -19,7 +19,7 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 | --- | --- |
 | Add or remove a resource (routes, handlers, table, policy, env var, sample events, docs) | `docs/adding-and-removing-resources.md`: it lists every place, with templates |
 | The route handler and result types | `src/route-handler-tools/route-handler.ts` |
-| The route and method types | `src/router/routes.ts` |
+| The method type, and the startup check of `routes.json` | `src/router/routes.ts` |
 | Build a response, or a failed request's whole result | `src/route-handler-tools/responses.ts` |
 | Read and check a JSON request body | `src/route-handler-tools/json-body.ts` (`readJsonBody`) |
 | Outcome codes and the log format | `src/route-handler-tools/outcome-codes.ts` (its error codes come from `common/src/error-body.ts`), `docs/logging.md` |
