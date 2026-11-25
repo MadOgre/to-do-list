@@ -3,10 +3,6 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 
-// The absolute path of Mantine's Sass helpers, for the `@use` injected into every SCSS file below.
-// Sass `@use` paths need forward slashes, so Windows backslashes are replaced.
-const mantineSassHelpersPath = fileURLToPath(new URL("./src/styles/_mantine", import.meta.url)).replaceAll("\\", "/");
-
 export default defineConfig({
   plugins: [
     react(),
@@ -40,8 +36,9 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         // Mantine's "Usage with Sass" setup: every SCSS file gets Mantine's helpers as the `mantine` namespace.
+        // The guide builds an absolute path to the helpers. The `@/` alias below finds them too, as in any SCSS file.
         // The guide's `api: "modern-compiler"` is left out: Vite 8 has no `api` option.
-        additionalData: `@use "${mantineSassHelpersPath}" as mantine;`,
+        additionalData: '@use "@/styles/mantine" as mantine;',
       },
     },
   },
