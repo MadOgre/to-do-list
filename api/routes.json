@@ -1,1 +1,8 @@
-[]
+[
+  { "method": "GET", "path": "/api/todos", "handler": "listTodos" },
+  { "method": "POST", "path": "/api/todos", "handler": "createTodo" },
+  { "method": "PATCH", "path": "/api/todos/{todo_id}", "handler": "setTodoCompleted" },
+  { "method": "DELETE", "path": "/api/todos/{todo_id}", "handler": "deleteTodo" },
+  { "method": "DELETE", "path": "/api/todos", "handler": "clearCompletedTodos" },
+  { "method": "POST", "path": "/api/demo-todos/restore", "handler": "restoreDemoTodos" }
+]

@@ -1,8 +1,8 @@
-Status: ready-for-agent
+**Status:** done
 
 # Spec: Mantine install
 
-Derived from `INTENT.md` and grilling rounds 1–3 in this folder. The styling decision is recorded in ADR-0002 (Mantine provides the components; custom styles stay in SCSS modules).
+Derived from `INTENT.md` and grilling rounds 1–3 in this folder. The styling decision is recorded in ADR-0001 (Mantine provides the components; custom styles stay in SCSS modules).
 
 ## Problem Statement
 
@@ -75,8 +75,8 @@ Install Mantine (core components and hooks) and configure it once at the app roo
   - custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the injected `mantine` helpers
   - Mantine docs examples written for `postcss-preset-mantine` are translated to the Sass form (`mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`)
 
-  Point to ADR-0002.
-- **ADR.** ADR-0002 is already written. Implementation follows it and doesn't need to change it.
+  Point to ADR-0001.
+- **ADR.** ADR-0001 is already written. Implementation follows it and doesn't need to change it.
 - **Domain glossary.** No change. Mantine is tooling, not a domain term. The existing terms (Page, Item, API Hook) are used as defined.
 
 ## Testing Decisions
@@ -103,7 +103,7 @@ Install Mantine (core components and hooks) and configure it once at the app roo
 ## Out of Scope
 
 - A test runner (Vitest, Testing Library, Playwright) and automated tests. That's a feature of its own.
-- `postcss-preset-mantine`, `postcss-simple-vars` and any `.module.css` files (ADR-0002).
+- `postcss-preset-mantine`, `postcss-simple-vars` and any `.module.css` files (ADR-0001).
 - Dark mode, an `auto` color scheme, a color-scheme toggle, and the `index.html` color-scheme script.
 - Optional Mantine packages: form, notifications, dates, modals, code highlight, and so on.
 - Wrapping or re-exporting Mantine components, and any Shared Components.

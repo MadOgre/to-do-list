@@ -16,8 +16,8 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "eslint": "^10.11.0",
+    "eslint": "catalog:",
     "eslint-plugin-perfectionist": "^5.12.1",
-    "typescript": "6.0.3"
+    "typescript": "catalog:"
   }
 }

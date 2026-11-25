@@ -1,4 +1,4 @@
-import { Alert, Anchor, Card, Container, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Card, Stack, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { type FC, useState } from "react";
 
@@ -6,30 +6,24 @@ import {
   useClearCompletedTodos,
   useCreateTodo,
   useDeleteTodo,
-  useRestoreTodos,
-  useTodos,
-  useUpdateTodo,
-} from "@/apiHooks";
-import { NewTodoInput, ThemeToggle, TodoFilters, TodoFooter, TodoRow } from "@/components";
-import type { Todo, TodoFilter } from "@/interfaces";
+  useListTodos,
+  useRestoreDemoTodos,
+  useSetTodoCompleted,
+} from "@/api-hooks";
+import { NewTodoInput, PageLayout, TodoFilters, TodoFooter, TodoRow } from "@/components";
+import type { Todo, TodoFilter } from "@/types";
 
-import styles from "./Home.module.scss";
+import classes from "./Home.module.scss";
 
 export const Home: FC = () => {
-  const { data: todos, isError } = useTodos();
+  const { data: todos, isError } = useListTodos();
   const createTodo = useCreateTodo();
-  const updateTodo = useUpdateTodo();
+  const setTodoCompleted = useSetTodoCompleted();
   const deleteTodo = useDeleteTodo();
   const clearCompletedTodos = useClearCompletedTodos();
-  const restoreTodos = useRestoreTodos();
+  const restoreDemoTodos = useRestoreDemoTodos();
   // Starts at All on every load: the filter isn't stored or put in the URL.
   const [filter, setFilter] = useState<TodoFilter>("all");
-  // The alert follows the most recent change, so a later success clears an earlier failure. `submittedAt` is when
-  // each mutation last ran (0 if never), so sorting by it, newest first, puts the most recent change first. A failed
-  // change leaves the list as it was, since the list only refetches after a change succeeds.
-  const changes = [createTodo, updateTodo, deleteTodo, clearCompletedTodos, restoreTodos];
-  const [lastChange] = changes.toSorted((a, b) => b.submittedAt - a.submittedAt);
-  const saveFailed = lastChange?.isError ?? false;
 
   // Derived from the query's data on each render, so there is no list state to keep in sync.
   const allTodos = todos ?? [];
@@ -49,13 +43,13 @@ export const Home: FC = () => {
   };
   const emptyMessage = getEmptyMessage();
 
-  const confirmDelete = ({ id, title }: Todo) =>
+  const confirmDelete = ({ todo_id, title }: Todo) =>
     modals.openConfirmModal({
       title: "Delete todo?",
       children: <Text size="sm">“{title}” will be deleted.</Text>,
       labels: { confirm: "Delete", cancel: "Cancel" },
       confirmProps: { color: "red" },
-      onConfirm: () => deleteTodo.mutate(id),
+      onConfirm: () => deleteTodo.mutate(todo_id),
     });
 
   // With no Completed Todo there is nothing to clear, so no dialog opens.
@@ -83,57 +77,49 @@ export const Home: FC = () => {
       children: <Text size="sm">Your current todos will be replaced by the six demo todos.</Text>,
       labels: { confirm: "Restore", cancel: "Cancel" },
       confirmProps: { color: "red" },
-      onConfirm: () => restoreTodos.mutate(),
+      onConfirm: () => restoreDemoTodos.mutate(),
     });
 
   return (
-    <div className={styles.page}>
-      <div className={styles.background} />
-      <Container component="main" className={styles.main}>
-        <Group component="header" justify="space-between" wrap="nowrap" className={styles.header}>
-          <Title order={1} className={styles.title}>TODO</Title>
-          <ThemeToggle />
-        </Group>
-        <Stack className={styles.content}>
-          <NewTodoInput onCreate={(title) => createTodo.mutateAsync({ title })} />
-          {saveFailed && <Alert color="red">Could not save your change.</Alert>}
-          {isError && <Alert color="red">Could not load your todos.</Alert>}
-          {todos && (
-            <>
-              <Card shadow="card" padding={0}>
-                {visibleTodos.map((todo) => (
-                  <TodoRow
-                    key={todo.id}
-                    todo={todo}
-                    onToggle={(completed) => updateTodo.mutate({ id: todo.id, input: { completed } })}
-                    onDelete={() => confirmDelete(todo)}
-                  />
-                ))}
-                {emptyMessage && (
-                  <Text c="dimmed" ta="center" fz="inherit" lh="inherit" className={styles.empty}>
-                    {emptyMessage}
-                  </Text>
-                )}
-                <TodoFooter
-                  activeCount={activeTodos.length}
-                  filter={filter}
-                  onFilterChange={setFilter}
-                  onClearCompleted={confirmClearCompleted}
+    <PageLayout>
+      <Stack className={classes.content}>
+        <NewTodoInput onCreate={(title) => createTodo.mutateAsync({ title })} />
+        {isError && <Alert color="red">Could not load your todos.</Alert>}
+        {todos && (
+          <>
+            <Card shadow="card" padding={0}>
+              {visibleTodos.map((todo) => (
+                <TodoRow
+                  key={todo.todo_id}
+                  todo={todo}
+                  onToggle={(completed) => setTodoCompleted.mutate({ todoId: todo.todo_id, input: { completed, version: todo.version } })}
+                  onDelete={() => confirmDelete(todo)}
                 />
-              </Card>
-              {/* Below `sm` the filters leave the footer for a card of their own. */}
-              <Card hiddenFrom="sm" shadow="card" padding={0} className={styles.filterCard}>
-                <TodoFilters filter={filter} onFilterChange={setFilter} />
-              </Card>
-            </>
-          )}
-          {/* DEMO ONLY: delete with restoreTodos when switching to a real API (step 3 in @/api/todos.ts). Shown even when
-              the list fails to load, since restoring also clears bad stored data. */}
-          <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={styles.restoreLink}>
-            Restore demo todos
-          </Anchor>
-        </Stack>
-      </Container>
-    </div>
+              ))}
+              {emptyMessage && (
+                <Text c="dimmed" ta="center" fz="inherit" lh="inherit" className={classes.empty}>
+                  {emptyMessage}
+                </Text>
+              )}
+              <TodoFooter
+                activeCount={activeTodos.length}
+                filter={filter}
+                onFilterChange={setFilter}
+                onClearCompleted={confirmClearCompleted}
+              />
+            </Card>
+            {/* Below `sm` the filters leave the footer for a card of their own. */}
+            <Card hiddenFrom="sm" shadow="card" padding={0} className={classes.filterCard}>
+              <TodoFilters filter={filter} onFilterChange={setFilter} />
+            </Card>
+          </>
+        )}
+        {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreDemoTodos and
+            useRestoreDemoTodos. Shown even when the list fails to load. */}
+        <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={classes.restoreLink}>
+          Restore demo todos
+        </Anchor>
+      </Stack>
+    </PageLayout>
   );
 };

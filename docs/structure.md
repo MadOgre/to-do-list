@@ -1,6 +1,6 @@
 # Folder structure
 
-A map of this repo: what each folder and file is for. It shows what exists today, not plans. Update it whenever a file or folder is added, moved or removed. Files that repeat (one per component, one per planning round) are described by their pattern instead of listed one by one. Terms such as Page, Shared Component, API Function and API Hook are defined in `CONTEXT.md`.
+A map of this repo: what each folder and file is for. It shows what exists today, not plans. Update it whenever a file or folder is added, moved or removed. Files that repeat (one per component, one per planning round) are described by their pattern instead of listed one by one. Terms such as Page, Shared Component, API Function and API Hook are defined in `GLOSSARY.md`.
 
 Generated files aren't listed: `node_modules/` (installed packages), `dist/` (build output, including the zip Terraform uploads), Terraform's `.terraform/` folders (downloaded providers) and the local state file in `infra/bootstrap/`. All are gitignored.
 
@@ -18,22 +18,24 @@ to-do-list/
 │                           in infra/envs/dev),
 │                           and the tools every package shares (TypeScript, ESLint and its plugins)
 ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
-│                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip
+│                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip,
+│                           and the catalog: the one version of each dependency that two or more
+│                           packages list, as "catalog:" (TypeScript locked to one exact version)
 ├── pnpm-lock.yaml          the exact version of every installed package; written by pnpm, committed
 ├── tsconfig.base.json      the TypeScript settings every package shares
 ├── eslint.config.base.js   the lint rules every package shares: quotes, commas, semicolons, indent,
-│                           spaces inside object braces, destructuring, arrow functions, the import
+│                           spaces inside object braces and after async, destructuring, arrow functions, the import
 │                           and export order (through eslint-plugin-perfectionist) and named exports only
 ├── eslint.config.js        lints the root's own files (such as eslint.config.base.js) with those rules;
 │                           each package has its own eslint.config.js
 ├── README.md               the quick start: prerequisites, install and run, the scripts, the docs
 ├── CLAUDE.md               instructions for AI coding agents: the code map (pointers to the CLAUDE.md
-│                           in frontend/, api/ and infra/), where issues, specs and domain docs live,
+│                           in frontend/, api/, common/ and infra/), where issues, specs and domain docs live,
 │                           and the working rules for this repo (workflow, keep the build green, AWS
 │                           and Terraform, review until clean, code conventions, grilling sessions)
-├── CONTEXT.md              the glossary: the project's terms (Page, Shared Component, API Function,
-│                           API Hook, and the to-do list's Todo, Active, Completed, Demo Todos and
-│                           Restore Demo Todos) and the synonyms to avoid
+├── GLOSSARY.md             the project's terms and the synonyms to avoid, in five sections: the
+│                           source layout, data access, the API, the to-do list, and the operations
+│                           on Todos, one name for each through every layer
 │
 ├── .claude/
 │   └── settings.json       shared Claude Code project settings: enables the official Figma plugin, so
@@ -50,16 +52,19 @@ to-do-list/
 │   ├── adding-and-removing-resources.md   every place a resource touches, the steps to add or
 │   │                                      remove one, and a code template for each file
 │   ├── adr/                architecture decision records, one per decision: NNNN-<decision>.md
-│   │   └── 0002-mantine-components-with-scss-modules.md   Mantine provides the UI components, and
+│   │   └── 0001-mantine-components-with-scss-modules.md   Mantine provides the UI components, and
 │   │                                                       custom styles stay in SCSS modules, using
 │   │                                                       Mantine's Sass helpers
 │   ├── agents/
-│   │   ├── domain.md       tells AI coding agents to read CONTEXT.md and the ADRs before exploring,
+│   │   ├── domain.md       tells AI coding agents to read GLOSSARY.md and the ADRs before exploring,
 │   │   │                   and to use the glossary's terms
 │   │   ├── issue-tracker.md   tells AI coding agents that issues and specs are markdown files under
 │   │   │                      docs/planning/, how they're laid out, and that each feature folder
 │   │   │                      starts from the developer's INTENT.md, with its template
 │   │   └── triage-labels.md   maps the agent skills' triage roles to the issue files' status labels
+│   ├── code-audit/         one file per audit of the whole repo: code-audit-<date>.md
+│   │   └── code-audit-2026-11-24.md   46 issues found: 33 fixed, 13 closed after discussion, and
+│   │                                  none left unfixed. A summary on top, then the working record
 │   └── planning/           one folder per feature: its planning record
 │       ├── <feature>/INTENT.md          the goal, definition of done, constraints and acceptance
 │       │                                criteria, in the developer's own words
@@ -73,10 +78,10 @@ to-do-list/
 │                               sizes and colors measured from it, so Figma needn't be queried again)
 │
 ├── frontend/               the React app, as the package @to-do-list/frontend
-│   ├── package.json        its libraries (React, Mantine, React Router, React Query, axios), its tools
+│   ├── package.json        its libraries (React, Mantine, React Router, React Query, axios, the shared schemas from common/), its tools
 │   │                       (Vite and its plugins, Sass, the React lint plugins), and its scripts:
 │   │                       dev, build, lint, preview
-│   ├── GUIDE.md            the frontend's layout and conventions, and where the project came from
+│   ├── GUIDE.md            the frontend's conventions, and where the project came from
 │   ├── CLAUDE.md           for AI coding agents: the frontend's data flow and where to find each part
 │   ├── index.html          the HTML page Vite serves and builds from. Sets the favicon and the "Todo
 │   │                       app" title, loads Josefin Sans from Google Fonts, applies the stored or OS
@@ -97,41 +102,35 @@ to-do-list/
 │   ├── public/
 │   │   └── favicon-32x32.png   the design's 32×32 favicon, served as is
 │   └── src/
-│       ├── main.tsx        the entry point. Loads Mantine's base styles, then the global styles, and
+│       ├── main.tsx        the entry point. Loads Mantine's styles, then the global styles, and
 │       │                   renders the app with the Mantine provider (the theme, its CSS variables
-│       │                   resolver, and the color scheme starting from the OS setting), the React
-│       │                   Query provider, the router and React Query Devtools (development only)
+│       │                   resolver, and the color scheme starting from the OS setting), the pop-up
+│       │                   messages, the React Query provider, the router and React Query Devtools
+│       │                   (development only)
 │       ├── routes.tsx      every route, in React Router's data mode: the Home Page at / and the
 │       │                   NotFound Page for anything else
-│       ├── queryClient.ts  the React Query client, in one place so its defaults are easy to change
-│       ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
-│       │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
-│       │                   that sets the design's light and dark colors, the check gradient and the
-│       │                   card shadow
-│       ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
-│       │                       classNames in theme.ts: Button labels centered on their capitals, and
-│       │                       cards in the design's card color
+│       ├── query-client.ts the React Query client. Its MutationCache shows a red pop-up message for
+│       │                   every failed change, with the text from api/error-text.ts
 │       ├── vite-env.d.ts   types the environment variables, and makes reading an undeclared one a
 │       │                   type error
 │       ├── api/
-│       │   ├── apiClient.ts    the shared axios instance the API Functions use once a real API exists,
-│       │   │                   with its base URL from VITE_API_BASE_URL
-│       │   ├── todos.ts        the Todo API Functions (list, get one, create, update, delete, clear
-│       │   │                   Completed, and the demo-only Restore Demo Todos). Each keeps its real
-│       │   │                   axios call commented out above the localStorage code, and the comment
-│       │   │                   at the top lists the steps to switch to a real API
-│       │   ├── todoStorage.ts  demo only: the localStorage key, the six Demo Todos and the helpers that
-│       │   │                   read, write and remove the stored list. Deleted at the switch
-│       │   └── index.ts        barrel for the API Functions and the shared axios instance
-│       ├── apiHooks/
-│       │   ├── todos.ts        the Todo API Hooks: two queries and five mutations. Each mutation
-│       │   │                   refreshes the Todo list when it succeeds. While the list lives in
-│       │   │                   localStorage, the queries don't retry a failed read
+│       │   ├── api-client.ts   the shared axios instance that the API Functions use, with its base URL
+│       │   │                   from VITE_API_BASE_URL
+│       │   ├── error-text.ts   the text that people see for each error outcome of the API, and
+│       │   │                   getErrorText, which reads the outcome from a failed request's error body
+│       │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
+│       │   │                   delete, clear Completed, and the temporary Restore Demo Todos
+│       │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
+│       ├── api-hooks/
+│       │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
+│       │   │                   refreshes the Todo list when it settles, whether it worked or failed
 │       │   └── index.ts        barrel for the API Hooks
 │       ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
 │       │   │               styles in <Name>/<Name>.module.scss
 │       │   ├── NewTodoInput/   "Create a new todo…" with a decorative circle. On Enter it creates the
 │       │   │                   trimmed, non-empty title, and clears once the create succeeds
+│       │   ├── PageLayout/     what every Page shares: the background image for the color scheme and
+│       │   │                   layout, the "TODO" header with the theme toggle, and the column width
 │       │   ├── ThemeToggle/    a moon in light and a sun in dark, switching the color scheme
 │       │   ├── TodoRow/        a round check in a clickable gutter, and the title, struck through when
 │       │   │                   Completed
@@ -141,71 +140,124 @@ to-do-list/
 │       │   └── index.ts        barrel for the Shared Components
 │       ├── images/
 │       │   ├── bg-{mobile,desktop}-{light,dark}.jpg   the design's header backgrounds, one per color
-│       │   │                                          scheme and layout, used by Home's SCSS module
+│       │   │                                          scheme and layout, used by PageLayout's SCSS module
 │       │   ├── icon-{moon,sun,check,cross}.svg   the design's icons: the theme toggle's moon and sun,
 │       │   │                                     the Completed check, and the ✕ for deleting
 │       │   └── index.ts        barrel for the images imported from TypeScript
-│       ├── interfaces/     shared types, one file per type and the types derived from it
-│       │   ├── Todo.ts         the Todo type, with its create and update input types
-│       │   ├── TodoFilter.ts   which Todos the list shows: all, active or completed
-│       │   └── index.ts        barrel for the shared types
 │       ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
 │       │   │               <Name>/<Name>.module.scss
-│       │   ├── Home/       the "TODO" header with the theme toggle over the background image, the
-│       │   │               new-todo input, the Todo rows and footer in a card (with the filters in
-│       │   │               a card of their own below the small breakpoint), and the demo-only
-│       │   │               Restore Demo Todos link. Asks before deleting, clearing or restoring.
-│       │   │               Shows an error alert if the Todos can't be loaded or a change can't be
-│       │   │               saved
-│       │   ├── NotFound/   shown for any unknown URL, with a link back home
+│       │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
+│       │   │               card (with the filters in a card of their own below the small
+│       │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
+│       │   │               Shows an error alert if the Todos can't be loaded
+│       │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
+│       │   │               the Todo list
 │       │   └── index.ts    barrel for the Pages
-│       └── styles/
-│           ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's
-│           │                   base styles: the page's own background color
-│           ├── _mantine.scss   Mantine's Sass helpers (rem, the breakpoints and the hover,
-│           │                   smaller-than, larger-than, light, dark, rtl and ltr mixins), copied
-│           │                   from Mantine's "Usage with Sass" guide. vite.config.ts injects it into
-│           │                   every SCSS file as mantine. Its breakpoints must match the theme's
-│           └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
-│                                   text, as the footer's filters and Clear Completed are drawn
+│       ├── styles/
+│       │   ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's
+│       │   │                   base styles: the page's own background color
+│       │   ├── _mantine.scss   Mantine's Sass helpers (rem, the breakpoints and the hover,
+│       │   │                   smaller-than, larger-than, light, dark, rtl and ltr mixins), copied
+│       │   │                   from Mantine's "Usage with Sass" guide. vite.config.ts injects it into
+│       │   │                   every SCSS file as mantine. Its breakpoints must match the theme's
+│       │   └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
+│       │                           text, as the footer's filters and Clear Completed are drawn
+│       ├── theme/
+│       │   ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
+│       │   │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
+│       │   │                   that sets the design's light and dark colors, the check gradient and the
+│       │   │                   card shadow
+│       │   ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
+│       │   │                       classNames in theme.ts: Button labels centered on their capitals, and
+│       │   │                       cards in the design's card color
+│       │   └── index.ts        barrel for the theme and its CSS variables resolver
+│       └── types/          shared types, one file per type and the types derived from it
+│           ├── todo.ts         the Todo type and the two request bodies' types, from common/
+│           ├── todo-filter.ts  which Todos the list shows: all, active or completed
+│           └── index.ts        barrel for the shared types
 │
 ├── api/                    the API's code, as the package @to-do-list/api
-│   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client), its tools
+│   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
+│   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint), and
 │   │                       its scripts: dev, typecheck, lint, invoke, bundle, build
-│   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
-│   │                       scripts/ and dev/
+│   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/
+│   │                       and dev/
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules and Node globals
 │   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
 │   ├── .env                your own copy of .env.example; gitignored
 │   ├── CLAUDE.md           for AI coding agents: the request path and where to find each part
 │   ├── routes.json         the one list of the API's routes (method, path, handler name);
-│   │                       infra/modules/app/ makes one API Gateway route from each entry. Empty
-│   │                       until the first resource
+│   │                       infra/modules/app/ makes one API Gateway route from each entry
 │   ├── src/
-│   │   ├── index.ts                  the function's entry point and router: checks at startup that every
-│   │   │                             route in routes.json has a handler, then sends each request to its
-│   │   │                             handler and writes one log line with the request's outcome
-│   │   ├── resource-handlers.ts      re-exports every route handler, under the name routes.json uses.
-│   │   │                             No exports until the first resource
-│   │   ├── route-handler-types.ts    Route (one entry in routes.json), HttpMethod (the methods a route
-│   │   │                             can use), RouteHandler (the shape every route handler has) and
-│   │   │                             Result (what a handler returns)
-│   │   ├── routes.ts                 loads routes.json with its type, and checks at startup that every
-│   │   │                             route uses a known method
-│   │   ├── request-outcome-codes.ts  every outcome a request can end with, as used in the logs
-│   │   ├── response-builders.ts      json and noContent: build HTTP responses
-│   │   └── logger.ts                 the one Powertools Logger the whole function writes with
-│   ├── dev/
-│   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│   │   │                   the router in src/index.ts, and warns when you're not logged in to AWS
-│   │   └── local-context.ts  the stand-in Lambda context that server.ts and scripts/invoke.ts pass
-│   ├── scripts/
-│   │   └── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
-│   │                       stand-in Lambda context
-│   └── sample-events/      sample API Gateway events, one folder per resource. Empty until the first
-│                           resource
+│   │   ├── index.ts                  the function's entry point: Lambda calls index.handler, which is the
+│   │   │                             router's handler
+│   │   ├── router/                   runs for every request
+│   │   │   ├── router.ts             checks at startup that every route in routes.json has a route handler,
+│   │   │   │                         then sends each request to its route handler and writes one log line
+│   │   │   │                         with the request's outcome
+│   │   │   ├── routes.ts             HttpMethod (the methods a route can use); loads routes.json, and
+│   │   │   │                         checks each entry at startup with a zod schema: a known method, a
+│   │   │   │                         path and a handler name
+│   │   │   ├── handler-registry.ts   re-exports every route handler, under the name routes.json uses
+│   │   │   └── logger.ts             the one Powertools Logger the whole function writes with
+│   │   ├── route-handler-tools/      what a route handler uses to read the request and write the response
+│   │   │   ├── route-handler.ts      RouteHandler (the shape every route handler has) and Result (what a
+│   │   │   │                         route handler returns)
+│   │   │   ├── outcome-codes.ts      every outcome a request can end with, as used in the logs; the error
+│   │   │   │                         codes come from common/
+│   │   │   ├── json-body.ts          readJsonBody: reads a request body as JSON and checks it against a
+│   │   │   │                         schema from @to-do-list/common, or gives the 400 result
+│   │   │   └── responses.ts          json, noContent and errorResult (a failed request's whole result, with
+│   │   │                             the error body): build HTTP responses
+│   │   └── resources/                one folder per resource
+│   │       └── todos/
+│   │           ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
+│   │           │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
+│   │           │                         changes and deletes one owner's Todos; the table name comes from
+│   │           │                         TODOS_TABLE
+│   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
+│   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
+│   │           └── route-handlers/       one file per route
+│   │               ├── list-todos.ts             GET /api/todos: the owner's Todos, newest first
+│   │               ├── create-todo.ts            POST /api/todos: checks the body, makes the ID (a version
+│   │               │                             7 UUID), writes the Todo and returns it with 201
+│   │               ├── set-todo-completed.ts     PATCH /api/todos/{todo_id}: sets completed if the version
+│   │               │                             is the stored one, and returns the Todo; 409 for a stale
+│   │               │                             version
+│   │               ├── delete-todo.ts            DELETE /api/todos/{todo_id}: 204, also when there's no
+│   │               │                             such Todo
+│   │               ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
+│   │               │                             Todo
+│   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
+│   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
+│   │                                             Todos link
+│   └── dev/                the tools that run only on your machine, never in Lambda
+│       ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
+│       │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
+│       ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
+│       │                   stand-in Lambda context
+│       ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+│       └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
+│           │               The dev server doesn't restart when one changes
+│           └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json
+│                           and clear-completed-todos-missing-query.json
+│
+├── common/                 the shared contract, as the package @to-do-list/common: the zod schemas
+│   │                       that api/ and frontend/ both import. No build of its own: esbuild, Vite
+│   │                       and Node read its TypeScript as it is
+│   ├── package.json        its library (zod), its lint tools, its scripts (typecheck, lint), and
+│   │                       exports, which points to src/index.ts
+│   ├── tsconfig.json       extends tsconfig.base.json with no Node or browser types, because both
+│   │                       sides run this code
+│   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
+│   │                       rules
+│   ├── CLAUDE.md           for AI coding agents: where to find each schema
+│   └── src/
+│       ├── index.ts        the package's one entry point: re-exports every schema and type
+│       ├── error-body.ts   the body of every API error ({ outcome, message }) and its outcome codes
+│       └── todos.ts        the Todo, and the bodies of POST /api/todos and PATCH /api/todos/{todo_id}
 │
 └── infra/                  Terraform, one folder per separate configuration.
     │                       Each has its own state and is planned and applied on its own.
@@ -225,14 +277,15 @@ to-do-list/
     │
     ├── modules/
     │   └── app/            the app's AWS resources for one environment, named
-    │       │               to-do-list-<environment>-api: the function's role, its log group (kept 14
+    │       │               tdl-<environment>-api: the function's role, its log group (kept 14
     │       │               days), and the function itself, uploaded as a zip of api/dist/ (Node.js 26,
     │       │               arm64, 512 MB, 10 seconds); the HTTP API in front of it, with one route for
     │       │               each entry in api/routes.json, its access log group (kept 14 days, keys in
     │       │               snake_case, the request ID as correlation_id) and a request limit of 10 per
     │       │               second (burst 20); and the permission that lets API Gateway call the
     │       │               function
-    │       ├── main.tf
+    │       ├── main.tf             the function, its role and its policies (logs, and the todos table), and the HTTP API
+    │       ├── dynamodb.tf         the todos table, tdl-<environment>-todos: partition key owner_id, sort key todo_id
     │       ├── variables.tf        the module's input: environment
     │       └── outputs.tf          the module's output: api_url
     │

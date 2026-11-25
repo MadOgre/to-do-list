@@ -2,11 +2,12 @@
 
 Each subsystem has its own `CLAUDE.md`: a short routing map of its data flow, its entry points and a "where to find" table. Claude Code loads one when you read a file in its folder. To locate code, read the subsystem's map first, and open only the files that it names:
 
-- `frontend/CLAUDE.md`: the React app, from Pages through API Hooks and API Functions to `localStorage`.
+- `frontend/CLAUDE.md`: the React app, from Pages through API Hooks and API Functions to the API.
 - `api/CLAUDE.md`: the Lambda router, `routes.json`, the dev server and the logs.
+- `common/CLAUDE.md`: the zod schemas and types that `api/` and `frontend/` share.
 - `infra/CLAUDE.md`: the Terraform configurations, and which resource holds which setting.
 
-For a one-line note on every file, read `docs/structure.md`. For the project's terms, read `CONTEXT.md`.
+For a one-line note on every file, read `docs/structure.md`. For the project's terms, read `GLOSSARY.md`.
 
 ## Agent skills
 
@@ -16,11 +17,11 @@ Issues and specs are local markdown files under `docs/planning/`, one folder per
 
 ### Triage labels
 
-Default vocabulary: needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix. See `docs/agents/triage-labels.md`.
+Default vocabulary: needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix, and done for a finished ticket. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
 ## Working rules
 
@@ -35,6 +36,7 @@ Whenever you ask the developer for a manual check (a ticket's closing check unde
 Before every commit, run these from the repo root, with the same `pnpm`, Node and Terraform the developer uses: `pnpm install`, `pnpm lint` (the root's files, then both packages), `pnpm build` (both packages), and a short `pnpm dev` start, which must serve the frontend on port 9000 and the API on port 3000. When a commit changes files in `infra/`, also run `terraform fmt -check -recursive infra` and `terraform validate` in each changed folder. Commit only when all of them pass: chain the checks and the commit with `&&`.
 
 - A check that passes only through a workaround (another binary, an env var, a manual step) has failed. Report it and agree the fix with the developer before committing. Version bumps to dependencies or tooling must run with the developer's existing tools.
+- A dependency that two or more packages list takes its version from the catalog in `pnpm-workspace.yaml`: write `catalog:` in each `package.json`.
 - Every failure seen while verifying is real, including a one-off that looks environmental. Resolve it with the developer before calling the work done.
 - Ask the developer to stop their `pnpm dev` before installing or removing dependencies. Start a test dev server only while theirs is stopped: every Vite server shares `frontend/node_modules/.vite/deps`, and the API's ports are fixed. Start it as `env -u CLAUDECODE -u AI_AGENT pnpm dev`, which runs Vite as the developer's own `pnpm dev` does (not a workaround): Vite changes its config when it detects an agent, and the deps would be rebuilt each time the two servers alternate. Stop it by its process IDs, never with `pkill -f`.
 
@@ -48,23 +50,33 @@ After `/code-review`, repeat: fix the findings, verify as above, then have both 
 
 ### Code conventions
 
-Lint enforces style (`eslint.config.base.js`, which each package's `eslint.config.js` starts from): double quotes, trailing commas, semicolons, 2-space indent, arrow functions wherever possible, object destructuring, named exports only (default exports only in tool config files), and the import and export order below. Review also checks the conventions lint can't. They apply to both packages, except the ones marked as the frontend's:
+Lint enforces style (`eslint.config.base.js`, which each package's `eslint.config.js` starts from): double quotes, trailing commas, semicolons, 2-space indent, arrow functions wherever possible, a space after `async` (`async (id) =>`), object destructuring, named exports only (default exports only in tool config files), and the import and export order below. Review also checks the conventions lint can't. They apply to both packages, except the ones marked as the frontend's:
 
 - **Components are typed with `FC`.** Use `FC` for components without props and `FC<ComponentNameProps>` for components with props. Props interfaces are named `<ComponentName>Props`, never a bare `Props`, because barrels re-export with `export *` and bare names would collide. Import `FC` as a type-only import. The one exception is generic components, which annotate their props parameter instead.
 - **No generics without a reason.** Add a generic type parameter only when it actually links or constrains types that callers rely on. If a type would be erased downstream, or only inferred from the argument and never checked, use `unknown` or a concrete type instead.
-- **Imports** sit in up to three sections, in this order, with one blank line between sections and empty sections left out:
-  1. Packages: `"react"`, `"@mantine/core"`, `"node:url"`.
-  2. The frontend's `@/` alias for `frontend/src/`.
-  3. Relative files: `"./…"` and `"../…"`.
+- **`interface` for an object shape.** Write a hand-written object shape as an `interface`. Use `type` for everything else: unions, function types, and the types that come from `z.infer`.
+- **File names (a guideline).** Name files and folders in kebab-case: `todos-repository.ts`, `api-hooks/`, `local-development.md`. The usual exceptions:
+  - A React component's folder and files are PascalCase, after the component: `TodoRow/TodoRow.tsx`.
+  - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`.
+  - A tool's config keeps the name that the tool looks for: `vite.config.ts`, `tsconfig.app.json`.
+  - A Sass partial starts with `_`: `_mantine.scss`.
+  - The grilling rounds keep the name `round_<N>_questions.md`.
 
-  Within a section, sort the imports by their module path, alphabetically: lowercase both paths, then compare them character by character (so `"eslint-plugin-x"` comes before `"eslint/config"`). Sort the names inside braces the same way, ignoring any `type` keyword: `import { alpha, beta, type Gamma } from "lib";`. Re-exports (`export … from`, as in barrels) follow the same order. An `import type` from a module goes right after the value import from the same module. Side-effect imports (`import "./styles.css";`) follow the same rules: `"./styles.css"` sorts into the relative section. When their order matters, comment why it holds, as `main.tsx` does for loading Mantine's styles before ours. Lint enforces this order (`eslint-plugin-perfectionist`), except the `import type` placement, which review checks.
+  Another exception is fine when a tool, a library or a clear reason needs it. Say why in the commit message.
+- **Imports** sit in up to four sections, in this order, with one blank line between sections and empty sections left out. One blank line follows the last import:
+  1. Packages from outside the repo: `"react"`, `"@mantine/core"`, `"axios"`, `"node:url"`.
+  2. The workspace packages: `"@to-do-list/common"`.
+  3. The frontend's `@/` alias for `frontend/src/`.
+  4. Relative files: `"./…"` and `"../…"`.
+
+  Within a section, sort the imports by their module path, alphabetically: lowercase both paths, then compare them character by character (so `"eslint-plugin-x"` comes before `"eslint/config"`). Sort the names inside braces the same way, ignoring any `type` keyword: `import { alpha, beta, type Gamma } from "lib";`. Re-exports (`export … from`, as in barrels) follow the same order. An `import type` from a module goes right after the value import from the same module. Side-effect imports (`import "./styles.css";`) follow the same rules: `"./styles.css"` sorts into the relative section. When their order matters, comment why it holds, as `main.tsx` does for loading Mantine's styles before ours. Lint enforces this order (`eslint-plugin-perfectionist`) and the blank line after the imports (`@stylistic/padding-line-between-statements`), except the `import type` placement, which review checks.
 - **Readable over clever.** Write the plainest code that does the job, so a reader understands it at first glance: an `if` over a dense one-liner, a named variable over a nested expression, a plain comparison over a `reduce` or a chained ternary, and the obvious language feature over a trick. When code still isn't obvious, add a comment saying what it does and why.
 - **Barrels (frontend):** each area of `frontend/src/` has an `index.ts` barrel, except `styles`. Page and component folders don't get their own barrels. A Page that should be lazy-loaded must be imported from its own file, never through the `@/pages` barrel.
 - **Pages (frontend)** live one per folder under `frontend/src/pages/`, with their SCSS module next to them.
-- **Shared types (frontend)** go in `frontend/src/interfaces/`, one file per type, with the types derived from it in the same file.
-- **Mantine (frontend,** ADR-0002**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, using Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
+- **Shared types (frontend)** go in `frontend/src/types/`, one file per type, with the types derived from it in the same file.
+- **Mantine (frontend,** ADR-0001**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, imported as `classes` (`import classes from "./Home.module.scss";`), as Mantine's docs do. The styles use Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
 - **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `api/.env.example`, with a comment and a placeholder, and each developer's own values in the gitignored `api/.env`.
 
 ### Grilling sessions
 
-Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/round_<N>_questions.md`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `CONTEXT.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.
+Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/round_<N>_questions.md`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `GLOSSARY.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.

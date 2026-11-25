@@ -29,8 +29,8 @@ Run them from the repo root.
 | --- | --- |
 | `pnpm dev` | Starts the frontend's and the API's dev servers side by side |
 | `pnpm build` | Type-checks and builds both packages, into `frontend/dist/` and `api/dist/` |
-| `pnpm typecheck` | Type-checks the API |
-| `pnpm lint` | Runs ESLint on the root's own files, then in both packages |
+| `pnpm typecheck` | Type-checks the API and the shared package, `common/` |
+| `pnpm lint` | Runs ESLint on the root's own files, then in each package |
 | `pnpm deploy:dev` | Builds the API, then deploys the dev environment with `terraform apply` |
 
 Each package has its own scripts too, such as `pnpm preview` in `frontend/` and `pnpm invoke` in `api/`.
@@ -46,5 +46,5 @@ Each package has its own scripts too, such as `pnpm preview` in `frontend/` and 
 - [docs/structure.md](docs/structure.md): what every folder and file is for
 - [docs/adding-and-removing-resources.md](docs/adding-and-removing-resources.md): every place an API resource touches, with code templates
 - [docs/logging.md](docs/logging.md): the API's logs, and how to follow one request through them
-- [frontend/GUIDE.md](frontend/GUIDE.md): the frontend's layout and conventions, and where the project came from
-- [CONTEXT.md](CONTEXT.md): the project's terms
+- [frontend/GUIDE.md](frontend/GUIDE.md): the frontend's conventions, and where the project came from
+- [GLOSSARY.md](GLOSSARY.md): the project's terms

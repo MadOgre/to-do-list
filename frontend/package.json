@@ -1,7 +1,6 @@
 {
   "name": "@to-do-list/frontend",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mantine/core": "^9.6.3",
-    "@mantine/hooks": "^9.6.3",
-    "@mantine/modals": "^9.6.3",
+    "@mantine/core": "^9.8.2",
+    "@mantine/hooks": "^9.8.2",
+    "@mantine/modals": "^9.8.2",
+    "@mantine/notifications": "^9.8.2",
     "@tanstack/react-query": "^5.104.0",
+    "@to-do-list/common": "workspace:*",
     "axios": "^1.20.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -21,17 +22,17 @@
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.104.0",
-    "@types/node": "^26.6.6",
+    "@types/node": "catalog:",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
-    "eslint": "^10.11.0",
+    "eslint": "catalog:",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
-    "globals": "^17.12.0",
+    "globals": "catalog:",
     "sass-embedded": "^1.105.0",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.70.1",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
     "vite": "^8.3.0",
     "vite-plugin-checker": "^0.14.5"
   }

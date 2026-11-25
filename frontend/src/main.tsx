@@ -1,16 +1,18 @@
-// Mantine's base styles load in the packages section, before any `@/` import that brings in our styles
+// Mantine's styles load in the packages section, the core styles first, before any `@/` import that brings in our styles
 // (global.scss, and the Pages' SCSS modules through the routes). Our rules then come after Mantine's in the CSS
 // and win where they overlap.
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 
-import { queryClient } from "@/queryClient";
+import { queryClient } from "@/query-client";
 import { router } from "@/routes";
 import "@/styles/global.scss";
 import { cssVariablesResolver, theme } from "@/theme";
@@ -19,6 +21,8 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* "auto" starts from the OS setting; Mantine's default manager remembers the choice in localStorage. */}
     <MantineProvider theme={theme} cssVariablesResolver={cssVariablesResolver} defaultColorScheme="auto">
+      {/* Renders the pop-up messages that `notifications.show` opens: one for each failed change (see query-client.ts). */}
+      <Notifications />
       {/* Renders the dialogs that `modals.openConfirmModal` opens. */}
       <ModalsProvider>
         <QueryClientProvider client={queryClient}>

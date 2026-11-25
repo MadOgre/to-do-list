@@ -6,9 +6,9 @@ How the API's logs work, and how to follow one request through them.
 
 Each environment has two, named after it. In the dev environment:
 
-- `to-do-list-dev-api-access`: API Gateway's access log. One line per request, including
+- `tdl-dev-api-access`: API Gateway's access log. One line per request, including
   requests that never reach the function, such as a 404 for a missing route or a 429.
-- `/aws/lambda/to-do-list-dev-api`: the function's log. One outcome line per request, written
+- `/aws/lambda/tdl-dev-api`: the function's log. One outcome line per request, written
   by Powertools Logger, plus Lambda's own records, such as `platform.start` and
   `platform.report`.
 
@@ -36,7 +36,7 @@ Both logs store it under the key `correlation_id`, so one filter finds the reque
 
    ```sh
    RID="PASTE-THE-ID"
-   aws logs tail /aws/lambda/to-do-list-dev-api --since 1h --filter-pattern "{ \$.correlation_id = \"$RID\" }"
+   aws logs tail /aws/lambda/tdl-dev-api --since 1h --filter-pattern "{ \$.correlation_id = \"$RID\" }"
    ```
 
 To see Lambda's own `platform.start` and `platform.report` records for the same request,
@@ -46,7 +46,7 @@ that's Lambda's own ID, and Lambda's records keep it under `record.requestId`.
 ## The function's outcome line
 
 The router writes it once per request, after the handler returns
-(`api/src/index.ts`). Errors are logged at level `ERROR` with `outcome` `error`, then
+(`api/src/router/router.ts`). Errors are logged at level `ERROR` with `outcome` `error`, then
 thrown again, so Lambda counts a failure and the client gets API Gateway's 500.
 
 | Key | What it holds |
@@ -54,8 +54,8 @@ thrown again, so Lambda counts a failure and the client gets API Gateway's 500.
 | `message` | What happened, for people to read. Wording may change; don't filter on it. |
 | `outcome` | One fixed code for how the request ended. Filter on this. |
 | `status` | The status code returned (a number). |
-| `route` | The route key, such as `GET /api/articles/{id}`. |
-| `resource_id` | The `{id}` from the path, whatever the resource. Missing on routes without one. |
+| `route` | The route key, such as `PATCH /api/todos/{todo_id}`. |
+| `resource_id` | The ID from the path, whatever its name, such as `{todo_id}`. Missing on routes without one. |
 | `correlation_id` | API Gateway's request ID. |
 | `error` | On errors only: the error's `name`, `message` and `stack`. |
 
@@ -66,7 +66,9 @@ Powertools adds `level`, `timestamp`, `service` (`to-do-list-api`, the same in e
 ## Outcome codes
 
 The full list, with when each happens, is the `RequestOutcomeCode` type in
-`api/src/request-outcome-codes.ts`. The code is type-checked against it, so it's always
+`api/src/route-handler-tools/outcome-codes.ts`. Its error codes with a body (`not_found`, `version_conflict`,
+`invalid_id`, `invalid_body` and `invalid_query`) come from `errorOutcomeSchema` in `common/src/error-body.ts`,
+because the frontend reads them too. The code is type-checked against it, so it's always
 current. For example, to find every request for a missing item in a Log Analytics query:
 `filter outcome = "not_found"`.
 
@@ -77,7 +79,7 @@ Set in `infra/modules/app/main.tf`, in the stage's `access_log_settings`.
 | Key | What it holds |
 | --- | --- |
 | `correlation_id` | API Gateway's request ID (`$context.requestId`). |
-| `route_key` | The route key API Gateway matched, such as `GET /api/articles/{id}`. |
+| `route_key` | The route key API Gateway matched, such as `PATCH /api/todos/{todo_id}`. |
 | `path` | The path the client asked for. |
 | `status` | The status sent to the client (a string). |
 | `integration_status` | Lambda's answer to API Gateway's call: 200 when the function ran. |

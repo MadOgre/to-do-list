@@ -1,9 +1,9 @@
 import { Button, Group } from "@mantine/core";
 import type { FC } from "react";
 
-import type { TodoFilter } from "@/interfaces";
+import type { TodoFilter } from "@/types";
 
-import styles from "./TodoFilters.module.scss";
+import classes from "./TodoFilters.module.scss";
 
 export interface TodoFiltersProps {
   filter: TodoFilter;
@@ -18,7 +18,7 @@ const filters: { value: TodoFilter; label: string }[] = [
 
 // The selected filter shows in the primary blue, the others dimmed (see the SCSS module).
 export const TodoFilters: FC<TodoFiltersProps> = ({ filter, onFilterChange }) => (
-  <Group gap={0} justify="center" wrap="nowrap" className={styles.filters}>
+  <Group gap={0} justify="center" wrap="nowrap" className={classes.filters}>
     {filters.map(({ value, label }) => (
       <Button
         key={value}
@@ -26,7 +26,7 @@ export const TodoFilters: FC<TodoFiltersProps> = ({ filter, onFilterChange }) =>
         aria-pressed={value === filter}
         mod={{ selected: value === filter }}
         onClick={() => onFilterChange(value)}
-        className={styles.filter}
+        className={classes.filter}
       >
         {label}
       </Button>

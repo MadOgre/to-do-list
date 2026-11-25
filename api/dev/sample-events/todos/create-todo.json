@@ -1,0 +1,7 @@
+{
+  "routeKey": "POST /api/todos",
+  "rawPath": "/api/todos",
+  "requestContext": { "requestId": "local-create-todo" },
+  "body": "{\"title\":\"Buy milk\"}",
+  "isBase64Encoded": false
+}

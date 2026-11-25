@@ -6,5 +6,5 @@
     "lib": ["esnext"],
     "types": ["node"]
   },
-  "include": ["src", "scripts", "dev"]
+  "include": ["src", "dev"]
 }

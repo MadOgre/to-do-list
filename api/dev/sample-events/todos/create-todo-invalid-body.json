@@ -1,0 +1,7 @@
+{
+  "routeKey": "POST /api/todos",
+  "rawPath": "/api/todos",
+  "requestContext": { "requestId": "local-create-todo-invalid-body" },
+  "body": "{\"title\":\"   \",\"completed\":true}",
+  "isBase64Encoded": false
+}

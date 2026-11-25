@@ -1,0 +1,6 @@
+{
+  "routeKey": "POST /api/demo-todos/restore",
+  "rawPath": "/api/demo-todos/restore",
+  "requestContext": { "requestId": "local-restore-demo-todos" },
+  "isBase64Encoded": false
+}

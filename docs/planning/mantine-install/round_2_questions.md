@@ -72,7 +72,7 @@ as recommended
 
 ---
 
-❓ **Q6** - **Record the decision as an ADR**: Adopting Mantine is hard to reverse (every component will use it), and it had real alternatives (another component library, or none). Write `docs/adr/0002-mantine-component-library.md`, covering Mantine for components, SCSS modules for custom styles, and the Q1 outcome?
+❓ **Q6** - **Record the decision as an ADR**: Adopting Mantine is hard to reverse (every component will use it), and it had real alternatives (another component library, or none). Write `docs/adr/0001-mantine-components-with-scss-modules.md`, covering Mantine for components, SCSS modules for custom styles, and the Q1 outcome?
 
 ➡️ Yes. The style-format decision (Q1) is the kind of "why" that gets lost.
 

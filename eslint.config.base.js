@@ -26,21 +26,30 @@ export const baseConfig = defineConfig([
       "@stylistic/indent": ["error", 2],
       // A space inside the braces of objects, destructuring and imports: { id, title }. Arrays stay ["a", "b"].
       "@stylistic/object-curly-spacing": ["error", "always"],
+      // A space after async in an async arrow function: async (id) =>, not async(id) =>.
+      "@stylistic/space-before-function-paren": ["error", { anonymous: "ignore", named: "ignore", asyncArrow: "always" }],
       "prefer-destructuring": ["error", { object: true, array: false }],
       // Arrow functions wherever possible.
       "func-style": ["error", "expression"],
       "prefer-arrow-callback": "error",
       "arrow-body-style": ["error", "as-needed"],
-      // Three sections with a blank line between them: packages, the `@/` alias, then relative files. Side-effect
-      // imports (`import "./styles.css";`) are sorted like any other import.
+      // Four sections with a blank line between them: packages, the workspace packages (`@to-do-list/…`), the `@/`
+      // alias, then relative files. Side-effect imports (`import "./styles.css";`) are sorted like any other import.
       "perfectionist/sort-imports": [
         "error",
         {
-          groups: [["builtin", "external"], "internal", ["parent", "sibling", "index"], "unknown"],
+          customGroups: [{ groupName: "workspace", elementNamePattern: "^@to-do-list/" }],
+          groups: [["builtin", "external"], "workspace", "internal", ["parent", "sibling", "index"], "unknown"],
           internalPattern: ["^@/"],
           sortSideEffects: true,
           newlinesBetween: 1,
         },
+      ],
+      // A blank line after the last import.
+      "@stylistic/padding-line-between-statements": [
+        "error",
+        { blankLine: "always", prev: "import", next: "*" },
+        { blankLine: "any", prev: "import", next: "import" },
       ],
       "perfectionist/sort-named-imports": "error",
       "perfectionist/sort-exports": "error",

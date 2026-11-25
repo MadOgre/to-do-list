@@ -4,7 +4,7 @@ Settled in round 3:
 
 - **The API Functions read and write `localStorage` directly**, where the axios calls would normally sit. Each one keeps its real axios call (real URL, `apiClient`) commented out next to it. Switching to a real API means setting the URL and deleting the `localStorage` code, and a short comment says how.
 - API Functions: `getTodos`, `getTodo`, `createTodo`, `updateTodo`, `deleteTodo`, `clearCompletedTodos` (one request), `restoreTodos` (one request). Each has an API Hook, and every mutation invalidates the list.
-- The six from the design are now the **Demo Todos** (in `CONTEXT.md`, with **Restore Demo Todos**). They show while nothing is stored. A stored empty list stays empty. The Demo Todos and all the logic around them get deleted when a real API arrives, so that has to be easy.
+- The six from the design are now the **Demo Todos** (in `GLOSSARY.md`, with **Restore Demo Todos**). They show while nothing is stored. A stored empty list stays empty. The Demo Todos and all the logic around them get deleted when a real API arrives, so that has to be easy.
 - No artificial delay.
 - A link restores the Demo Todos: it is always visible, styled like the design's hint, and asks for confirmation first.
 - Failures show a red `Alert`: in place of the list when loading fails, above the list when a change fails.

@@ -15,7 +15,8 @@ terraform {
 }
 
 locals {
-  name   = "to-do-list-${var.environment}-api"
+  prefix = "tdl-${var.environment}"
+  name   = "${local.prefix}-api"
   routes = jsondecode(file("${path.module}/../../../api/routes.json"))
 }
 
@@ -37,6 +38,23 @@ resource "aws_iam_role" "api" {
 resource "aws_iam_role_policy_attachment" "api_logs" {
   role       = aws_iam_role.api.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy" "api_todos_table" {
+  name = "todos-table-access"
+  role = aws_iam_role.api.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "ReadWriteDeleteTodos"
+        Effect   = "Allow"
+        Action   = ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:DeleteItem", "dynamodb:BatchWriteItem"]
+        Resource = aws_dynamodb_table.todos.arn
+      }
+    ]
+  })
 }
 
 resource "aws_cloudwatch_log_group" "api" {
@@ -67,6 +85,7 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
+      TODOS_TABLE  = aws_dynamodb_table.todos.name
       NODE_OPTIONS = "--enable-source-maps"
     }
   }

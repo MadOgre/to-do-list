@@ -1,0 +1,6 @@
+{
+  "routeKey": "GET /api/todos",
+  "rawPath": "/api/todos",
+  "requestContext": { "requestId": "local-list-todos" },
+  "isBase64Encoded": false
+}

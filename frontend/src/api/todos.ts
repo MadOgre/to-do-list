@@ -1,86 +1,33 @@
-import type { CreateTodoInput, Todo, UpdateTodoInput } from "@/interfaces";
+import type { CreateTodoBody, SetTodoCompletedBody, Todo } from "@/types";
 
-// import { apiClient } from "./apiClient";
-import { readTodos, removeTodos, writeTodos } from "./todoStorage";
+import { apiClient } from "./api-client";
 
-// The Todos live in localStorage until a real API exists. To switch:
-// 1. Run `pnpm dev` from the repo root: Vite's proxy sends `/api` to the API's dev server.
-// 2. Uncomment the apiClient import and each function's REAL API lines, delete its LOCAL STORAGE lines,
-//    and make the function async.
-// 3. Delete todoStorage.ts and restoreTodos, together with useRestoreTodos and the Restore Demo Todos link in Home.
-// 4. Remove `retry: false` from useTodos and useTodo.
+// Each API Function sends one request to the todos API. apiClient adds the /api prefix.
 
-const findTodo = (todos: Todo[], id: string) => {
-  const todo = todos.find((candidate) => candidate.id === id);
-  if (!todo) {
-    throw new Error(`Todo ${id} not found`);
-  }
-  return todo;
+export const listTodos = async () => {
+  const { data } = await apiClient.get<Todo[]>("/todos");
+  return data;
 };
 
-export const getTodos = () => {
-  // REAL API:
-  // const { data } = await apiClient.get<Todo[]>("/todos");
-  // return data;
-
-  // LOCAL STORAGE:
-  const todos = readTodos();
-  return Promise.resolve(todos);
+export const createTodo = async (input: CreateTodoBody) => {
+  const { data } = await apiClient.post<Todo>("/todos", input);
+  return data;
 };
 
-export const getTodo = (id: string) => {
-  // REAL API:
-  // const { data } = await apiClient.get<Todo>(`/todos/${id}`);
-  // return data;
-
-  // LOCAL STORAGE:
-  const todo = findTodo(readTodos(), id);
-  return Promise.resolve(todo);
+export const setTodoCompleted = async (todoId: string, input: SetTodoCompletedBody) => {
+  const { data } = await apiClient.patch<Todo>(`/todos/${todoId}`, input);
+  return data;
 };
 
-export const createTodo = (input: CreateTodoInput) => {
-  // REAL API:
-  // const { data } = await apiClient.post<Todo>("/todos", input);
-  // return data;
-
-  // LOCAL STORAGE:
-  const todo: Todo = { id: crypto.randomUUID(), completed: false, ...input };
-  writeTodos([todo, ...readTodos()]);
-  return Promise.resolve(todo);
+export const deleteTodo = async (todoId: string) => {
+  await apiClient.delete(`/todos/${todoId}`);
 };
 
-export const updateTodo = (id: string, input: UpdateTodoInput) => {
-  // REAL API:
-  // const { data } = await apiClient.patch<Todo>(`/todos/${id}`, input);
-  // return data;
-
-  // LOCAL STORAGE:
-  const todos = readTodos();
-  const todo = { ...findTodo(todos, id), ...input };
-  writeTodos(todos.map((candidate) => (candidate.id === id ? todo : candidate)));
-  return Promise.resolve(todo);
+export const clearCompletedTodos = async () => {
+  await apiClient.delete("/todos", { params: { completed: true } });
 };
 
-export const deleteTodo = (id: string) => {
-  // REAL API:
-  // await apiClient.delete(`/todos/${id}`);
-
-  // LOCAL STORAGE:
-  writeTodos(readTodos().filter((todo) => todo.id !== id));
-  return Promise.resolve();
-};
-
-export const clearCompletedTodos = () => {
-  // REAL API:
-  // await apiClient.delete("/todos", { params: { completed: true } });
-
-  // LOCAL STORAGE:
-  writeTodos(readTodos().filter((todo) => !todo.completed));
-  return Promise.resolve();
-};
-
-// DEMO ONLY: Restore Demo Todos.
-export const restoreTodos = () => {
-  removeTodos();
-  return Promise.resolve();
+// Temporary: replaces every Todo with the six Demo Todos. Delete it together with POST /api/demo-todos/restore.
+export const restoreDemoTodos = async () => {
+  await apiClient.post("/demo-todos/restore");
 };
