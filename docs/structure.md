@@ -62,6 +62,9 @@ to-do-list/
 │   │   │                      docs/planning/, how they're laid out, and that each feature folder
 │   │   │                      starts from the developer's INTENT.md, with its template
 │   │   └── triage-labels.md   maps the agent skills' triage roles to the issue files' status labels
+│   ├── code-audit/         one file per audit of the whole repo: code-audit-<date>.md
+│   │   └── code-audit-2026-11-24.md   46 issues found: 33 fixed, 13 closed after discussion, and
+│   │                                  none left unfixed. A summary on top, then the working record
 │   └── planning/           one folder per feature: its planning record
 │       ├── <feature>/INTENT.md          the goal, definition of done, constraints and acceptance
 │       │                                criteria, in the developer's own words
