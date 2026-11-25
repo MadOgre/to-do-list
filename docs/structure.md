@@ -126,6 +126,8 @@ to-do-list/
 │       │   │               styles in <Name>/<Name>.module.scss
 │       │   ├── NewTodoInput/   "Create a new todo…" with a decorative circle. On Enter it creates the
 │       │   │                   trimmed, non-empty title, and clears once the create succeeds
+│       │   ├── PageLayout/     what every Page shares: the background image for the color scheme and
+│       │   │                   layout, the "TODO" header with the theme toggle, and the column width
 │       │   ├── ThemeToggle/    a moon in light and a sun in dark, switching the color scheme
 │       │   ├── TodoRow/        a round check in a clickable gutter, and the title, struck through when
 │       │   │                   Completed
@@ -135,18 +137,18 @@ to-do-list/
 │       │   └── index.ts        barrel for the Shared Components
 │       ├── images/
 │       │   ├── bg-{mobile,desktop}-{light,dark}.jpg   the design's header backgrounds, one per color
-│       │   │                                          scheme and layout, used by Home's SCSS module
+│       │   │                                          scheme and layout, used by PageLayout's SCSS module
 │       │   ├── icon-{moon,sun,check,cross}.svg   the design's icons: the theme toggle's moon and sun,
 │       │   │                                     the Completed check, and the ✕ for deleting
 │       │   └── index.ts        barrel for the images imported from TypeScript
 │       ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
 │       │   │               <Name>/<Name>.module.scss
-│       │   ├── Home/       the "TODO" header with the theme toggle over the background image, the
-│       │   │               new-todo input, the Todo rows and footer in a card (with the filters in
-│       │   │               a card of their own below the small breakpoint), and the temporary
-│       │   │               Restore Demo Todos link. Asks before deleting, clearing or restoring.
+│       │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
+│       │   │               card (with the filters in a card of their own below the small
+│       │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
 │       │   │               Shows an error alert if the Todos can't be loaded
-│       │   ├── NotFound/   shown for any unknown URL, with a link back home
+│       │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
+│       │   │               the Todo list
 │       │   └── index.ts    barrel for the Pages
 │       ├── styles/
 │       │   ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's

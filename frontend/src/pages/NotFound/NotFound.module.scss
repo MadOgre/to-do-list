@@ -1,0 +1,24 @@
+// The same padding and type sizes as a Todo row: the design's mobile layout below `sm`, its desktop layout from `sm` up.
+.card {
+  gap: mantine.rem(16);
+  padding: mantine.rem(16) mantine.rem(20);
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    gap: mantine.rem(20);
+    padding: mantine.rem(24);
+  }
+}
+
+.title {
+  font-size: mantine.rem(16);
+  font-weight: 700;
+
+  @include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+    font-size: mantine.rem(22);
+  }
+}
+
+// A Card lays out its children in a column and stretches them, so the link would be clickable across the whole card.
+.link {
+  align-self: flex-start;
+}

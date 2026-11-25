@@ -1,4 +1,4 @@
-import { Alert, Anchor, Card, Container, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Anchor, Card, Stack, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { type FC, useState } from "react";
 
@@ -10,7 +10,7 @@ import {
   useRestoreDemoTodos,
   useSetTodoCompleted,
 } from "@/api-hooks";
-import { NewTodoInput, ThemeToggle, TodoFilters, TodoFooter, TodoRow } from "@/components";
+import { NewTodoInput, PageLayout, TodoFilters, TodoFooter, TodoRow } from "@/components";
 import type { Todo, TodoFilter } from "@/types";
 
 import classes from "./Home.module.scss";
@@ -81,52 +81,45 @@ export const Home: FC = () => {
     });
 
   return (
-    <div className={classes.page}>
-      <div className={classes.background} />
-      <Container component="main" className={classes.main}>
-        <Group component="header" justify="space-between" wrap="nowrap" className={classes.header}>
-          <Title order={1} className={classes.title}>TODO</Title>
-          <ThemeToggle />
-        </Group>
-        <Stack className={classes.content}>
-          <NewTodoInput onCreate={(title) => createTodo.mutateAsync({ title })} />
-          {isError && <Alert color="red">Could not load your todos.</Alert>}
-          {todos && (
-            <>
-              <Card shadow="card" padding={0}>
-                {visibleTodos.map((todo) => (
-                  <TodoRow
-                    key={todo.todo_id}
-                    todo={todo}
-                    onToggle={(completed) => setTodoCompleted.mutate({ todoId: todo.todo_id, input: { completed, version: todo.version } })}
-                    onDelete={() => confirmDelete(todo)}
-                  />
-                ))}
-                {emptyMessage && (
-                  <Text c="dimmed" ta="center" fz="inherit" lh="inherit" className={classes.empty}>
-                    {emptyMessage}
-                  </Text>
-                )}
-                <TodoFooter
-                  activeCount={activeTodos.length}
-                  filter={filter}
-                  onFilterChange={setFilter}
-                  onClearCompleted={confirmClearCompleted}
+    <PageLayout>
+      <Stack className={classes.content}>
+        <NewTodoInput onCreate={(title) => createTodo.mutateAsync({ title })} />
+        {isError && <Alert color="red">Could not load your todos.</Alert>}
+        {todos && (
+          <>
+            <Card shadow="card" padding={0}>
+              {visibleTodos.map((todo) => (
+                <TodoRow
+                  key={todo.todo_id}
+                  todo={todo}
+                  onToggle={(completed) => setTodoCompleted.mutate({ todoId: todo.todo_id, input: { completed, version: todo.version } })}
+                  onDelete={() => confirmDelete(todo)}
                 />
-              </Card>
-              {/* Below `sm` the filters leave the footer for a card of their own. */}
-              <Card hiddenFrom="sm" shadow="card" padding={0} className={classes.filterCard}>
-                <TodoFilters filter={filter} onFilterChange={setFilter} />
-              </Card>
-            </>
-          )}
-          {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreDemoTodos and
-              useRestoreDemoTodos. Shown even when the list fails to load. */}
-          <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={classes.restoreLink}>
-            Restore demo todos
-          </Anchor>
-        </Stack>
-      </Container>
-    </div>
+              ))}
+              {emptyMessage && (
+                <Text c="dimmed" ta="center" fz="inherit" lh="inherit" className={classes.empty}>
+                  {emptyMessage}
+                </Text>
+              )}
+              <TodoFooter
+                activeCount={activeTodos.length}
+                filter={filter}
+                onFilterChange={setFilter}
+                onClearCompleted={confirmClearCompleted}
+              />
+            </Card>
+            {/* Below `sm` the filters leave the footer for a card of their own. */}
+            <Card hiddenFrom="sm" shadow="card" padding={0} className={classes.filterCard}>
+              <TodoFilters filter={filter} onFilterChange={setFilter} />
+            </Card>
+          </>
+        )}
+        {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreDemoTodos and
+            useRestoreDemoTodos. Shown even when the list fails to load. */}
+        <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={classes.restoreLink}>
+          Restore demo todos
+        </Anchor>
+      </Stack>
+    </PageLayout>
   );
 };

@@ -19,7 +19,7 @@ Page or Shared Component → API Hook (`src/api-hooks/todos.ts`, React Query, ke
 | How a failed change is shown, and the text for each API error | `src/query-client.ts`, `src/api/error-text.ts` |
 | Add or change a route | `src/routes.tsx`, then `src/pages/<Name>/` and `src/pages/index.ts` |
 | The to-do screen: filter state, counts, empty states, confirm dialogs, the load-error alert | `src/pages/Home/Home.tsx` |
-| One UI piece (input, row, filters, footer, theme toggle) | `src/components/<Name>/<Name>.tsx` and its `.module.scss` |
+| One UI piece (input, row, filters, footer, theme toggle, and the page layout that every Page shares: background, header, column width) | `src/components/<Name>/<Name>.tsx` and its `.module.scss` |
 | Todo and filter types | `src/types/todo.ts`, `src/types/todo-filter.ts` |
 | Colors, font, radius, light and dark CSS variables | `src/theme/theme.ts` |
 | Theme-wide overrides of Mantine components | `src/theme/theme.module.scss` |
