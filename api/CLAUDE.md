@@ -12,6 +12,7 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 - `src/router/handler-registry.ts` exports each route handler under the name that `routes.json` uses. The route handlers are in `src/resources/<resource>/route-handlers/`, one file per route, named after the route handler.
 - Locally, `dev/server.ts` (Express) plays API Gateway's part and calls the same `handler`. It reads `PORT` from `.env`.
 - `pnpm build` writes `dist/index.mjs`. Terraform zips `dist/` and uploads it.
+- `pnpm test` runs the unit tests in `tests/` (Vitest, `vitest.config.ts`). `tests/` has the same folders as `src/`. A route handler's test replaces the repository with `vi.mock` and builds its event with `makeEvent` from `tests/fixtures/events.ts`, so no test reaches DynamoDB.
 
 ## Where to find
 
@@ -26,3 +27,4 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 | The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
 | How the dev server differs from Lambda | `docs/local-development.md` |
 | Run the built function with a sample event | `dev/invoke.ts` (`pnpm invoke`), `dev/sample-events/` |
+| Test a route handler | `tests/resources/<resource>/route-handlers/<name>.test.ts`, with `tests/fixtures/events.ts` |

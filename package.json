@@ -11,6 +11,7 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint . && pnpm -r lint",
+    "test": "pnpm -r test",
     "deploy:dev": "pnpm --filter @to-do-list/api build && terraform -chdir=infra/envs/dev apply"
   },
   "devDependencies": {

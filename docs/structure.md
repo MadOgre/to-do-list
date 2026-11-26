@@ -14,7 +14,7 @@ to-do-list/
 ├── .nvmrc                  pins Node 26 for version managers such as fnm and nvm
 ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
 │                           scripts that run in each package that has them (pnpm dev, build,
-│                           typecheck, lint), pnpm deploy:dev (build the API, then terraform apply
+│                           typecheck, lint, test), pnpm deploy:dev (build the API, then terraform apply
 │                           in infra/envs/dev),
 │                           and the tools every package shares (TypeScript, ESLint and its plugins)
 ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
@@ -79,8 +79,8 @@ to-do-list/
 │
 ├── frontend/               the React app, as the package @to-do-list/frontend
 │   ├── package.json        its libraries (React, Mantine, React Router, React Query, axios, the shared schemas from common/), its tools
-│   │                       (Vite and its plugins, Sass, the React lint plugins), and its scripts:
-│   │                       dev, build, lint, preview
+│   │                       (Vite and its plugins, Sass, the React lint plugins, Vitest, jsdom and
+│   │                       Testing Library), and its scripts: dev, build, lint, preview, test
 │   ├── GUIDE.md            the frontend's conventions, and where the project came from
 │   ├── CLAUDE.md           for AI coding agents: the frontend's data flow and where to find each part
 │   ├── index.html          the HTML page Vite serves and builds from. Sets the favicon and the "Todo
@@ -93,96 +93,110 @@ to-do-list/
 │   │                       ESLint errors during pnpm dev, the dev server on localhost and fixed port
 │   │                       9000, the proxy that sends /api to the API's dev server on port 3000, the
 │   │                       injection of Mantine's Sass helpers into every SCSS file, and the @/ alias
+│   ├── vitest.config.ts    the unit tests' config: vite.config.ts merged with the test settings (the
+│   │                       files in tests/, jsdom, the setup file, mocks cleared before each test)
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules, the React Hooks and React Refresh rules, and browser globals
 │   ├── tsconfig.json       only references the two configs below, so tsc -b checks both
-│   ├── tsconfig.app.json   extends tsconfig.base.json for the app code in src/: browser libraries,
+│   ├── tsconfig.app.json   extends tsconfig.base.json for the app code in src/ and the tests in tests/: browser libraries,
 │   │                       bundler module resolution, JSX, unused-code checks and the @/ alias
-│   ├── tsconfig.node.json  extends tsconfig.base.json for vite.config.ts, which runs in Node
+│   ├── tsconfig.node.json  extends tsconfig.base.json for vite.config.ts and vitest.config.ts, which run in Node
 │   ├── public/
 │   │   └── favicon-32x32.png   the design's 32×32 favicon, served as is
-│   └── src/
-│       ├── main.tsx        the entry point. Loads Mantine's styles, then the global styles, and
-│       │                   renders the app with the Mantine provider (the theme, its CSS variables
-│       │                   resolver, and the color scheme starting from the OS setting), the pop-up
-│       │                   messages, the React Query provider, the router and React Query Devtools
-│       │                   (development only)
-│       ├── routes.tsx      every route, in React Router's data mode: the Home Page at / and the
-│       │                   NotFound Page for anything else
-│       ├── query-client.ts the React Query client. Its MutationCache shows a red pop-up message for
-│       │                   every failed change, with the text from api/error-text.ts
-│       ├── vite-env.d.ts   types the environment variables, and makes reading an undeclared one a
-│       │                   type error
-│       ├── api/
-│       │   ├── api-client.ts   the shared axios instance that the API Functions use, with its base URL
-│       │   │                   from VITE_API_BASE_URL
-│       │   ├── error-text.ts   the text that people see for each error outcome of the API, and
-│       │   │                   getErrorText, which reads the outcome from a failed request's error body
-│       │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
-│       │   │                   delete, clear Completed, and the temporary Restore Demo Todos
-│       │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
-│       ├── api-hooks/
-│       │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
-│       │   │                   refreshes the Todo list when it settles, whether it worked or failed
-│       │   └── index.ts        barrel for the API Hooks
-│       ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
-│       │   │               styles in <Name>/<Name>.module.scss
-│       │   ├── NewTodoInput/   "Create a new todo…" with a decorative circle. On Enter it creates the
-│       │   │                   trimmed, non-empty title, and clears once the create succeeds
-│       │   ├── PageLayout/     what every Page shares: the background image for the color scheme and
-│       │   │                   layout, the "TODO" header with the theme toggle, and the column width
-│       │   ├── ThemeToggle/    a moon in light and a sun in dark, switching the color scheme
-│       │   ├── TodoRow/        a round check in a clickable gutter, and the title, struck through when
-│       │   │                   Completed
-│       │   ├── TodoFilters/    the All, Active and Completed filters, with the selected one in blue
-│       │   ├── TodoFooter/     the card's footer: the "items left" count, the filters (from the small
-│       │   │                   breakpoint up) and Clear Completed
-│       │   └── index.ts        barrel for the Shared Components
-│       ├── images/
-│       │   ├── bg-{mobile,desktop}-{light,dark}.jpg   the design's header backgrounds, one per color
-│       │   │                                          scheme and layout, used by PageLayout's SCSS module
-│       │   ├── icon-{moon,sun,check,cross}.svg   the design's icons: the theme toggle's moon and sun,
-│       │   │                                     the Completed check, and the ✕ for deleting
-│       │   └── index.ts        barrel for the images imported from TypeScript
-│       ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
-│       │   │               <Name>/<Name>.module.scss
-│       │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
-│       │   │               card (with the filters in a card of their own below the small
-│       │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
-│       │   │               Shows an error alert if the Todos can't be loaded
-│       │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
-│       │   │               the Todo list
-│       │   └── index.ts    barrel for the Pages
-│       ├── styles/
-│       │   ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's
-│       │   │                   base styles: the page's own background color
-│       │   ├── _mantine.scss   Mantine's Sass helpers (rem, the breakpoints and the hover,
-│       │   │                   smaller-than, larger-than, light, dark, rtl and ltr mixins), copied
-│       │   │                   from Mantine's "Usage with Sass" guide. vite.config.ts injects it into
-│       │   │                   every SCSS file as mantine. Its breakpoints must match the theme's
-│       │   └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
-│       │                           text, as the footer's filters and Clear Completed are drawn
-│       ├── theme/
-│       │   ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
-│       │   │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
-│       │   │                   that sets the design's light and dark colors, the check gradient and the
-│       │   │                   card shadow
-│       │   ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
-│       │   │                       classNames in theme.ts: Button labels centered on their capitals, and
-│       │   │                       cards in the design's card color
-│       │   └── index.ts        barrel for the theme and its CSS variables resolver
-│       └── types/          shared types, one file per type and the types derived from it
-│           ├── todo.ts         the Todo type and the two request bodies' types, from common/
-│           ├── todo-filter.ts  which Todos the list shows: all, active or completed
-│           └── index.ts        barrel for the shared types
+│   ├── src/
+│   │   ├── main.tsx        the entry point. Loads Mantine's styles, then the global styles, and
+│   │   │                   renders the app with the Mantine provider (the theme, its CSS variables
+│   │   │                   resolver, and the color scheme starting from the OS setting), the pop-up
+│   │   │                   messages, the React Query provider, the router and React Query Devtools
+│   │   │                   (development only)
+│   │   ├── routes.tsx      every route, in React Router's data mode: the Home Page at / and the
+│   │   │                   NotFound Page for anything else
+│   │   ├── query-client.ts the React Query client. Its MutationCache shows a red pop-up message for
+│   │   │                   every failed change, with the text from api/error-text.ts
+│   │   ├── vite-env.d.ts   types the environment variables, and makes reading an undeclared one a
+│   │   │                   type error
+│   │   ├── api/
+│   │   │   ├── api-client.ts   the shared axios instance that the API Functions use, with its base URL
+│   │   │   │                   from VITE_API_BASE_URL
+│   │   │   ├── error-text.ts   the text that people see for each error outcome of the API, and
+│   │   │   │                   getErrorText, which reads the outcome from a failed request's error body
+│   │   │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
+│   │   │   │                   delete, clear Completed, and the temporary Restore Demo Todos
+│   │   │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
+│   │   ├── api-hooks/
+│   │   │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
+│   │   │   │                   refreshes the Todo list when it settles, whether it worked or failed
+│   │   │   └── index.ts        barrel for the API Hooks
+│   │   ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
+│   │   │   │               styles in <Name>/<Name>.module.scss
+│   │   │   ├── NewTodoInput/   "Create a new todo…" with a decorative circle. On Enter it creates the
+│   │   │   │                   trimmed, non-empty title, and clears once the create succeeds
+│   │   │   ├── PageLayout/     what every Page shares: the background image for the color scheme and
+│   │   │   │                   layout, the "TODO" header with the theme toggle, and the column width
+│   │   │   ├── ThemeToggle/    a moon in light and a sun in dark, switching the color scheme
+│   │   │   ├── TodoRow/        a round check in a clickable gutter, and the title, struck through when
+│   │   │   │                   Completed
+│   │   │   ├── TodoFilters/    the All, Active and Completed filters, with the selected one in blue
+│   │   │   ├── TodoFooter/     the card's footer: the "items left" count, the filters (from the small
+│   │   │   │                   breakpoint up) and Clear Completed
+│   │   │   └── index.ts        barrel for the Shared Components
+│   │   ├── images/
+│   │   │   ├── bg-{mobile,desktop}-{light,dark}.jpg   the design's header backgrounds, one per color
+│   │   │   │                                          scheme and layout, used by PageLayout's SCSS module
+│   │   │   ├── icon-{moon,sun,check,cross}.svg   the design's icons: the theme toggle's moon and sun,
+│   │   │   │                                     the Completed check, and the ✕ for deleting
+│   │   │   └── index.ts        barrel for the images imported from TypeScript
+│   │   ├── pages/          the Pages, one folder each: <Name>/<Name>.tsx and, when it has styles,
+│   │   │   │               <Name>/<Name>.module.scss
+│   │   │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
+│   │   │   │               card (with the filters in a card of their own below the small
+│   │   │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
+│   │   │   │               Shows an error alert if the Todos can't be loaded
+│   │   │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
+│   │   │   │               the Todo list
+│   │   │   └── index.ts    barrel for the Pages
+│   │   ├── styles/
+│   │   │   ├── global.scss     global styles for every Page, loaded once in main.tsx after Mantine's
+│   │   │   │                   base styles: the page's own background color
+│   │   │   ├── _mantine.scss   Mantine's Sass helpers (rem, the breakpoints and the hover,
+│   │   │   │                   smaller-than, larger-than, light, dark, rtl and ltr mixins), copied
+│   │   │   │                   from Mantine's "Usage with Sass" guide. vite.config.ts injects it into
+│   │   │   │                   every SCSS file as mantine. Its breakpoints must match the theme's
+│   │   │   └── _text-button.scss   the text-button mixin: a transparent Mantine Button cut down to its
+│   │   │                           text, as the footer's filters and Clear Completed are drawn
+│   │   ├── theme/
+│   │   │   ├── theme.ts        the Mantine theme from the style guide: Blue 500 as the primary color,
+│   │   │   │                   Josefin Sans and the design's 5px radius, plus the CSS variables resolver
+│   │   │   │                   that sets the design's light and dark colors, the check gradient and the
+│   │   │   │                   card shadow
+│   │   │   ├── theme.module.scss   theme-wide overrides of Mantine components, attached through
+│   │   │   │                       classNames in theme.ts: Button labels centered on their capitals, and
+│   │   │   │                       cards in the design's card color
+│   │   │   └── index.ts        barrel for the theme and its CSS variables resolver
+│   │   └── types/          shared types, one file per type and the types derived from it
+│   │       ├── todo.ts         the Todo type and the two request bodies' types, from common/
+│   │       ├── todo-filter.ts  which Todos the list shows: all, active or completed
+│   │       └── index.ts        barrel for the shared types
+│   └── tests/              the unit tests (Vitest, in jsdom), with the same folders as src/
+│       ├── setup.ts        runs before each test file: jest-dom's matchers, the cleanup after each
+│       │                   test, and a stand-in for window.matchMedia, which jsdom lacks
+│       ├── test-utils/
+│       │   └── render.tsx  render: renders a component in MantineProvider with the app's theme, in
+│       │                   Mantine's test mode (no transitions, no portals)
+│       ├── components/     a <Name>.test.tsx for TodoRow, NewTodoInput, TodoFilters and TodoFooter,
+│       │                   each rendered and clicked like a user
+│       └── api/
+│           └── error-text.test.ts  getErrorText: the text for each error body, and the fallback
 │
 ├── api/                    the API's code, as the package @to-do-list/api
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
 │   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
-│   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint), and
-│   │                       its scripts: dev, typecheck, lint, invoke, bundle, build
-│   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/
-│   │                       and dev/
+│   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint,
+│   │                       Vitest), and its scripts: dev, typecheck, lint, invoke, bundle, build, test
+│   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
+│   │                       dev/, tests/ and vitest.config.ts
+│   ├── vitest.config.ts    the unit tests' config: the files in tests/, Node, mocks cleared before
+│   │                       each test
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules and Node globals
 │   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
@@ -233,16 +247,25 @@ to-do-list/
 │   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
 │   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
 │   │                                             Todos link
-│   └── dev/                the tools that run only on your machine, never in Lambda
-│       ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│       │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
-│       ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
-│       │                   stand-in Lambda context
-│       ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
-│       └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
-│           │               The dev server doesn't restart when one changes
-│           └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json
-│                           and clear-completed-todos-missing-query.json
+│   ├── dev/                the tools that run only on your machine, never in Lambda
+│   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
+│   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
+│   │   ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
+│   │   │                   stand-in Lambda context
+│   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+│   │   └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
+│   │       │               The dev server doesn't restart when one changes
+│   │       └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json
+│   │                       and clear-completed-todos-missing-query.json
+│   └── tests/              the unit tests (Vitest, in Node), with the same folders as src/. No test
+│       │                   reaches DynamoDB: the repository tests wait for DynamoDB Local
+│       ├── fixtures/
+│       │   └── events.ts   makeEvent: a whole API Gateway event from the parts a route handler reads
+│       └── resources/
+│           └── todos/
+│               ├── todo-id.test.ts   isValidTodoId: the IDs it accepts and refuses
+│               └── route-handlers/   one <name>.test.ts per route handler, with the repository
+│                                     replaced by vi.mock
 │
 ├── common/                 the shared contract, as the package @to-do-list/common: the zod schemas
 │   │                       that api/ and frontend/ both import. No build of its own: esbuild, Vite
