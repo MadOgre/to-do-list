@@ -14,8 +14,9 @@ to-do-list/
 ├── .nvmrc                  pins Node 26 for version managers such as fnm and nvm
 ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
 │                           scripts that run in each package that has them (pnpm dev, build,
-│                           typecheck, lint, test), pnpm deploy:dev (build the API, then terraform apply
-│                           in infra/envs/dev),
+│                           typecheck, lint, test, and test:verbose, which lists every test by
+│                           name), pnpm deploy:dev (build the API, then terraform apply in
+│                           infra/envs/dev),
 │                           and the tools every package shares (TypeScript, ESLint and its plugins)
 ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
 │                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip,

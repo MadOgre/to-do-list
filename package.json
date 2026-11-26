@@ -12,6 +12,7 @@
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint . && pnpm -r lint",
     "test": "pnpm -r test",
+    "test:verbose": "pnpm -r --reporter=append-only test --reporter=verbose",
     "deploy:dev": "pnpm --filter @to-do-list/api build && terraform -chdir=infra/envs/dev apply"
   },
   "devDependencies": {
