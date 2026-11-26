@@ -6,5 +6,5 @@
     "lib": ["esnext"],
     "types": ["node"]
   },
-  "include": ["src", "dev"]
+  "include": ["src", "dev", "tests", "vitest.config.ts"]
 }

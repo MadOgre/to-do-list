@@ -26,9 +26,12 @@ Page or Shared Component → API Hook (`src/api-hooks/todos.ts`, React Query, ke
 | Sass helpers and breakpoints (they must match the theme) | `src/styles/_mantine.scss` |
 | Design sizes and colors from Figma | `docs/planning/todo-list-mvp/design/FIGMA.md` and `STYLEGUIDE.md` |
 | Dev server port, `/api` proxy, `@/` alias, Sass injection, chunk-size warning limit | `vite.config.ts` |
+| Unit tests: the config, the setup (jest-dom, cleanup, the `matchMedia` stand-in) and the `render` helper with `MantineProvider` | `vitest.config.ts`, `tests/setup.ts`, `tests/test-utils/render.tsx` |
+| A component's or a function's tests | `tests/components/<Name>.test.tsx`, `tests/<area>/<file>.test.ts` |
 
 ## Gotchas
 
 - `src/main.tsx` imports Mantine's styles before ours on purpose. Keep that order.
 - Import a lazy-loaded Page from its own file, never through the `@/pages` barrel.
-- There is no test runner.
+- Render a component in a test with `render` from `tests/test-utils/render.tsx`, never Testing Library's own `render`: Mantine's components need the provider.
+- The tests import Vitest's functions (`describe`, `it`, `expect`, `vi`). They aren't global, so `tests/setup.ts` runs Testing Library's `cleanup` itself.

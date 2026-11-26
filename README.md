@@ -31,6 +31,8 @@ Run them from the repo root.
 | `pnpm build` | Type-checks and builds both packages, into `frontend/dist/` and `api/dist/` |
 | `pnpm typecheck` | Type-checks the API and the shared package, `common/` |
 | `pnpm lint` | Runs ESLint on the root's own files, then in each package |
+| `pnpm test` | Runs the unit tests (Vitest) of the API and the frontend, with no AWS and no browser |
+| `pnpm test:verbose` | Runs the same tests, and lists every test by name, with no output cut short |
 | `pnpm deploy:dev` | Builds the API, then deploys the dev environment with `terraform apply` |
 
 Each package has its own scripts too, such as `pnpm preview` in `frontend/` and `pnpm invoke` in `api/`.

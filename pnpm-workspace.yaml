@@ -4,15 +4,6 @@ packages:
   - common
   - frontend
 
-# Install scripts that pnpm skips. Each one is safe to skip:
-# - esbuild's script only repairs a missing binary package and links the binary for a faster start.
-#   pnpm installs the binary package for this OS itself, so esbuild works without the script.
-# - @parcel/watcher comes in through sass. Its install script only builds from source on request,
-#   and the prebuilt binary is a separate package.
-ignoredBuiltDependencies:
-  - "@parcel/watcher"
-  - esbuild
-
 # One version for each dependency that two or more packages list. Each package lists it as "catalog:".
 # TypeScript is locked to one version, because its minor releases can bring new type errors.
 catalog:
@@ -21,4 +12,14 @@ catalog:
   globals: ^17.12.0
   typescript: 6.0.3
   typescript-eslint: ^8.70.1
+  vitest: ^5.1.2
   zod: ^4.6.7
+
+# Install scripts that pnpm skips. Each one is safe to skip:
+# - esbuild's script only repairs a missing binary package and links the binary for a faster start.
+#   pnpm installs the binary package for this OS itself, so esbuild works without the script.
+# - @parcel/watcher comes in through sass. Its install script only builds from source on request,
+#   and the prebuilt binary is a separate package.
+ignoredBuiltDependencies:
+  - "@parcel/watcher"
+  - esbuild

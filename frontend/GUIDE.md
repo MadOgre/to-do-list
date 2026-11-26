@@ -8,7 +8,7 @@ The terms used here (Page, Shared Component, API Function, API Hook, Todo) are d
 
 ## Scripts
 
-The frontend's own scripts are `dev`, `build`, `lint` and `preview`, in `package.json`. The root's scripts run them together with the API's: see the [Scripts](../README.md#scripts) table in the README. There is no test runner and no test script: add the testing setup you choose.
+The frontend's own scripts are `dev`, `build`, `lint`, `preview` and `test`, in `package.json`. The root's scripts run them together with the API's: see the [Scripts](../README.md#scripts) table in the README. `test` runs the unit tests in `tests/` with Vitest, in jsdom, with React Testing Library.
 
 ## Conventions
 

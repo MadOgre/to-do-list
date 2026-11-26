@@ -15,6 +15,7 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 | `api/src/router/handler-registry.ts` | One export line per route handler. |
 | `api/src/route-handler-tools/outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
 | `api/dev/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
+| `api/tests/resources/<resource>/` | One test file per route handler, in `route-handlers/`, and a test of its ID rule. |
 | `api/.env.example` | Its table's variable. |
 | `infra/modules/app/dynamodb.tf` | Its table. |
 | `infra/modules/app/main.tf` | Its table's policy, and its table's variable in the function. |
@@ -143,11 +144,63 @@ Export each route handler from `api/src/router/handler-registry.ts`, one line ea
 export { getArticle } from "../resources/articles/route-handlers/get-article.ts";
 ```
 
-### 4. The outcome codes
+### 4. The tests, in `api/tests/resources/articles/`
+
+Add one test file per route handler, at the same path as the route handler under `api/tests/`, with `.test` before `.ts`: `route-handlers/get-article.test.ts`. `pnpm test` finds every `*.test.ts` file in `api/tests/`.
+
+The test replaces the repository with `vi.mock`, so no test talks to DynamoDB, and the real file's `ARTICLES_TABLE` check never runs. The factory returns every export of the repository that the route handler uses, each function as `vi.fn()`. Each test sets the repository's answer with `mockResolvedValue`, and builds its event with `makeEvent` from `api/tests/fixtures/events.ts`. Test each response the route handler can give: here 200, 404 and 400.
+
+```ts
+import { describe, expect, it, vi } from "vitest";
+
+import * as articlesRepository from "../../../../src/resources/articles/articles-repository.ts";
+import { getArticle } from "../../../../src/resources/articles/route-handlers/get-article.ts";
+import { makeEvent } from "../../../fixtures/events.ts";
+
+// The route handler gets these exports in place of the real repository, so no test talks to DynamoDB.
+vi.mock("../../../../src/resources/articles/articles-repository.ts", () => ({
+  findArticle: vi.fn(),
+}));
+
+const ROUTE_KEY = "GET /api/articles/{article_id}";
+
+describe("getArticle", () => {
+  it("answers 200 with the article", async () => {
+    const article = { id: "first-article", title: "Hello" };
+    vi.mocked(articlesRepository.findArticle).mockResolvedValue(article);
+
+    const result = await getArticle(makeEvent({ routeKey: ROUTE_KEY, pathParameters: { article_id: "first-article" } }));
+
+    expect(articlesRepository.findArticle).toHaveBeenCalledWith("first-article");
+    expect(result.response.statusCode).toBe(200);
+    expect(JSON.parse(result.response.body ?? "")).toEqual(article);
+  });
+
+  it("answers 404 not_found when no article has the ID", async () => {
+    vi.mocked(articlesRepository.findArticle).mockResolvedValue(null);
+
+    const result = await getArticle(makeEvent({ routeKey: ROUTE_KEY, pathParameters: { article_id: "missing" } }));
+
+    expect(result.outcome).toBe("not_found");
+    expect(result.response.statusCode).toBe(404);
+  });
+
+  it("answers 400 invalid_id for an ID with other characters, and reads nothing", async () => {
+    const result = await getArticle(makeEvent({ routeKey: ROUTE_KEY, pathParameters: { article_id: "not an id!" } }));
+
+    expect(result.outcome).toBe("invalid_id");
+    expect(articlesRepository.findArticle).not.toHaveBeenCalled();
+  });
+});
+```
+
+Test the ID rule too, in `article-id.test.ts`, as `api/tests/resources/todos/todo-id.test.ts` does. The repository itself has no tests yet: they need a real table.
+
+### 5. The outcome codes
 
 Reuse the codes that fit (`found`, `not_found`, `invalid_id` and so on): their comments are generic, so neither file changes. Add a new code only for an ending no existing code describes, with a generic comment like the others: the kind of request, the status, and what happened. A success code goes in `api/src/route-handler-tools/outcome-codes.ts`. An error code goes in `errorOutcomeSchema` in `common/src/error-body.ts`, because the frontend reads it too.
 
-### 5. The table, its policy and its variable, in `infra/modules/app/`
+### 6. The table, its policy and its variable, in `infra/modules/app/`
 
 Add the table to `dynamodb.tf`, next to the todos table. If the file doesn't exist (no resource is left), create it. The table's name starts with `local.prefix` (`tdl-<environment>`), so each environment has its own table. Give it one `attribute` block for each key attribute, and only for those: a non-key attribute fails the plan.
 
@@ -198,7 +251,7 @@ Add the table's name to the function's `environment.variables` in `main.tf`:
   }
 ```
 
-### 6. The local settings
+### 7. The local settings
 
 Add the variable to `api/.env.example`, with a comment, and to your own `api/.env`, so `pnpm dev` and `pnpm invoke` have it. Locally, the code uses the dev environment's table:
 
@@ -207,11 +260,11 @@ Add the variable to `api/.env.example`, with a comment, and to your own `api/.en
 ARTICLES_TABLE=tdl-dev-articles
 ```
 
-### 7. Deploy
+### 8. Deploy
 
 From the repo root: `pnpm deploy:dev`. Read the plan before answering `yes`. Expect the table, the policy, one route per new entry in `routes.json`, and the function updated. A policy change can take some minutes to reach the function: until then, its requests fail with `AccessDeniedException` (a 500). Wait and try again before you look for a mistake.
 
-### 8. Try it
+### 9. Try it
 
 Add one sample event per route to `api/dev/sample-events/articles/`, such as `get-article.json`:
 
@@ -229,13 +282,14 @@ Try it from `api/`, after a build: `pnpm invoke dev/sample-events/articles/get-a
 
 You can also run `pnpm dev` from the repo root and send requests with curl: the local server reads `routes.json`, so the new routes work there with no other change. Both run with your credentials, so a missing permission works locally and fails only in AWS.
 
-### 9. The docs
+### 10. The docs
 
 Update `docs/structure.md`.
 
 ### What catches mistakes
 
 - `pnpm typecheck` (part of `pnpm deploy:dev`): a handler that doesn't match `RouteHandler`, or an outcome code that isn't in `RequestOutcomeCode`.
+- `pnpm test`: a route handler that gives the wrong response for a repository answer or a bad request.
 - The startup check in `api/src/router/router.ts`: a `routes.json` entry whose handler isn't exported. Every route then answers 500, and the function's log says `routes.json: no handler named …`.
 - The repository's startup check: a missing `ARTICLES_TABLE` stops the function, and every route answers 500.
 - Nothing catches an exported handler that no route names. It's never called.
@@ -244,7 +298,7 @@ Update `docs/structure.md`.
 ## Removing a resource
 
 1. Remove its entries from `api/routes.json` and its lines from `api/src/router/handler-registry.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
-2. Delete `api/src/resources/articles/`, `api/dev/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
+2. Delete `api/src/resources/articles/`, `api/tests/resources/articles/`, `api/dev/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
 3. In `api/src/route-handler-tools/outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
 4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `api/.env.example` and `api/.env` too.
 5. Deploy: `pnpm deploy:dev`. Read the plan before answering `yes`: the table and the policy destroyed, one route destroyed per removed entry, and the function updated. **Destroying the table deletes every item in it.** No undo. See [Its data goes with the table](#its-data-goes-with-the-table).
