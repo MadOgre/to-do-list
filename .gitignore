@@ -8,6 +8,9 @@ dist
 # Local-only overrides (.env.local, .env.development.local, ...)
 *.local
 
+# Notes for humans only, which may go out of sync with the repo. .claude/settings.json denies Claude Code reads of it
+DEV-PLANS.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
