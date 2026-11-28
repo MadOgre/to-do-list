@@ -82,7 +82,7 @@ Also checked, nothing to decide: the reset while the Home Page is open, another 
 | Scenario | Given | Then |
 | --- | --- | --- |
 | Not running | `pnpm dev` is stopped. The developer runs `pnpm db:reset` | The reset prints `DynamoDB Local isn't running. Starting it…`, then `Reset tdl-dev-todos: 6 Todos written.`, then `Stopped DynamoDB Local.` Port 8000 is free afterward |
-| Running | `pnpm dev` runs. The developer runs `pnpm db:reset` | The reset prints only `Reset tdl-dev-todos: 6 Todos written.` DynamoDB Local keeps running |
+| Running | `pnpm dev` runs. The developer runs `pnpm db:reset` | The reset prints only `Reset tdl-dev-todos: 6 Todos written.`, after pnpm's own `>` lines. DynamoDB Local keeps running |
 | Can't start | DynamoDB Local isn't installed. The developer runs `pnpm db:reset` | After 10 seconds, the reset prints `DynamoDB Local didn't answer within 10 seconds. Did you run bin/setup-local-db.sh? See docs/local-development.md.` and exits with code 1. Nothing changes |
 
 Also checked, nothing to decide: Ctrl+C during the reset.

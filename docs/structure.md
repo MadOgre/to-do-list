@@ -17,8 +17,8 @@ to-do-list/
 ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
 │                           scripts that run in each package that has them (pnpm dev, build,
 │                           typecheck, lint, test, and test:verbose, which lists every test by
-│                           name), pnpm deploy:dev (build the API, then terraform apply in
-│                           infra/envs/dev),
+│                           name), pnpm db:reset (the API's Reset Local Database), pnpm
+│                           deploy:dev (build the API, then terraform apply in infra/envs/dev),
 │                           and the tools every package shares (TypeScript, ESLint and its plugins)
 ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
 │                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip,
@@ -207,7 +207,7 @@ to-do-list/
 │   │                       Vitest), and its scripts: dev (runs dev:server, the API's dev server, and
 │   │                       dev:db, DynamoDB Local on port 8000 with telemetry off, side by side),
 │   │                       typecheck, lint,
-│   │                       invoke, bundle, build, test
+│   │                       invoke, db:reset, bundle, build, test
 │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
 │   │                       dev/, tests/ and vitest.config.ts
 │   ├── vitest.config.ts    the unit tests' config: the files in tests/, Node, mocks cleared before
@@ -255,7 +255,6 @@ to-do-list/
 │   │           │                         changes and deletes one owner's Todos; the table name comes from
 │   │           │                         TODOS_TABLE, and the client's settings from DATABASE
 │   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
-│   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
 │   │           └── route-handlers/       one file per route
 │   │               ├── list-todos.ts             GET /api/todos: the owner's Todos, newest first
 │   │               ├── create-todo.ts            POST /api/todos: checks the body, makes the ID (a version
@@ -274,6 +273,11 @@ to-do-list/
 │   │   ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
 │   │   │                   stand-in Lambda context
 │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+│   │   ├── reset-local-db.ts  Reset Local Database (pnpm db:reset): deletes the local todos table
+│   │   │                   in DynamoDB Local, creates it again and writes the Seed; never AWS,
+│   │   │                   whatever DATABASE says
+│   │   ├── seeds/
+│   │   │   └── todos.ts    the todos table's Seed: the Demo Owner's six Demo Todos, with fixed IDs
 │   │   └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
 │   │       │               The dev server doesn't restart when one changes
 │   │       └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json

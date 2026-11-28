@@ -468,7 +468,7 @@ Source: questions-round-07.md, Q4. Accepted, with the developer's change: the "C
 | Scenario | Given | Then |
 | --- | --- | --- |
 | Not running | `pnpm dev` is stopped. The developer runs `pnpm db:reset` | The reset prints `DynamoDB Local isn't running. Starting it…`, then `Reset tdl-dev-todos: 6 Todos written.`, then `Stopped DynamoDB Local.` Port 8000 is free afterward |
-| Running | `pnpm dev` runs. The developer runs `pnpm db:reset` | The reset prints only `Reset tdl-dev-todos: 6 Todos written.` DynamoDB Local keeps running |
+| Running | `pnpm dev` runs. The developer runs `pnpm db:reset` | The reset prints only `Reset tdl-dev-todos: 6 Todos written.`, after pnpm's own `>` lines. DynamoDB Local keeps running |
 | Can't start | DynamoDB Local isn't installed. The developer runs `pnpm db:reset` | After 10 seconds, the reset prints `DynamoDB Local didn't answer within 10 seconds. Did you run bin/setup-local-db.sh? See docs/local-development.md.` and exits with code 1. Nothing changes |
 
 Also checked, nothing to decide: Ctrl+C during the reset.
@@ -547,3 +547,4 @@ Everything else, the builder decides alone.
 - **Ticket 02, a taken port 8000 on WSL 1:** DynamoDB Local can start on a taken port 8000 and print no error. The "Port taken" scenario now says so, and `docs/local-development.md` gets one sentence about WSL 1. Source: the developer's closing manual check of ticket 02, step 8.
 - **Ticket 02, the setup script's messages:** the script prints `Installing Java...` and `Downloading DynamoDB Local...` before those steps, and `DynamoDB Local is installed in api/.dynamodb-local/.` after an install. Source: the developer's request after the closing manual check of ticket 02.
 - **Ticket 02, DynamoDB Local's metadata file and telemetry:** git ignores `api/dynamodb-local-metadata.json`. DynamoDB Local starts with `-disableTelemetry`, in `dev:db` and in the reset's start. Source: the developer's answers after the fix rounds of ticket 02.
+- **Ticket 04, the reset's output:** the plain `pnpm db:reset` may print pnpm's own `>` lines before the reset's success line. A `--silent` inside the root script can't hide them, so the root script stays as it is. Source: the developer's answer to the block of ticket 04.

@@ -1,0 +1,1 @@
+c6d8861 Reset the local todos table to the Demo Todos with pnpm db:reset

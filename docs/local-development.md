@@ -29,7 +29,8 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
      On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
    - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
 5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
-6. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
+6. **Fill the local todos table** once: run `pnpm dev`, and from the repo root, in a second terminal, run `pnpm db:reset`. The reset prints `Reset tdl-dev-todos: 6 Todos written.` Before the first reset, the table doesn't exist, and every todos route answers 500. See [Reset Local Database](#reset-local-database).
+7. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
 
 ## Running it
 
@@ -70,6 +71,12 @@ Saving a `.ts` or `.json` file in `api/src/` or `api/dev/` (except the sample ev
 The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true` in `api/.env`), with the same keys as in CloudWatch. Each response's `apigw-requestid` header is the `correlation_id` of its lines, as in AWS (see [logging.md](logging.md)).
 
 `pnpm invoke` (from `api/`) runs the built function, `api/dist/index.mjs`, with a sample event: `pnpm invoke dev/sample-events/<resource>/<name>.json`. It reads `api/.env` too. Build first with `pnpm build`.
+
+## Reset Local Database
+
+`pnpm db:reset`, from the repo root, deletes the local todos table, creates it again, and writes the six Demo Todos from `api/dev/seeds/todos.ts`. Each reset puts back the same six Todos, with the same IDs. Run it while `pnpm dev` runs DynamoDB Local.
+
+The reset always uses DynamoDB Local on `localhost:8000`, with fake credentials, whatever `DATABASE` says. So the reset never changes a table in AWS. It reads the table's name from `TODOS_TABLE` in `api/.env`.
 
 ## Settings
 

@@ -15,6 +15,8 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 | `api/src/router/handler-registry.ts` | One export line per route handler. |
 | `api/src/route-handler-tools/outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
 | `api/dev/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
+| `api/dev/seeds/<resource>.ts` | Its Seed: each Owner's ID, and that Owner's items, which `pnpm db:reset` writes to the local table. |
+| `api/dev/reset-local-db.ts` | About 10 lines: delete its local table, create it again with its keys, and write its Seed. |
 | `api/tests/resources/<resource>/` | One test file per route handler, in `route-handlers/`, and a test of its ID rule. |
 | `api/.env.example` | Its table's variable. |
 | `infra/modules/app/dynamodb.tf` | Its table. |

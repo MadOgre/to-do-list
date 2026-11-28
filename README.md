@@ -6,6 +6,7 @@ A to-do list web app: a React + TypeScript frontend on Vite, with Mantine, React
 
 - **Node 26.** It's pinned in `.nvmrc`, so [fnm](https://github.com/Schniz/fnm) or nvm picks it up.
 - **pnpm through corepack.** Run `corepack enable` once. On Windows, remove any global pnpm first (`npm rm -g pnpm`), then run `corepack enable` in an admin prompt.
+- **Java 17 or newer,** for DynamoDB Local, which `pnpm dev` starts. On WSL and Linux, `bin/setup-local-db.sh` installs Java and DynamoDB Local.
 - **For the API's AWS parts:** the AWS CLI and Terraform 1.16.
 
 ## Quick start
@@ -14,9 +15,10 @@ A to-do list web app: a React + TypeScript frontend on Vite, with Mantine, React
 git clone <repo-url> to-do-list
 cd to-do-list
 pnpm install
+bin/setup-local-db.sh          # WSL and Linux; other systems: see docs/local-development.md
 cp api/.env.example api/.env   # in Windows cmd: copy api\.env.example api\.env
-aws login
 pnpm dev
+pnpm db:reset                  # once, in a second terminal, while pnpm dev runs
 ```
 
 The frontend opens at **<http://localhost:9000>**, and the API runs at **<http://localhost:3000>**. Full details, on every OS: [docs/local-development.md](docs/local-development.md).
@@ -28,6 +30,7 @@ Run them from the repo root.
 | Command | Does |
 | --- | --- |
 | `pnpm dev` | Starts the frontend's and the API's dev servers side by side |
+| `pnpm db:reset` | Resets the local todos table in DynamoDB Local to the six Demo Todos. Never touches AWS |
 | `pnpm build` | Type-checks and builds both packages, into `frontend/dist/` and `api/dist/` |
 | `pnpm typecheck` | Type-checks the API and the shared package, `common/` |
 | `pnpm lint` | Runs ESLint on the root's own files, then in each package |

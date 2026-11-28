@@ -28,4 +28,5 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 | The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
 | How the dev server differs from Lambda | `docs/local-development.md` |
 | Run the built function with a sample event | `dev/invoke.ts` (`pnpm invoke`), `dev/sample-events/` |
+| Reset the local todos table to the Demo Todos | `dev/reset-local-db.ts` (`pnpm db:reset`), with the Seed in `dev/seeds/todos.ts` |
 | Test a route handler | `tests/resources/<resource>/route-handlers/<name>.test.ts`, with `tests/fixtures/events.ts` |
