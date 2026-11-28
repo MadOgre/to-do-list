@@ -28,8 +28,8 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
 
      On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
    - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
-5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
-6. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
+5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
+6. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
 
 ## Running it
 
@@ -57,7 +57,7 @@ The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api`
 
 `api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/router/router.ts`), and turns the result into an HTTP response. A request that matches no route gets API Gateway's own answer: a 404 and `{"message":"Not Found"}`.
 
-Only the code is local. The todos routes read and write the real table in AWS, with your own credentials. If you're not signed in, the server says so when it starts and when a request fails for that reason.
+`DATABASE` in `api/.env` selects the database that the todos routes read and write. With `local`, they use DynamoDB Local, with fake credentials, and the server never checks your AWS login. With `dev`, they use the real table in AWS, with your own credentials: if you're not signed in, the server says so when it starts and when a request fails for that reason. With no `DATABASE`, or any other value, the server stops at startup with `DATABASE must be local or dev (see api/.env.example)`, and waits until you save `api/.env` with a valid value.
 
 Send requests from another terminal:
 
@@ -79,7 +79,8 @@ Node loads `api/.env` with `--env-file`. A variable already set in your shell wi
 | --- | --- |
 | `PORT` | The API dev server's port on `localhost`. |
 | `POWERTOOLS_DEV` | `true` prints each log line as indented JSON. |
-| `TODOS_TABLE` | The todos table's name. Locally, the code uses the dev environment's table, `tdl-dev-todos`. |
+| `DATABASE` | The database that the todos routes use: `local` for DynamoDB Local on port 8000, or `dev` for the real dev table in AWS, after `aws login`. The dev server refuses any other value, and a missing one. The deployed Lambda doesn't get `DATABASE`, and uses the real DynamoDB. |
+| `TODOS_TABLE` | The todos table's name. Locally, the code uses the dev environment's table name, `tdl-dev-todos`, for DynamoDB Local and for AWS alike. |
 
 When code starts reading a new variable, add it to `api/.env.example`, with a comment, and a placeholder such as `XXXXXXX` for values that differ per person.
 

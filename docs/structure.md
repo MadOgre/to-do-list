@@ -235,6 +235,10 @@ to-do-list/
 │   │   │   │                         path and a handler name
 │   │   │   ├── handler-registry.ts   re-exports every route handler, under the name routes.json uses
 │   │   │   └── logger.ts             the one Powertools Logger the whole function writes with
+│   │   ├── database/
+│   │   │   └── dynamodb-client-config.ts  dynamoDbClientConfig: the DynamoDB client's settings for a
+│   │   │                             DATABASE value; DynamoDB Local on port 8000, with fake
+│   │   │                             credentials, for local, and the real DynamoDB otherwise
 │   │   ├── route-handler-tools/      what a route handler uses to read the request and write the response
 │   │   │   ├── route-handler.ts      RouteHandler (the shape every route handler has) and Result (what a
 │   │   │   │                         route handler returns)
@@ -249,7 +253,7 @@ to-do-list/
 │   │           ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
 │   │           │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
 │   │           │                         changes and deletes one owner's Todos; the table name comes from
-│   │           │                         TODOS_TABLE
+│   │           │                         TODOS_TABLE, and the client's settings from DATABASE
 │   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
 │   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
 │   │           └── route-handlers/       one file per route
@@ -265,7 +269,8 @@ to-do-list/
 │   │                                             Todo
 │   ├── dev/                the tools that run only on your machine, never in Lambda
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
+│   │   │                   the router in src/router/router.ts, stops unless DATABASE is local or dev,
+│   │   │                   and with dev warns when you're not logged in to AWS
 │   │   ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
 │   │   │                   stand-in Lambda context
 │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
@@ -277,6 +282,8 @@ to-do-list/
 │       │                   reaches DynamoDB: the repository tests wait for DynamoDB Local
 │       ├── fixtures/
 │       │   └── events.ts   makeEvent: a whole API Gateway event from the parts a route handler reads
+│       ├── database/
+│       │   └── dynamodb-client-config.test.ts   the client's endpoint for local, dev and no DATABASE
 │       ├── router/
 │       │   └── routes.test.ts   the routes list: the removed POST /api/demo-todos/restore stays out
 │       └── resources/

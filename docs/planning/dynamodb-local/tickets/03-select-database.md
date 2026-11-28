@@ -1,6 +1,6 @@
 # 03 - Select the database with `DATABASE`
 
-**Status:** todo
+**Status:** done
 **Blocked by:** 02
 **Model:** opus
 **Skills:** `tdd` for writing the endpoint test first, at the new function
@@ -40,28 +40,46 @@ Before the first reset, the local table doesn't exist, so a todos route with `lo
 
 ### Rules 1 to 3: the database setting
 
-- [ ] **Dev, logged in**: given `DATABASE=dev`, after `aws login`; then `GET /api/todos` returns the Todos in the real `tdl-dev-todos` table.
-- [ ] **Dev, not logged in**: given `DATABASE=dev`, and no AWS credentials; then The dev server prints `NOT_LOGGED_IN_MESSAGE` at startup, as today.
+- [x] **Dev, logged in**: given `DATABASE=dev`, after `aws login`; then `GET /api/todos` returns the Todos in the real `tdl-dev-todos` table.
+- [x] **Dev, not logged in**: given `DATABASE=dev`, and no AWS credentials; then The dev server prints `NOT_LOGGED_IN_MESSAGE` at startup, as today.
 
 ### Rule 11: before the first reset
 
-- [ ] **No table yet**: given DynamoDB Local runs, and no reset has run yet; then `GET /api/todos` answers 500 with `{"message":"Internal Server Error"}`. The terminal shows `ResourceNotFoundException`. The Home Page shows its red alert, "Could not load your todos."
+- [x] **No table yet**: given DynamoDB Local runs, and no reset has run yet; then `GET /api/todos` answers 500 with `{"message":"Internal Server Error"}`. The terminal shows `ResourceNotFoundException`. The Home Page shows its red alert, "Could not load your todos."
 
 ### A missing or unknown database setting
 
-- [ ] **Missing, dev server**: given No `DATABASE` in `api/.env`. The developer runs `pnpm dev`; then The dev server stops at startup with `DATABASE must be local or dev (see api/.env.example)`.
-- [ ] **Unknown, dev server**: given `DATABASE=prod`, or any other value; then The dev server stops at startup with the same message.
-- [ ] **Local**: given `DATABASE=local`; then The API uses DynamoDB Local.
-- [ ] **Dev**: given `DATABASE=dev`; then The API uses the real DynamoDB in AWS.
-- [ ] **Deployed Lambda**: given No `DATABASE`, as `infra/modules/app/main.tf` sets today; then The Lambda uses the real DynamoDB, as today.
+- [x] **Missing, dev server**: given No `DATABASE` in `api/.env`. The developer runs `pnpm dev`; then The dev server stops at startup with `DATABASE must be local or dev (see api/.env.example)`.
+- [x] **Unknown, dev server**: given `DATABASE=prod`, or any other value; then The dev server stops at startup with the same message.
+- [x] **Local**: given `DATABASE=local`; then The API uses DynamoDB Local.
+  Test: `api/tests/database/dynamodb-client-config.test.ts::dynamoDbClientConfig > sends the client to DynamoDB Local, with fake credentials and region, for local`
+- [x] **Dev**: given `DATABASE=dev`; then The API uses the real DynamoDB in AWS.
+  Test: `api/tests/database/dynamodb-client-config.test.ts::dynamoDbClientConfig > leaves the client on the real DynamoDB in AWS for dev`
+- [x] **Deployed Lambda**: given No `DATABASE`, as `infra/modules/app/main.tf` sets today; then The Lambda uses the real DynamoDB, as today.
+  Test: `api/tests/database/dynamodb-client-config.test.ts::dynamoDbClientConfig > leaves the client on the real DynamoDB in AWS when no database is set, as in the deployed Lambda`
 
 ## Acceptance criteria
 
-- [ ] A test checks the endpoint that the DynamoDB client gets for each `DATABASE` value, including no value ("Verified another way").
-- [ ] The structure doc names the new test file, and any new source file.
-- [ ] Every scenario above, except the ones that the endpoint test covers, is a step in the closing manual check.
-- [ ] The project's checks pass, as "Keep the build green" in the project's `CLAUDE.md` lists them. The short `pnpm dev` start needs `DATABASE` in `api/.env`.
+- [x] A test checks the endpoint that the DynamoDB client gets for each `DATABASE` value, including no value ("Verified another way").
+- [x] The structure doc names the new test file, and any new source file.
+- [x] Every scenario above, except the ones that the endpoint test covers, is a step in the closing manual check.
+- [x] The project's checks pass, as "Keep the build green" in the project's `CLAUDE.md` lists them. The short `pnpm dev` start needs `DATABASE` in `api/.env`.
 
 ## Notes
 
-(Empty. `/forge:implement` adds notes here.)
+Base: 8e970077f6a9ebdcbc53a1861cf260a209d782e4
+
+From ticket 02 review: S2 (`docs/local-development.md`, step "Sign in to AWS" says that the todos routes need AWS credentials) is this ticket's work, under "The docs".
+
+Review round 1 (reviews/03/):
+- P1 (partial, new, `dynamodb-client-config.test.ts:13-19`): blocking, as a weak scenario test. The "Dev" and "Deployed Lambda" tests check only the endpoint, not today's settings `{}`.
+- S1 (judgment, new, `api/dev/server.ts:20`): non-blocking. The literals `"local"` and `"dev"` repeat in two files. Declined for now: two short literals, and the spec names no shared type.
+
+Close: the developer passed every step of the closing manual check, AWS steps included.
+- Fixed: P1 (`01ee663`). Accepted: S1, as above. Deferred: 0.
+- The developer's `api/.env` now matches `api/.env.example`: `DATABASE=local` with its comment above `TODOS_TABLE`. The unused `LOCAL_DB_PORT` is gone.
+
+For the next builders:
+- The reset can call `dynamoDbClientConfig("local")` from `api/src/database/dynamodb-client-config.ts`. The reset must ignore `DATABASE`.
+- `api/dev/server.ts` imports `handler` first, so the Repository's `TODOS_TABLE` check fires before the `DATABASE` check.
+- `README.md` line 18 still says `aws login`. The README update comes with `pnpm db:reset`.
