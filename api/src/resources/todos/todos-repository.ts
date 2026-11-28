@@ -134,11 +134,3 @@ export const clearCompletedTodos = async (ownerId: string) => {
 
   return result.Count ?? 0;
 };
-
-// Deletes every Todo of one owner, then writes the given Todos.
-export const restoreDemoTodos = async (ownerId: string, todos: Todo[]) => {
-  await todosTable.build(DeletePartitionCommand).entities(TodoEntity).query({ partition: ownerId }).send();
-
-  const puts = todos.map((todo) => TodoEntity.build(PutItemCommand).item({ owner_id: ownerId, ...todo }).send());
-  await Promise.all(puts);
-};

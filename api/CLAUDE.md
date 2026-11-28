@@ -2,7 +2,7 @@
 
 A routing map for this package. Read a file only when this map points there. For a one-line note on each file, read the `api/` part of `docs/structure.md`.
 
-**Status:** the API has one resource, todos, with all its routes (see `routes.json`). `POST /api/demo-todos/restore` is temporary, for the Restore Demo Todos link. The frontend reads and changes its Todos through these routes.
+**Status:** the API has one resource, todos, with all its routes (see `routes.json`). The frontend reads and changes its Todos through these routes.
 
 ## Request path
 

@@ -1,6 +1,6 @@
 # 01 - Delete the Restore Demo Todos route, and hide the link
 
-**Status:** todo
+**Status:** done
 **Blocked by:** None
 **Model:** sonnet
 **Skills:** `tdd` for writing the router test and the Home Page test first, at their seams
@@ -36,16 +36,26 @@ Keep `DEMO_TODOS` and its file. A later ticket moves the Demo Todos into the see
 
 ### Rules 13 and 14: the removed route and the hidden link
 
-- [ ] **Removed route**: given `POST http://localhost:3000/api/demo-todos/restore`; then 404 with `{"message":"Not Found"}`.
-- [ ] **Hidden link**: given The developer opens the Home Page; then The text "Restore demo todos" doesn't show.
+- [x] **Removed route**: given `POST http://localhost:3000/api/demo-todos/restore`; then 404 with `{"message":"Not Found"}`.
+- [x] **Hidden link**: given The developer opens the Home Page; then The text "Restore demo todos" doesn't show.
 
 ## Acceptance criteria
 
-- [ ] A router test checks that the `routes` list has no `POST /api/demo-todos/restore` ("Verified another way").
-- [ ] A Home Page test checks that the text "Restore demo todos" isn't visible ("Verified another way").
-- [ ] The structure doc lists no deleted file, and names the new test files.
-- [ ] The project's checks pass, as "Keep the build green" in the project's `CLAUDE.md` lists them: `pnpm install`, `pnpm lint`, `pnpm build`, `pnpm test`, and a short `pnpm dev` start on ports 9000 and 3000.
+- [x] A router test checks that the `routes` list has no `POST /api/demo-todos/restore` ("Verified another way").
+- [x] A Home Page test checks that the text "Restore demo todos" isn't visible ("Verified another way").
+- [x] The structure doc lists no deleted file, and names the new test files.
+- [x] The project's checks pass, as "Keep the build green" in the project's `CLAUDE.md` lists them: `pnpm install`, `pnpm lint`, `pnpm build`, `pnpm test`, and a short `pnpm dev` start on ports 9000 and 3000.
 
 ## Notes
 
-(Empty. `/forge:implement` adds notes here.)
+Base: 3623ab9d9e2475e7173f45c289ab1f92ef5213eb
+
+Review (reviews/01/): no blocking findings. Spec review: no findings.
+- S1 (judgment, new, `Home.tsx:106`): accepted as non-blocking. The ticket's "Do not" section keeps the hidden link for a later use, in the developer's words.
+- Deferred: 0.
+
+For the next builders:
+- `DEMO_TODOS` is now used by nothing. It stays until the ticket that moves the Demo Todos into the seed file.
+- `frontend/tests/test-utils/render.tsx` has no `QueryClientProvider`. `tests/pages/Home.test.tsx` wraps `Home` in its own provider, and mocks `@/api/api-client`.
+- `todos-repository.ts` still imports `DeletePartitionCommand`, for `clearCompletedTodos`.
+- `GLOSSARY.md` keeps `_Avoid_: restore`. `docs/code-audit/code-audit-2026-11-24.md` still names the route, as a dated audit.

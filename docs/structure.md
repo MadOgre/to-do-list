@@ -126,10 +126,10 @@ to-do-list/
 │   │   │   ├── error-text.ts   the text that people see for each error outcome of the API, and
 │   │   │   │                   getErrorText, which reads the outcome from a failed request's error body
 │   │   │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
-│   │   │   │                   delete, clear Completed, and the temporary Restore Demo Todos
+│   │   │   │                   delete, clear Completed
 │   │   │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
 │   │   ├── api-hooks/
-│   │   │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
+│   │   │   ├── todos.ts        the Todo API Hooks: one query and four mutations. Each mutation
 │   │   │   │                   refreshes the Todo list when it settles, whether it worked or failed
 │   │   │   └── index.ts        barrel for the API Hooks
 │   │   ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
@@ -155,7 +155,7 @@ to-do-list/
 │   │   │   │               <Name>/<Name>.module.scss
 │   │   │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
 │   │   │   │               card (with the filters in a card of their own below the small
-│   │   │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
+│   │   │   │               breakpoint), and a hidden Restore Demo Todos link that waits for a new use. Asks before deleting or clearing.
 │   │   │   │               Shows an error alert if the Todos can't be loaded
 │   │   │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
 │   │   │   │               the Todo list
@@ -185,6 +185,8 @@ to-do-list/
 │   └── tests/              the unit tests (Vitest, in jsdom), with the same folders as src/
 │       ├── setup.ts        runs before each test file: jest-dom's matchers, the cleanup after each
 │       │                   test, and a stand-in for window.matchMedia, which jsdom lacks
+│       ├── pages/
+│       │   └── Home.test.tsx   the Home Page: the Restore Demo Todos link doesn't show
 │       ├── test-utils/
 │       │   └── render.tsx  render: renders a component in MantineProvider with the app's theme, in
 │       │                   Mantine's test mode (no transitions, no portals)
@@ -247,11 +249,8 @@ to-do-list/
 │   │               │                             version
 │   │               ├── delete-todo.ts            DELETE /api/todos/{todo_id}: 204, also when there's no
 │   │               │                             such Todo
-│   │               ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
-│   │               │                             Todo
-│   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
-│   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
-│   │                                             Todos link
+│   │               └── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
+│   │                                             Todo
 │   ├── dev/                the tools that run only on your machine, never in Lambda
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
 │   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
@@ -266,6 +265,8 @@ to-do-list/
 │       │                   reaches DynamoDB: the repository tests wait for DynamoDB Local
 │       ├── fixtures/
 │       │   └── events.ts   makeEvent: a whole API Gateway event from the parts a route handler reads
+│       ├── router/
+│       │   └── routes.test.ts   the routes list: the removed POST /api/demo-todos/restore stays out
 │       └── resources/
 │           └── todos/
 │               ├── todo-id.test.ts   isValidTodoId: the IDs it accepts and refuses

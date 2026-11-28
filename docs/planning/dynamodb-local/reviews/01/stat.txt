@@ -1,0 +1,16 @@
+ api/CLAUDE.md                                      |  2 +-
+ .../sample-events/todos/restore-demo-todos.json    |  6 -----
+ api/routes.json                                    |  3 +--
+ .../todos/route-handlers/restore-demo-todos.ts     | 30 ---------------------
+ api/src/resources/todos/todos-repository.ts        |  8 ------
+ api/src/route-handler-tools/outcome-codes.ts       |  1 -
+ api/src/router/handler-registry.ts                 |  1 -
+ .../route-handlers/restore-demo-todos.test.ts      | 31 ----------------------
+ api/tests/router/routes.test.ts                    | 11 ++++++++
+ docs/structure.md                                  | 17 ++++++------
+ frontend/CLAUDE.md                                 |  2 +-
+ frontend/src/api-hooks/todos.ts                    | 10 -------
+ frontend/src/api/todos.ts                          |  5 ----
+ frontend/src/pages/Home/Home.tsx                   | 16 ++---------
+ frontend/tests/pages/Home.test.tsx                 | 24 +++++++++++++++++
+ 15 files changed, 49 insertions(+), 118 deletions(-)

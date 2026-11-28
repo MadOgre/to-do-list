@@ -26,8 +26,3 @@ export const deleteTodo = async (todoId: string) => {
 export const clearCompletedTodos = async () => {
   await apiClient.delete("/todos", { params: { completed: true } });
 };
-
-// Temporary: replaces every Todo with the six Demo Todos. Delete it together with POST /api/demo-todos/restore.
-export const restoreDemoTodos = async () => {
-  await apiClient.post("/demo-todos/restore");
-};

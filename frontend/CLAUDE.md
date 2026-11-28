@@ -9,7 +9,7 @@ Page or Shared Component → API Hook (`src/api-hooks/todos.ts`, React Query, ke
 - Every mutation invalidates `["todos"]` when it settles, whether it worked or failed, so the list refetches.
 - A failed mutation shows a pop-up message from one place: the `MutationCache` in `src/query-client.ts`. `src/api/error-text.ts` turns the API's error body into the text that people see. A failed read shows in the Page, through the query's `isError`.
 - The Todo types come from `@to-do-list/common`, through `src/types/todo.ts`.
-- Code marked Temporary (`restoreDemoTodos`, `useRestoreDemoTodos` and the Restore Demo Todos link) goes away together with `POST /api/demo-todos/restore`.
+- The Home Page keeps the Restore Demo Todos link in its code, hidden, until it gets a new use.
 
 ## Where to find
 

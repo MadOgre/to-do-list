@@ -1,0 +1,15 @@
+api/CLAUDE.md
+api/dev/sample-events/todos/restore-demo-todos.json
+api/routes.json
+api/src/resources/todos/route-handlers/restore-demo-todos.ts
+api/src/resources/todos/todos-repository.ts
+api/src/route-handler-tools/outcome-codes.ts
+api/src/router/handler-registry.ts
+api/tests/resources/todos/route-handlers/restore-demo-todos.test.ts
+api/tests/router/routes.test.ts
+docs/structure.md
+frontend/CLAUDE.md
+frontend/src/api-hooks/todos.ts
+frontend/src/api/todos.ts
+frontend/src/pages/Home/Home.tsx
+frontend/tests/pages/Home.test.tsx
