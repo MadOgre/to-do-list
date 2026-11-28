@@ -75,6 +75,7 @@ to-do-list/
 │       ├── <feature>/SPEC.md            the spec derived from the intent and the grilling rounds.
 │       │                                Earlier features name it spec.md
 │       ├── <feature>/tickets/NN-<ticket>.md   one per ticket. Earlier features keep them in issues/
+│       ├── dynamodb-local/     running the API against DynamoDB Local, with no AWS
 │       ├── mantine-install/    installing Mantine and its Sass helpers
 │       └── todo-list-mvp/      the to-do list from the Figma design. Also has design/: the Figma
 │                               screenshots (1.png … 4.png), STYLEGUIDE.md (layout widths, colors,

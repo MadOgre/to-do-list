@@ -1,0 +1,3 @@
+User provided description: I want to install DynamoDB.local into this repository. I want it to use the same seeds as were used previously for demo to-dos. I want it to just install DynamoDB.local for local development without overcomplicating the issue. It should give the user sufficient help to install the Java version of DynamoDB.local and it should serve it with local like it's supposed to.
+
+Eventually there should be some kind of parameter to run it with the production database or staging database later when those databases exist. For right now all I want is to be able to serve completely locally without touching AWS CLI.

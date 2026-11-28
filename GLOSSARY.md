@@ -70,8 +70,8 @@ A number on each Todo that grows by one with each change. A change that names an
 _Avoid_: revision, etag
 
 **Demo Todos**:
-The six Todos from the design that Restore Demo Todos puts in the list. They exist only until the app has logins.
-_Avoid_: original, default, seed, sample, starter todos
+The Demo Owner's six Todos from the design, which the Seed puts in the local todos table.
+_Avoid_: original, default, sample, starter todos
 
 ## Operations
 
@@ -95,6 +95,10 @@ _Avoid_: remove, destroy
 Deleting every Completed Todo of one Owner at once.
 _Avoid_: purge, delete completed
 
-**Restore Demo Todos**:
-Replacing every Todo of one Owner with the Demo Todos.
-_Avoid_: reset, clear all
+**Reset Local Database**:
+Deleting the local todos table, creating it again, and filling it with the Demo Todos through the Seed. It never touches a table in AWS.
+_Avoid_: restore, reseed, clear all
+
+**Seed**:
+Filling a newly created local todos table with the Demo Todos. Reset Local Database ends with the Seed.
+_Avoid_: populate, fixtures
