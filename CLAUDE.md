@@ -75,7 +75,7 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **Pages (frontend)** live one per folder under `frontend/src/pages/`, with their SCSS module next to them.
 - **Shared types (frontend)** go in `frontend/src/types/`, one file per type, with the types derived from it in the same file.
 - **Mantine (frontend,** ADR-0001**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, imported as `classes` (`import classes from "./Home.module.scss";`), as Mantine's docs do. The styles use Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
-- **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `api/.env.example`, with a comment and a placeholder, and each developer's own values in the gitignored `api/.env`.
+- **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `.env.example` at the repo root, with a comment and a placeholder, and each developer's own values in the gitignored `.env` next to it.
 
 ### Grilling sessions
 

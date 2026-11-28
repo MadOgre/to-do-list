@@ -9,10 +9,13 @@ to-do-list/
 ├── .gitattributes          makes git store every text file with LF (Linux) line endings, so Windows
 │                           checkouts don't produce noisy diffs
 ├── .gitignore              what git leaves out: installed packages, build output, local env overrides
-│                           (*.local, api/.env), DynamoDB Local's folder (api/.dynamodb-local/) and
+│                           (*.local, .env), DynamoDB Local's folder (api/.dynamodb-local/) and
 │                           metadata file (api/dynamodb-local-metadata.json), editor and OS files, and
 │                           Terraform's working folders,
 │                           state files, variable files, crash logs and saved plans
+├── .env.example            the API's settings that pnpm dev, pnpm invoke and pnpm db:reset read,
+│                           with their values; committed
+├── .env                    your own copy of .env.example; gitignored
 ├── .nvmrc                  pins Node 26 for version managers such as fnm and nvm
 ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
 │                           scripts that run in each package that has them (pnpm dev, build,
@@ -214,8 +217,6 @@ to-do-list/
 │   │                       each test
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules and Node globals
-│   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
-│   ├── .env                your own copy of .env.example; gitignored
 │   ├── .dynamodb-local/    DynamoDB Local, from bin/setup-local-db.sh, and its tables in data/;
 │   │                       gitignored
 │   ├── dynamodb-local-metadata.json  DynamoDB Local's installation ID and telemetry flag, which

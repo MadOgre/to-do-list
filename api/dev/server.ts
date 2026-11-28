@@ -12,14 +12,14 @@ import { makeLocalContext } from "./local-context.ts";
 
 const { PORT } = process.env;
 if (!PORT) {
-  throw new Error("PORT environment variable must be set (see api/.env.example)");
+  throw new Error("PORT environment variable must be set (see .env.example)");
 }
 
 // Every developer chooses the database: no default, so nobody reaches AWS without meaning to.
 // The deployed Lambda never gets DATABASE, so only the dev server refuses a missing or unknown value.
 const { DATABASE } = process.env;
 if (DATABASE !== "local" && DATABASE !== "dev") {
-  throw new Error("DATABASE must be local or dev (see api/.env.example)");
+  throw new Error("DATABASE must be local or dev (see .env.example)");
 }
 
 // Only the dev database needs an AWS login: DynamoDB Local takes fake credentials.

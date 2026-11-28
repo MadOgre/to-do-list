@@ -28,7 +28,7 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
 
      On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
    - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
-5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
+5. **Copy `.env.example` to `.env`.** Git ignores `.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
 6. **Fill the local todos table** once: from the repo root, run `pnpm db:reset`. The reset prints `Reset tdl-dev-todos: 6 Todos written.` Before the first reset, the table doesn't exist, and every todos route answers 500. See [Reset Local Database](#reset-local-database).
 7. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
 
@@ -52,13 +52,13 @@ Ctrl+C stops all three. pnpm may then print `Failed` for a package, which only m
 
 ### The proxy
 
-The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api` in `frontend/.env`). Vite's dev server passes every request whose path starts with `/api` on to the API's dev server, with the path unchanged, because the API's routes start with `/api` too. So <http://localhost:9000/api/anything> reaches the API, and answers with the API's 404. The proxy is set in `frontend/vite.config.ts`, and it names port 3000: if you change `PORT` in `api/.env`, change the proxy too.
+The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api` in `frontend/.env`). Vite's dev server passes every request whose path starts with `/api` on to the API's dev server, with the path unchanged, because the API's routes start with `/api` too. So <http://localhost:9000/api/anything> reaches the API, and answers with the API's 404. The proxy is set in `frontend/vite.config.ts`, and it names port 3000: if you change `PORT` in `.env`, change the proxy too.
 
 ## The API's dev server
 
 `api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/router/router.ts`), and turns the result into an HTTP response. A request that matches no route gets API Gateway's own answer: a 404 and `{"message":"Not Found"}`.
 
-`DATABASE` in `api/.env` selects the database that the todos routes read and write. With `local`, they use DynamoDB Local, with fake credentials, and the server never checks your AWS login. With `dev`, they use the real table in AWS, with your own credentials: if you're not signed in, the server says so when it starts and when a request fails for that reason. With no `DATABASE`, or any other value, the server stops at startup with `DATABASE must be local or dev (see api/.env.example)`, and waits until you save `api/.env` with a valid value.
+`DATABASE` in `.env` selects the database that the todos routes read and write. With `local`, they use DynamoDB Local, with fake credentials, and the server never checks your AWS login. With `dev`, they use the real table in AWS, with your own credentials: if you're not signed in, the server says so when it starts and when a request fails for that reason. With no `DATABASE`, or any other value, the server stops at startup with `DATABASE must be local or dev (see .env.example)`, and waits until you save `.env` with a valid value.
 
 Send requests from another terminal:
 
@@ -66,11 +66,11 @@ Send requests from another terminal:
 curl -sS http://localhost:3000/api/anything
 ```
 
-Saving a `.ts` or `.json` file in `api/src/` or `api/dev/` (except the sample events), or saving `api/routes.json` or `api/.env`, restarts the server. `tsc` checks the code before each start. When a change breaks the type check or the server, the terminal shows the error and the server waits. Fixing the file starts it again.
+Saving a `.ts` or `.json` file in `api/src/` or `api/dev/` (except the sample events), or saving `api/routes.json` or `.env`, restarts the server. `tsc` checks the code before each start. When a change breaks the type check or the server, the terminal shows the error and the server waits. Fixing the file starts it again.
 
-The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true` in `api/.env`), with the same keys as in CloudWatch. Each response's `apigw-requestid` header is the `correlation_id` of its lines, as in AWS (see [logging.md](logging.md)).
+The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true` in `.env`), with the same keys as in CloudWatch. Each response's `apigw-requestid` header is the `correlation_id` of its lines, as in AWS (see [logging.md](logging.md)).
 
-`pnpm invoke` (from `api/`) runs the built function, `api/dist/index.mjs`, with a sample event: `pnpm invoke dev/sample-events/<resource>/<name>.json`. It reads `api/.env` too. Build first with `pnpm build`.
+`pnpm invoke` (from `api/`) runs the built function, `api/dist/index.mjs`, with a sample event: `pnpm invoke dev/sample-events/<resource>/<name>.json`. It reads `.env` too. Build first with `pnpm build`.
 
 ## Reset Local Database
 
@@ -78,11 +78,11 @@ The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true` 
 
 The reset works whether `pnpm dev` runs or not. If DynamoDB Local runs already, the reset uses it and leaves it running. If DynamoDB Local isn't running, the reset starts it, prints `DynamoDB Local isn't running. Starting it…`, resets the table, and stops DynamoDB Local again with `Stopped DynamoDB Local.` If DynamoDB Local doesn't answer within 10 seconds, for example because it isn't installed, the reset stops with an error and exits with code 1. The reset checks only that a program answers on port 8000. If a foreign program uses the port, the reset fails: free the port.
 
-The reset always uses DynamoDB Local on `localhost:8000`, with fake credentials, whatever `DATABASE` says. So the reset never changes a table in AWS. It reads the table's name from `TODOS_TABLE` in `api/.env`.
+The reset always uses DynamoDB Local on `localhost:8000`, with fake credentials, whatever `DATABASE` says. So the reset never changes a table in AWS. It reads the table's name from `TODOS_TABLE` in `.env`.
 
 ## Settings
 
-Node loads `api/.env` with `--env-file`. A variable already set in your shell wins over the file. On macOS, Linux and WSL, `PORT=3001 pnpm dev` overrides it for one run, and a terminal where you once ran `export PORT=…` keeps that value until you close it or `unset PORT`.
+Node loads `.env` with `--env-file`. A variable already set in your shell wins over the file. On macOS, Linux and WSL, `PORT=3001 pnpm dev` overrides it for one run, and a terminal where you once ran `export PORT=…` keeps that value until you close it or `unset PORT`.
 
 | Variable | What it's for |
 | --- | --- |
@@ -91,7 +91,7 @@ Node loads `api/.env` with `--env-file`. A variable already set in your shell wi
 | `DATABASE` | The database that the todos routes use: `local` for DynamoDB Local on port 8000, or `dev` for the real dev table in AWS, after `aws login`. The dev server refuses any other value, and a missing one. The deployed Lambda doesn't get `DATABASE`, and uses the real DynamoDB. |
 | `TODOS_TABLE` | The todos table's name. Locally, the code uses the dev environment's table name, `tdl-dev-todos`, for DynamoDB Local and for AWS alike. |
 
-When code starts reading a new variable, add it to `api/.env.example`, with a comment, and a placeholder such as `XXXXXXX` for values that differ per person.
+When code starts reading a new variable, add it to `.env.example`, with a comment, and a placeholder such as `XXXXXXX` for values that differ per person.
 
 The frontend's settings are in `frontend/.env` (committed, with safe defaults). Override them in `frontend/.env.local`, which git ignores.
 

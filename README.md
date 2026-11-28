@@ -16,7 +16,7 @@ git clone <repo-url> to-do-list
 cd to-do-list
 pnpm install
 bin/setup-local-db.sh          # WSL and Linux; other systems: see docs/local-development.md
-cp api/.env.example api/.env   # in Windows cmd: copy api\.env.example api\.env
+cp .env.example .env   # in Windows cmd: copy .env.example .env
 pnpm db:reset                  # once
 pnpm dev
 ```
