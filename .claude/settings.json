@@ -1,5 +1,8 @@
 {
   "enabledPlugins": {
     "figma@claude-plugins-official": true
+  },
+  "permissions": {
+    "deny": ["Read(/DEV-PLANS.md)"]
   }
 }
