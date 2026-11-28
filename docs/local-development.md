@@ -17,7 +17,7 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
    - **Check:** `pnpm --version` in the repo prints the pinned version.
 3. **Install the packages,** from the repo root: `pnpm install`. If it fails with `EACCES` errors on WSL, close VS Code and run it again: VS Code's file watching can block the install.
 4. **Install Java and DynamoDB Local.** `pnpm dev` starts DynamoDB Local, a local copy of DynamoDB that runs on Java. DynamoDB Local goes in `api/.dynamodb-local/`, which git ignores, and keeps its tables in the `data/` folder there. When DynamoDB Local runs, it writes `api/dynamodb-local-metadata.json`, which git also ignores.
-   - **WSL and Linux:** run `bin/setup-local-db.sh` from the repo root. If `java` isn't found, the script installs Java with `sudo apt`, so it asks for your password. If DynamoDB Local isn't there, the script downloads and unpacks it. A second run changes nothing.
+   - **WSL and Linux:** run `bin/setup-local-db.sh` from the repo root. If `java` isn't found, the script refreshes the package lists and installs Java with `sudo apt`, so it asks for your password. If DynamoDB Local isn't there, the script downloads and unpacks it. A second run changes nothing.
    - **Every other system:** install Java 17 or newer. Then, from the repo root, download and unpack DynamoDB Local:
 
      ```sh

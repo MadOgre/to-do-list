@@ -180,7 +180,7 @@ The developer rejected "missing means AWS" for the dev server. The deployed Lamb
 ### The setup script
 
 - The setup script is a small Bash script in the root `bin/` folder, with a minimum of error checks. No `package.json` script runs it. The script does nothing else than the two installs below. The reason, in the developer's words: "the most simplistic batch script you can think of, with a minimum of error checking, just to install these two things".
-- If `java` isn't found, the script runs `sudo apt install -y openjdk-21-jre-headless`. The command works on WSL and Ubuntu only. The script checks only that `java` exists, not its version.
+- If `java` isn't found, the script runs `sudo apt update`, then `sudo apt install -y openjdk-21-jre-headless`. The command works on WSL and Ubuntu only. The script checks only that `java` exists, not its version.
 - If DynamoDB Local is missing, the script downloads and unpacks DynamoDB Local.
 
 ### The docs

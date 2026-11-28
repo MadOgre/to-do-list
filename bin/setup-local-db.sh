@@ -14,6 +14,8 @@ fi
 
 if ! command -v java > /dev/null; then
   echo "Installing Java..."
+  # A fresh WSL often has empty or stale package lists, and then apt install fails.
+  sudo apt update
   sudo apt install -y openjdk-21-jre-headless
 fi
 
