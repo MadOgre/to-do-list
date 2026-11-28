@@ -1,0 +1,1 @@
+9a94721 Install DynamoDB Local with bin/setup-local-db.sh, and start it with pnpm dev

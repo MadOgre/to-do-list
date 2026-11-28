@@ -9,7 +9,9 @@ to-do-list/
 ├── .gitattributes          makes git store every text file with LF (Linux) line endings, so Windows
 │                           checkouts don't produce noisy diffs
 ├── .gitignore              what git leaves out: installed packages, build output, local env overrides
-│                           (*.local, api/.env), editor and OS files, and Terraform's working folders,
+│                           (*.local, api/.env), DynamoDB Local's folder (api/.dynamodb-local/) and
+│                           metadata file (api/dynamodb-local-metadata.json), editor and OS files, and
+│                           Terraform's working folders,
 │                           state files, variable files, crash logs and saved plans
 ├── .nvmrc                  pins Node 26 for version managers such as fnm and nvm
 ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
@@ -45,6 +47,9 @@ to-do-list/
 │   ├── extensions.json     recommends the ESLint extension when the folder is opened in VS Code
 │   └── settings.json       shared workspace settings: 2-space indentation, ESLint fixes on save
 │                           instead of a formatter, and the workspace's own TypeScript version
+├── bin/
+│   └── setup-local-db.sh   installs Java (with apt) and DynamoDB Local (into api/.dynamodb-local/), if
+│                           they are missing; WSL and Ubuntu only. No package.json script runs it
 │
 ├── docs/
 │   ├── structure.md        this file
@@ -199,7 +204,10 @@ to-do-list/
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
 │   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint,
-│   │                       Vitest), and its scripts: dev, typecheck, lint, invoke, bundle, build, test
+│   │                       Vitest), and its scripts: dev (runs dev:server, the API's dev server, and
+│   │                       dev:db, DynamoDB Local on port 8000 with telemetry off, side by side),
+│   │                       typecheck, lint,
+│   │                       invoke, bundle, build, test
 │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
 │   │                       dev/, tests/ and vitest.config.ts
 │   ├── vitest.config.ts    the unit tests' config: the files in tests/, Node, mocks cleared before
@@ -208,6 +216,10 @@ to-do-list/
 │   │                       rules and Node globals
 │   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
 │   ├── .env                your own copy of .env.example; gitignored
+│   ├── .dynamodb-local/    DynamoDB Local, from bin/setup-local-db.sh, and its tables in data/;
+│   │                       gitignored
+│   ├── dynamodb-local-metadata.json  DynamoDB Local's installation ID and telemetry flag, which
+│   │                       DynamoDB Local writes when it runs; gitignored
 │   ├── CLAUDE.md           for AI coding agents: the request path and where to find each part
 │   ├── routes.json         the one list of the API's routes (method, path, handler name);
 │   │                       infra/modules/app/ makes one API Gateway route from each entry

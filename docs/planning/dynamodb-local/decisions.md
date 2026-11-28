@@ -442,7 +442,7 @@ Source: questions-round-07.md, Q2. Accepted.
 | Start | DynamoDB Local is installed. The developer runs `pnpm dev` | The terminal shows the frontend on 9000, the API on 3000, and DynamoDB Local on 8000 |
 | Stop | `pnpm dev` runs. The developer presses Ctrl+C | All three stop. Ports 9000, 3000 and 8000 are free |
 | Not installed | DynamoDB Local's folder is missing. The developer runs `pnpm dev` | The terminal shows Java's error, `Unable to access jarfile …`. The frontend and the API keep running |
-| Port taken | Another program uses port 8000. The developer runs `pnpm dev` | The terminal shows DynamoDB Local's error. The frontend and the API keep running |
+| Port taken | Another program uses port 8000. The developer runs `pnpm dev` | The terminal shows DynamoDB Local's error, except on WSL 1: there, DynamoDB Local can start and print no error. The frontend and the API keep running |
 | Data kept | The developer adds "Buy milk", stops `pnpm dev`, and starts it again | The list still has "Buy milk" |
 
 Also checked, nothing to decide: `DATABASE=dev` with DynamoDB Local running, Windows itself, a foreign program on port 8000 (spec-review round-01, Q6).
@@ -487,8 +487,8 @@ Source: questions-round-07.md, Q6. Accepted.
 
 | Scenario | Given | Then |
 | --- | --- | --- |
-| Fresh machine | No Java and no DynamoDB Local | The script asks for the `sudo` password, installs Java, then downloads and unpacks DynamoDB Local |
-| Java already there | Java is installed, DynamoDB Local isn't | The script only downloads and unpacks DynamoDB Local |
+| Fresh machine | No Java and no DynamoDB Local | The script asks for the `sudo` password, installs Java, then downloads and unpacks DynamoDB Local. The script prints `Installing Java...`, `Downloading DynamoDB Local...` and `DynamoDB Local is installed in api/.dynamodb-local/.` |
+| Java already there | Java is installed, DynamoDB Local isn't | The script only downloads and unpacks DynamoDB Local. The script prints `Downloading DynamoDB Local...` and `DynamoDB Local is installed in api/.dynamodb-local/.` |
 | Both there | Java and DynamoDB Local are installed | The script prints `Java and DynamoDB Local are installed.` and changes nothing |
 
 Also checked, nothing to decide: an old Java version, a failed download.
@@ -540,3 +540,10 @@ Source: questions-round-07.md, Q10. Accepted.
 - **The wait limit:** the reset waits 10 seconds at most for DynamoDB Local to answer.
 
 Everything else, the builder decides alone.
+
+## Rulings during `/implement`
+
+- **Ticket 02, DynamoDB Local's network address:** DynamoDB Local listens on `localhost` only, if DynamoDB Local has an option for that. If not, `docs/local-development.md` says that other machines on the network can reach DynamoDB Local on port 8000. Source: the developer's answer to review finding S1 of ticket 02.
+- **Ticket 02, a taken port 8000 on WSL 1:** DynamoDB Local can start on a taken port 8000 and print no error. The "Port taken" scenario now says so, and `docs/local-development.md` gets one sentence about WSL 1. Source: the developer's closing manual check of ticket 02, step 8.
+- **Ticket 02, the setup script's messages:** the script prints `Installing Java...` and `Downloading DynamoDB Local...` before those steps, and `DynamoDB Local is installed in api/.dynamodb-local/.` after an install. Source: the developer's request after the closing manual check of ticket 02.
+- **Ticket 02, DynamoDB Local's metadata file and telemetry:** git ignores `api/dynamodb-local-metadata.json`. DynamoDB Local starts with `-disableTelemetry`, in `dev:db` and in the reset's start. Source: the developer's answers after the fix rounds of ticket 02.

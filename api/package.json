@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon --quiet --watch src --watch dev --watch routes.json --watch .env --ignore dev/sample-events --ext ts,json --exec \"tsc && node --env-file=.env dev/server.ts\"",
+    "dev": "pnpm run --no-bail \"/^dev:/\"",
+    "dev:server": "nodemon --quiet --watch src --watch dev --watch routes.json --watch .env --ignore dev/sample-events --ext ts,json --exec \"tsc && node --env-file=.env dev/server.ts\"",
+    "dev:db": "java -Djava.library.path=.dynamodb-local/DynamoDBLocal_lib -jar .dynamodb-local/DynamoDBLocal.jar -sharedDb -dbPath .dynamodb-local/data -port 8000 -disableTelemetry",
     "typecheck": "tsc",
     "lint": "eslint .",
     "invoke": "node --env-file=.env --enable-source-maps dev/invoke.ts",

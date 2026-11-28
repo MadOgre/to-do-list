@@ -24,6 +24,11 @@ Thumbs.db
 # The API's local settings for pnpm dev and pnpm invoke. api/.env.example shows what goes in them
 api/.env
 
+# DynamoDB Local's download and its data, from bin/setup-local-db.sh, and the metadata file
+# (installation ID, telemetry flag) that DynamoDB Local writes into api/ when it runs
+api/.dynamodb-local/
+api/dynamodb-local-metadata.json
+
 # Terraform's working folder: downloaded providers (hundreds of MB), caches
 .terraform/
 

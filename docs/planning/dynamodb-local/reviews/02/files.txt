@@ -1,0 +1,5 @@
+.gitignore
+api/package.json
+bin/setup-local-db.sh
+docs/local-development.md
+docs/structure.md

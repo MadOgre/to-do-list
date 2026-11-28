@@ -10,7 +10,7 @@
 
 The reset works whether `pnpm dev` runs or not. When DynamoDB Local isn't running, `pnpm db:reset` starts DynamoDB Local, waits until it answers, resets the table, and stops DynamoDB Local again. When DynamoDB Local runs already, the reset uses it and leaves it running, as today.
 
-- **The start:** the reset starts DynamoDB Local with the same values as `pnpm dev`: port 8000, `-sharedDb`, and the data folder in DynamoDB Local's folder. The start needs no Bash.
+- **The start:** the reset starts DynamoDB Local with the same values as `pnpm dev`: port 8000, `-sharedDb`, `-disableTelemetry`, and the data folder in DynamoDB Local's folder. The start needs no Bash.
 - **The wait:** the reset waits 10 seconds at most for DynamoDB Local to answer.
 - **The messages:** the reset prints a short message for each step, with the literal texts in the scenarios below.
 - **After a failure:** the reset always stops the DynamoDB Local that the reset started, also after a failure. Then the reset exits with code 1. The reset never stops a DynamoDB Local that was already running. The reason: a left-over Java process breaks the next `pnpm dev`.

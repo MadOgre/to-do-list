@@ -16,8 +16,20 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
    - **macOS and Linux:** run `corepack enable`, with `sudo` if Node is installed system-wide.
    - **Check:** `pnpm --version` in the repo prints the pinned version.
 3. **Install the packages,** from the repo root: `pnpm install`. If it fails with `EACCES` errors on WSL, close VS Code and run it again: VS Code's file watching can block the install.
-4. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
-5. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
+4. **Install Java and DynamoDB Local.** `pnpm dev` starts DynamoDB Local, a local copy of DynamoDB that runs on Java. DynamoDB Local goes in `api/.dynamodb-local/`, which git ignores, and keeps its tables in the `data/` folder there. When DynamoDB Local runs, it writes `api/dynamodb-local-metadata.json`, which git also ignores.
+   - **WSL and Linux:** run `bin/setup-local-db.sh` from the repo root. If `java` isn't found, the script installs Java with `sudo apt`, so it asks for your password. If DynamoDB Local isn't there, the script downloads and unpacks it. A second run changes nothing.
+   - **Every other system:** install Java 17 or newer. Then, from the repo root, download and unpack DynamoDB Local:
+
+     ```sh
+     mkdir -p api/.dynamodb-local/data
+     curl -fLo api/.dynamodb-local/dynamodb_local_latest.tar.gz https://d1ni2b6xgvw0s0.cloudfront.net/v2.x/dynamodb_local_latest.tar.gz
+     tar -xzf api/.dynamodb-local/dynamodb_local_latest.tar.gz -C api/.dynamodb-local
+     ```
+
+     On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
+   - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
+5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
+6. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
 
 ## Running it
 
@@ -27,14 +39,15 @@ From the repo root:
 pnpm dev
 ```
 
-This starts both packages' dev servers side by side, and prefixes each line with the package's folder:
+This starts three servers side by side, and prefixes each line with the package's folder:
 
 - **The frontend** on <http://localhost:9000> (`frontend dev:` lines). Vite serves the app with HMR, and shows TypeScript and ESLint errors in the terminal and in the browser overlay.
 - **The API** on <http://localhost:3000> (`api dev:` lines). See [The API's dev server](#the-apis-dev-server).
+- **DynamoDB Local** on <http://localhost:8000> (`api dev:` lines too), with its telemetry off. It keeps its tables in `api/.dynamodb-local/data/`, so they survive a stop and a start. If DynamoDB Local fails to start, the terminal shows its error, and the frontend and the API keep running. If it isn't installed, the error is Java's `Unable to access jarfile`: see step 4 of [First-time setup](#first-time-setup).
 
-Both listen on localhost only, so they aren't reachable from your network. This matters most for the API's dev server, which runs with your AWS credentials. Both ports are fixed: if one is taken, its server stops with an error rather than moving to another port.
+The frontend and the API listen on localhost only, so they aren't reachable from your network. This matters most for the API's dev server, which runs with your AWS credentials. DynamoDB Local has no option to listen on localhost only, so other machines on your network can reach DynamoDB Local on port 8000. All three ports are fixed: if one is taken, its server stops with an error rather than moving to another port. On WSL 1, DynamoDB Local is the exception: it can start on a taken port 8000 and print no error.
 
-Ctrl+C stops both. pnpm may then print `Failed` for a package, which only means it was stopped.
+Ctrl+C stops all three. pnpm may then print `Failed` for a package, which only means it was stopped.
 
 ### The proxy
 
