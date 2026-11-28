@@ -72,8 +72,9 @@ to-do-list/
 │       ├── <feature>/questions-round-NN.md   one per grilling round: its questions and the answers.
 │       │                                Earlier features name them round_N_questions.md
 │       ├── <feature>/decisions.md       every decision of the grilling session
-│       ├── <feature>/spec.md            the spec derived from the intent and the grilling rounds
-│       ├── <feature>/issues/NN-<ticket>.md   one per ticket
+│       ├── <feature>/SPEC.md            the spec derived from the intent and the grilling rounds.
+│       │                                Earlier features name it spec.md
+│       ├── <feature>/tickets/NN-<ticket>.md   one per ticket. Earlier features keep them in issues/
 │       ├── mantine-install/    installing Mantine and its Sass helpers
 │       └── todo-list-mvp/      the to-do list from the Figma design. Also has design/: the Figma
 │                               screenshots (1.png … 4.png), STYLEGUIDE.md (layout widths, colors,

@@ -57,7 +57,7 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **`interface` for an object shape.** Write a hand-written object shape as an `interface`. Use `type` for everything else: unions, function types, and the types that come from `z.infer`.
 - **File names (a guideline).** Name files and folders in kebab-case: `todos-repository.ts`, `api-hooks/`, `local-development.md`. The usual exceptions:
   - A React component's folder and files are PascalCase, after the component: `TodoRow/TodoRow.tsx`.
-  - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`.
+  - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`, `SPEC.md`.
   - A tool's config keeps the name that the tool looks for: `vite.config.ts`, `tsconfig.app.json`.
   - A Sass partial starts with `_`: `_mantine.scss`.
   - The grilling rounds of earlier features keep their old names, `round_<N>_questions.md`.
