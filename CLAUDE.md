@@ -60,7 +60,7 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
   - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`.
   - A tool's config keeps the name that the tool looks for: `vite.config.ts`, `tsconfig.app.json`.
   - A Sass partial starts with `_`: `_mantine.scss`.
-  - The grilling rounds keep the name `round_<N>_questions.md`.
+  - The grilling rounds of earlier features keep their old names, `round_<N>_questions.md`.
 
   Another exception is fine when a tool, a library or a clear reason needs it. Say why in the commit message.
 - **Imports** sit in up to four sections, in this order, with one blank line between sections and empty sections left out. One blank line follows the last import:
@@ -79,4 +79,4 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 
 ### Grilling sessions
 
-Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/round_<N>_questions.md`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `GLOSSARY.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.
+Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/questions-round-NN.md`, numbered with two digits from `01`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `decisions.md`, `GLOSSARY.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.

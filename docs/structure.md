@@ -69,7 +69,9 @@ to-do-list/
 │   └── planning/           one folder per feature: its planning record
 │       ├── <feature>/INTENT.md          the goal, definition of done, constraints and acceptance
 │       │                                criteria, in the developer's own words
-│       ├── <feature>/round_N_questions.md   one per grilling round: its questions and the answers
+│       ├── <feature>/questions-round-NN.md   one per grilling round: its questions and the answers.
+│       │                                Earlier features name them round_N_questions.md
+│       ├── <feature>/decisions.md       every decision of the grilling session
 │       ├── <feature>/spec.md            the spec derived from the intent and the grilling rounds
 │       ├── <feature>/issues/NN-<ticket>.md   one per ticket
 │       ├── mantine-install/    installing Mantine and its Sass helpers
