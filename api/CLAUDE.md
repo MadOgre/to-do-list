@@ -2,7 +2,7 @@
 
 A routing map for this package. Read a file only when this map points there. For a one-line note on each file, read the `api/` part of `docs/structure.md`.
 
-**Status:** the API has one resource, todos, with all its routes (see `routes.json`). `POST /api/demo-todos/restore` is temporary, for the Restore Demo Todos link. The frontend reads and changes its Todos through these routes.
+**Status:** the API has one resource, todos, with all its routes (see `routes.json`). The frontend reads and changes its Todos through these routes.
 
 ## Request path
 
@@ -10,7 +10,8 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 
 - `routes.json` is the one route list. `src/router/router.ts` and `src/router/routes.ts` check it at startup, and Terraform makes one API Gateway route from each entry.
 - `src/router/handler-registry.ts` exports each route handler under the name that `routes.json` uses. The route handlers are in `src/resources/<resource>/route-handlers/`, one file per route, named after the route handler.
-- Locally, `dev/server.ts` (Express) plays API Gateway's part and calls the same `handler`. It reads `PORT` from `.env`.
+- Locally, `dev/server.ts` (Express) plays API Gateway's part and calls the same `handler`. It reads `PORT` and `DATABASE` from the root `.env`, and stops unless `DATABASE` is `local` or `dev`.
+- `src/database/dynamodb-client-config.ts` turns `DATABASE` into the DynamoDB client's settings: DynamoDB Local on port 8000 for `local`, the real DynamoDB for anything else, as in the deployed Lambda, which has no `DATABASE`.
 - `pnpm build` writes `dist/index.mjs`. Terraform zips `dist/` and uploads it.
 - `pnpm test` runs the unit tests in `tests/` (Vitest, `vitest.config.ts`). `tests/` has the same folders as `src/`. A route handler's test replaces the repository with `vi.mock` and builds its event with `makeEvent` from `tests/fixtures/events.ts`, so no test reaches DynamoDB.
 
@@ -27,4 +28,5 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
 | The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
 | How the dev server differs from Lambda | `docs/local-development.md` |
 | Run the built function with a sample event | `dev/invoke.ts` (`pnpm invoke`), `dev/sample-events/` |
+| Reset the local todos table to the Demo Todos | `dev/reset-local-db.ts` (`pnpm db:reset`), with the Seed in `dev/seeds/todos.ts` |
 | Test a route handler | `tests/resources/<resource>/route-handlers/<name>.test.ts`, with `tests/fixtures/events.ts` |

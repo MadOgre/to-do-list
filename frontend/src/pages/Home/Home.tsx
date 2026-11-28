@@ -7,7 +7,6 @@ import {
   useCreateTodo,
   useDeleteTodo,
   useListTodos,
-  useRestoreDemoTodos,
   useSetTodoCompleted,
 } from "@/api-hooks";
 import { NewTodoInput, PageLayout, TodoFilters, TodoFooter, TodoRow } from "@/components";
@@ -21,7 +20,6 @@ export const Home: FC = () => {
   const setTodoCompleted = useSetTodoCompleted();
   const deleteTodo = useDeleteTodo();
   const clearCompletedTodos = useClearCompletedTodos();
-  const restoreDemoTodos = useRestoreDemoTodos();
   // Starts at All on every load: the filter isn't stored or put in the URL.
   const [filter, setFilter] = useState<TodoFilter>("all");
 
@@ -71,15 +69,6 @@ export const Home: FC = () => {
     });
   };
 
-  const confirmRestore = () =>
-    modals.openConfirmModal({
-      title: "Restore demo todos?",
-      children: <Text size="sm">Your current todos will be replaced by the six demo todos.</Text>,
-      labels: { confirm: "Restore", cancel: "Cancel" },
-      confirmProps: { color: "red" },
-      onConfirm: () => restoreDemoTodos.mutate(),
-    });
-
   return (
     <PageLayout>
       <Stack className={classes.content}>
@@ -114,9 +103,8 @@ export const Home: FC = () => {
             </Card>
           </>
         )}
-        {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreDemoTodos and
-            useRestoreDemoTodos. Shown even when the list fails to load. */}
-        <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={classes.restoreLink}>
+        {/* Hidden, and waiting for a new use: the developer plans to repurpose this link, or at least its style. */}
+        <Anchor component="button" type="button" c="dimmed" display="none" className={classes.restoreLink}>
           Restore demo todos
         </Anchor>
       </Stack>

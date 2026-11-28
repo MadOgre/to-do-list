@@ -1,0 +1,11 @@
+378ba93 Start and stop DynamoDB Local in pnpm db:reset when it isn't running
+1b74a5e Reset the local todos table to the Demo Todos with pnpm db:reset
+cc6c030 Select the database with DATABASE in api/.env, local or dev
+8e97007 Install DynamoDB Local with bin/setup-local-db.sh, and start it with pnpm dev
+73aca40 Delete the Restore Demo Todos route and hide its link
+3623ab9 Plan the DynamoDB Local feature
+3cb626d Name the spec SPEC.md and keep tickets in tickets/
+b9f072a Name grilling rounds questions-round-NN.md, and list decisions.md
+b147685 Enable the forge plugin for this project
+821be47 Ignore DEV-PLANS.md in git
+05cb1cc Deny Claude Code reads of DEV-PLANS.md

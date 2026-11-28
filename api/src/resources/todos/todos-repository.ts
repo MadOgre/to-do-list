@@ -14,7 +14,9 @@ import { QueryCommand } from "dynamodb-toolbox/table/actions/query";
 
 import type { Todo } from "@to-do-list/common";
 
-const { TODOS_TABLE } = process.env;
+import { dynamoDbClientConfig } from "../../database/dynamodb-client-config.ts";
+
+const { DATABASE, TODOS_TABLE } = process.env;
 if (!TODOS_TABLE) {
   throw new Error("TODOS_TABLE environment variable must be set");
 }
@@ -22,7 +24,7 @@ if (!TODOS_TABLE) {
 // The one owner of every Todo until the app has logins. Then each request brings its own owner.
 export const DEMO_OWNER_ID = "demo-owner";
 
-const documentClient = DynamoDBDocumentClient.from(new DynamoDBClient());
+const documentClient = DynamoDBDocumentClient.from(new DynamoDBClient(dynamoDbClientConfig(DATABASE)));
 
 const todosTable = new Table({
   name: TODOS_TABLE,
@@ -133,12 +135,4 @@ export const clearCompletedTodos = async (ownerId: string) => {
     .send();
 
   return result.Count ?? 0;
-};
-
-// Deletes every Todo of one owner, then writes the given Todos.
-export const restoreDemoTodos = async (ownerId: string, todos: Todo[]) => {
-  await todosTable.build(DeletePartitionCommand).entities(TodoEntity).query({ partition: ownerId }).send();
-
-  const puts = todos.map((todo) => TodoEntity.build(PutItemCommand).item({ owner_id: ownerId, ...todo }).send());
-  await Promise.all(puts);
 };

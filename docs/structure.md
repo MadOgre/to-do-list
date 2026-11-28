@@ -9,14 +9,19 @@ to-do-list/
 ├── .gitattributes          makes git store every text file with LF (Linux) line endings, so Windows
 │                           checkouts don't produce noisy diffs
 ├── .gitignore              what git leaves out: installed packages, build output, local env overrides
-│                           (*.local, api/.env), editor and OS files, and Terraform's working folders,
+│                           (*.local, .env), DynamoDB Local's folder (api/.dynamodb-local/) and
+│                           metadata file (api/dynamodb-local-metadata.json), editor and OS files, and
+│                           Terraform's working folders,
 │                           state files, variable files, crash logs and saved plans
+├── .env.example            the API's settings that pnpm dev, pnpm invoke and pnpm db:reset read,
+│                           with their values; committed
+├── .env                    your own copy of .env.example; gitignored
 ├── .nvmrc                  pins Node 26 for version managers such as fnm and nvm
 ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
 │                           scripts that run in each package that has them (pnpm dev, build,
 │                           typecheck, lint, test, and test:verbose, which lists every test by
-│                           name), pnpm deploy:dev (build the API, then terraform apply in
-│                           infra/envs/dev),
+│                           name), pnpm db:reset (the API's Reset Local Database), pnpm
+│                           deploy:dev (build the API, then terraform apply in infra/envs/dev),
 │                           and the tools every package shares (TypeScript, ESLint and its plugins)
 ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
 │                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip,
@@ -45,6 +50,9 @@ to-do-list/
 │   ├── extensions.json     recommends the ESLint extension when the folder is opened in VS Code
 │   └── settings.json       shared workspace settings: 2-space indentation, ESLint fixes on save
 │                           instead of a formatter, and the workspace's own TypeScript version
+├── bin/
+│   └── setup-local-db.sh   installs Java (with apt) and DynamoDB Local (into api/.dynamodb-local/), if
+│                           they are missing; WSL and Ubuntu only. No package.json script runs it
 │
 ├── docs/
 │   ├── structure.md        this file
@@ -69,9 +77,13 @@ to-do-list/
 │   └── planning/           one folder per feature: its planning record
 │       ├── <feature>/INTENT.md          the goal, definition of done, constraints and acceptance
 │       │                                criteria, in the developer's own words
-│       ├── <feature>/round_N_questions.md   one per grilling round: its questions and the answers
-│       ├── <feature>/spec.md            the spec derived from the intent and the grilling rounds
-│       ├── <feature>/issues/NN-<ticket>.md   one per ticket
+│       ├── <feature>/questions-round-NN.md   one per grilling round: its questions and the answers.
+│       │                                Earlier features name them round_N_questions.md
+│       ├── <feature>/decisions.md       every decision of the grilling session
+│       ├── <feature>/SPEC.md            the spec derived from the intent and the grilling rounds.
+│       │                                Earlier features name it spec.md
+│       ├── <feature>/tickets/NN-<ticket>.md   one per ticket. Earlier features keep them in issues/
+│       ├── dynamodb-local/     running the API against DynamoDB Local, with no AWS
 │       ├── mantine-install/    installing Mantine and its Sass helpers
 │       └── todo-list-mvp/      the to-do list from the Figma design. Also has design/: the Figma
 │                               screenshots (1.png … 4.png), STYLEGUIDE.md (layout widths, colors,
@@ -122,10 +134,10 @@ to-do-list/
 │   │   │   ├── error-text.ts   the text that people see for each error outcome of the API, and
 │   │   │   │                   getErrorText, which reads the outcome from a failed request's error body
 │   │   │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
-│   │   │   │                   delete, clear Completed, and the temporary Restore Demo Todos
+│   │   │   │                   delete, clear Completed
 │   │   │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
 │   │   ├── api-hooks/
-│   │   │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
+│   │   │   ├── todos.ts        the Todo API Hooks: one query and four mutations. Each mutation
 │   │   │   │                   refreshes the Todo list when it settles, whether it worked or failed
 │   │   │   └── index.ts        barrel for the API Hooks
 │   │   ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
@@ -151,7 +163,7 @@ to-do-list/
 │   │   │   │               <Name>/<Name>.module.scss
 │   │   │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
 │   │   │   │               card (with the filters in a card of their own below the small
-│   │   │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
+│   │   │   │               breakpoint), and a hidden Restore Demo Todos link that waits for a new use. Asks before deleting or clearing.
 │   │   │   │               Shows an error alert if the Todos can't be loaded
 │   │   │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
 │   │   │   │               the Todo list
@@ -181,6 +193,8 @@ to-do-list/
 │   └── tests/              the unit tests (Vitest, in jsdom), with the same folders as src/
 │       ├── setup.ts        runs before each test file: jest-dom's matchers, the cleanup after each
 │       │                   test, and a stand-in for window.matchMedia, which jsdom lacks
+│       ├── pages/
+│       │   └── Home.test.tsx   the Home Page: the Restore Demo Todos link doesn't show
 │       ├── test-utils/
 │       │   └── render.tsx  render: renders a component in MantineProvider with the app's theme, in
 │       │                   Mantine's test mode (no transitions, no portals)
@@ -193,15 +207,20 @@ to-do-list/
 │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
 │   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
 │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint,
-│   │                       Vitest), and its scripts: dev, typecheck, lint, invoke, bundle, build, test
+│   │                       Vitest), and its scripts: dev (runs dev:server, the API's dev server, and
+│   │                       dev:db, DynamoDB Local on port 8000 with telemetry off, side by side),
+│   │                       typecheck, lint,
+│   │                       invoke, db:reset, bundle, build, test
 │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
 │   │                       dev/, tests/ and vitest.config.ts
 │   ├── vitest.config.ts    the unit tests' config: the files in tests/, Node, mocks cleared before
 │   │                       each test
 │   ├── eslint.config.js    starts from eslint.config.base.js and adds typescript-eslint's type-aware
 │   │                       rules and Node globals
-│   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
-│   ├── .env                your own copy of .env.example; gitignored
+│   ├── .dynamodb-local/    DynamoDB Local, from bin/setup-local-db.sh, and its tables in data/;
+│   │                       gitignored
+│   ├── dynamodb-local-metadata.json  DynamoDB Local's installation ID and telemetry flag, which
+│   │                       DynamoDB Local writes when it runs; gitignored
 │   ├── CLAUDE.md           for AI coding agents: the request path and where to find each part
 │   ├── routes.json         the one list of the API's routes (method, path, handler name);
 │   │                       infra/modules/app/ makes one API Gateway route from each entry
@@ -217,6 +236,10 @@ to-do-list/
 │   │   │   │                         path and a handler name
 │   │   │   ├── handler-registry.ts   re-exports every route handler, under the name routes.json uses
 │   │   │   └── logger.ts             the one Powertools Logger the whole function writes with
+│   │   ├── database/
+│   │   │   └── dynamodb-client-config.ts  dynamoDbClientConfig: the DynamoDB client's settings for a
+│   │   │                             DATABASE value; DynamoDB Local on port 8000, with fake
+│   │   │                             credentials, for local, and the real DynamoDB otherwise
 │   │   ├── route-handler-tools/      what a route handler uses to read the request and write the response
 │   │   │   ├── route-handler.ts      RouteHandler (the shape every route handler has) and Result (what a
 │   │   │   │                         route handler returns)
@@ -231,9 +254,8 @@ to-do-list/
 │   │           ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
 │   │           │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
 │   │           │                         changes and deletes one owner's Todos; the table name comes from
-│   │           │                         TODOS_TABLE
+│   │           │                         TODOS_TABLE, and the client's settings from DATABASE
 │   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
-│   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
 │   │           └── route-handlers/       one file per route
 │   │               ├── list-todos.ts             GET /api/todos: the owner's Todos, newest first
 │   │               ├── create-todo.ts            POST /api/todos: checks the body, makes the ID (a version
@@ -243,17 +265,21 @@ to-do-list/
 │   │               │                             version
 │   │               ├── delete-todo.ts            DELETE /api/todos/{todo_id}: 204, also when there's no
 │   │               │                             such Todo
-│   │               ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
-│   │               │                             Todo
-│   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
-│   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
-│   │                                             Todos link
+│   │               └── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
+│   │                                             Todo
 │   ├── dev/                the tools that run only on your machine, never in Lambda
 │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
-│   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
+│   │   │                   the router in src/router/router.ts, stops unless DATABASE is local or dev,
+│   │   │                   and with dev warns when you're not logged in to AWS
 │   │   ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
 │   │   │                   stand-in Lambda context
 │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+│   │   ├── reset-local-db.ts  Reset Local Database (pnpm db:reset): deletes the local todos table
+│   │   │                   in DynamoDB Local, creates it again and writes the Seed; never AWS,
+│   │   │                   whatever DATABASE says; starts and stops DynamoDB Local if it
+│   │   │                   isn't running
+│   │   ├── seeds/
+│   │   │   └── todos.ts    the todos table's Seed: the Demo Owner's six Demo Todos, with fixed IDs
 │   │   └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
 │   │       │               The dev server doesn't restart when one changes
 │   │       └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json
@@ -262,6 +288,10 @@ to-do-list/
 │       │                   reaches DynamoDB: the repository tests wait for DynamoDB Local
 │       ├── fixtures/
 │       │   └── events.ts   makeEvent: a whole API Gateway event from the parts a route handler reads
+│       ├── database/
+│       │   └── dynamodb-client-config.test.ts   the client's endpoint for local, dev and no DATABASE
+│       ├── router/
+│       │   └── routes.test.ts   the routes list: the removed POST /api/demo-todos/restore stays out
 │       └── resources/
 │           └── todos/
 │               ├── todo-id.test.ts   isValidTodoId: the IDs it accepts and refuses

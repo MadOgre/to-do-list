@@ -9,6 +9,5 @@ export type RequestOutcomeCode =
   | "updated"          // change one item by ID: 200, with the changed item.
   | "deleted"          // delete one item by ID: 204, also when it didn't exist.
   | "cleared"          // delete every item that matches a filter: 204.
-  | "restored"         // replace every item with the demo items: 204.
   | ErrorOutcome       // the errors with a body: not_found, version_conflict, invalid_id, invalid_body, invalid_query.
   | "error";           // any request: 500, something threw. The router logs it as ERROR and throws it again.

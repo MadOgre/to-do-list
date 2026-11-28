@@ -15,8 +15,10 @@ The examples add a resource called `articles`, with one route, `GET /api/article
 | `api/src/router/handler-registry.ts` | One export line per route handler. |
 | `api/src/route-handler-tools/outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
 | `api/dev/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
+| `api/dev/seeds/<resource>.ts` | Its Seed: each Owner's ID, and that Owner's items, which `pnpm db:reset` writes to the local table. |
+| `api/dev/reset-local-db.ts` | About 10 lines: delete its local table, create it again with its keys, and write its Seed. |
 | `api/tests/resources/<resource>/` | One test file per route handler, in `route-handlers/`, and a test of its ID rule. |
-| `api/.env.example` | Its table's variable. |
+| `.env.example` | Its table's variable. |
 | `infra/modules/app/dynamodb.tf` | Its table. |
 | `infra/modules/app/main.tf` | Its table's policy, and its table's variable in the function. |
 | `docs/structure.md` | Its folders and its table. |
@@ -253,7 +255,7 @@ Add the table's name to the function's `environment.variables` in `main.tf`:
 
 ### 7. The local settings
 
-Add the variable to `api/.env.example`, with a comment, and to your own `api/.env`, so `pnpm dev` and `pnpm invoke` have it. Locally, the code uses the dev environment's table:
+Add the variable to `.env.example`, with a comment, and to your own `.env`, so `pnpm dev` and `pnpm invoke` have it. Locally, the code uses the dev environment's table:
 
 ```sh
 # The articles table, named in infra/modules/app/dynamodb.tf.
@@ -300,7 +302,7 @@ Update `docs/structure.md`.
 1. Remove its entries from `api/routes.json` and its lines from `api/src/router/handler-registry.ts`, in the same change. Removing only the exports breaks every route at startup. If no handler is left, put back `export {};`.
 2. Delete `api/src/resources/articles/`, `api/tests/resources/articles/`, `api/dev/sample-events/articles/` and `common/src/articles.ts`, and remove its export lines from `common/src/index.ts`.
 3. In `api/src/route-handler-tools/outcome-codes.ts` and `common/src/error-body.ts`, remove the codes no other resource uses. TypeScript doesn't warn about unused codes: check each one with `grep -rn '"XXXXXXX"' api/src common/src frontend/src`, with the code in place of `XXXXXXX`.
-4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `api/.env.example` and `api/.env` too.
+4. In `infra/modules/app/`, remove its table from `dynamodb.tf`, and its policy and its variable from `main.tf`. Remove the variable from `.env.example` and `.env` too.
 5. Deploy: `pnpm deploy:dev`. Read the plan before answering `yes`: the table and the policy destroyed, one route destroyed per removed entry, and the function updated. **Destroying the table deletes every item in it.** No undo. See [Its data goes with the table](#its-data-goes-with-the-table).
 6. If it was the last resource, also delete `infra/modules/app/dynamodb.tf`, and remove `@aws-sdk/lib-dynamodb` and `dynamodb-toolbox` from the API, with your dev server stopped: `pnpm --filter @to-do-list/api remove @aws-sdk/lib-dynamodb dynamodb-toolbox`.
 7. Update `docs/structure.md`.

@@ -1,0 +1,1 @@
+18673ad Start and stop DynamoDB Local in pnpm db:reset when it isn't running

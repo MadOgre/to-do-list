@@ -1,0 +1,244 @@
+diff --git a/README.md b/README.md
+index 26e20ef..8e328ec 100644
+--- a/README.md
++++ b/README.md
+@@ -6,6 +6,7 @@ A to-do list web app: a React + TypeScript frontend on Vite, with Mantine, React
+ 
+ - **Node 26.** It's pinned in `.nvmrc`, so [fnm](https://github.com/Schniz/fnm) or nvm picks it up.
+ - **pnpm through corepack.** Run `corepack enable` once. On Windows, remove any global pnpm first (`npm rm -g pnpm`), then run `corepack enable` in an admin prompt.
++- **Java 17 or newer,** for DynamoDB Local, which `pnpm dev` starts. On WSL and Linux, `bin/setup-local-db.sh` installs Java and DynamoDB Local.
+ - **For the API's AWS parts:** the AWS CLI and Terraform 1.16.
+ 
+ ## Quick start
+@@ -14,9 +15,10 @@ A to-do list web app: a React + TypeScript frontend on Vite, with Mantine, React
+ git clone <repo-url> to-do-list
+ cd to-do-list
+ pnpm install
++bin/setup-local-db.sh          # WSL and Linux; other systems: see docs/local-development.md
+ cp api/.env.example api/.env   # in Windows cmd: copy api\.env.example api\.env
+-aws login
+ pnpm dev
++pnpm db:reset                  # once, in a second terminal, while pnpm dev runs
+ ```
+ 
+ The frontend opens at **<http://localhost:9000>**, and the API runs at **<http://localhost:3000>**. Full details, on every OS: [docs/local-development.md](docs/local-development.md).
+@@ -28,6 +30,7 @@ Run them from the repo root.
+ | Command | Does |
+ | --- | --- |
+ | `pnpm dev` | Starts the frontend's and the API's dev servers side by side |
++| `pnpm db:reset` | Resets the local todos table in DynamoDB Local to the six Demo Todos. Never touches AWS |
+ | `pnpm build` | Type-checks and builds both packages, into `frontend/dist/` and `api/dist/` |
+ | `pnpm typecheck` | Type-checks the API and the shared package, `common/` |
+ | `pnpm lint` | Runs ESLint on the root's own files, then in each package |
+diff --git a/api/CLAUDE.md b/api/CLAUDE.md
+index 5bb81ec..216a97c 100644
+--- a/api/CLAUDE.md
++++ b/api/CLAUDE.md
+@@ -28,4 +28,5 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
+ | The shapes of the request, response and error bodies | `common/src/` (the package `@to-do-list/common`) |
+ | How the dev server differs from Lambda | `docs/local-development.md` |
+ | Run the built function with a sample event | `dev/invoke.ts` (`pnpm invoke`), `dev/sample-events/` |
++| Reset the local todos table to the Demo Todos | `dev/reset-local-db.ts` (`pnpm db:reset`), with the Seed in `dev/seeds/todos.ts` |
+ | Test a route handler | `tests/resources/<resource>/route-handlers/<name>.test.ts`, with `tests/fixtures/events.ts` |
+diff --git a/api/dev/reset-local-db.ts b/api/dev/reset-local-db.ts
+new file mode 100644
+index 0000000..12e723a
+--- /dev/null
++++ b/api/dev/reset-local-db.ts
+@@ -0,0 +1,51 @@
++// Reset Local Database: deletes the local todos table, creates it again, and writes the Seed.
++// Usage, in api/, while pnpm dev runs DynamoDB Local: pnpm db:reset
++import { CreateTableCommand, DeleteTableCommand, DynamoDBClient, ResourceNotFoundException } from "@aws-sdk/client-dynamodb";
++import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
++
++import { dynamoDbClientConfig } from "../src/database/dynamodb-client-config.ts";
++import { TODOS_SEED } from "./seeds/todos.ts";
++
++const { TODOS_TABLE } = process.env;
++if (!TODOS_TABLE) {
++  throw new Error("TODOS_TABLE environment variable must be set");
++}
++
++// Always DynamoDB Local, with fake credentials, whatever DATABASE says: the reset never reaches AWS.
++const client = new DynamoDBClient(dynamoDbClientConfig("local"));
++const documentClient = DynamoDBDocumentClient.from(client);
++
++// Deleting a table that doesn't exist yet, before the first reset, isn't an error.
++try {
++  await client.send(new DeleteTableCommand({ TableName: TODOS_TABLE }));
++} catch (error) {
++  if (!(error instanceof ResourceNotFoundException)) {
++    throw error;
++  }
++}
++
++// The same keys as the real table in infra/modules/app/dynamodb.tf.
++await client.send(
++  new CreateTableCommand({
++    TableName: TODOS_TABLE,
++    AttributeDefinitions: [
++      { AttributeName: "owner_id", AttributeType: "S" },
++      { AttributeName: "todo_id", AttributeType: "S" },
++    ],
++    KeySchema: [
++      { AttributeName: "owner_id", KeyType: "HASH" },
++      { AttributeName: "todo_id", KeyType: "RANGE" },
++    ],
++    BillingMode: "PAY_PER_REQUEST",
++  }),
++);
++
++let todosWritten = 0;
++for (const [ownerId, todos] of Object.entries(TODOS_SEED)) {
++  for (const todo of todos) {
++    await documentClient.send(new PutCommand({ TableName: TODOS_TABLE, Item: { owner_id: ownerId, ...todo } }));
++    todosWritten += 1;
++  }
++}
++
++console.log(`Reset ${TODOS_TABLE}: ${todosWritten} Todos written.`);
+diff --git a/api/dev/seeds/todos.ts b/api/dev/seeds/todos.ts
+new file mode 100644
+index 0000000..6b0efbe
+--- /dev/null
++++ b/api/dev/seeds/todos.ts
+@@ -0,0 +1,16 @@
++import type { Todo } from "@to-do-list/common";
++
++// The Seed of the local todos table: each Owner's ID, and that Owner's Todos.
++// The Demo Owner's ID is DEMO_OWNER_ID in src/resources/todos/todos-repository.ts.
++// The IDs are fixed, in the version 7 UUID form, so each reset puts the same IDs back.
++// The list shows the largest ID first, so the IDs grow smaller down this list.
++export const TODOS_SEED: Record<string, Todo[]> = {
++  "demo-owner": [
++    { todo_id: "019ac000-0006-7000-8000-000000000000", title: "Complete online JavaScript course", completed: true, version: 1 },
++    { todo_id: "019ac000-0005-7000-8000-000000000000", title: "Jog around the park 3x", completed: false, version: 1 },
++    { todo_id: "019ac000-0004-7000-8000-000000000000", title: "10 minutes meditation", completed: false, version: 1 },
++    { todo_id: "019ac000-0003-7000-8000-000000000000", title: "Read for 1 hour", completed: false, version: 1 },
++    { todo_id: "019ac000-0002-7000-8000-000000000000", title: "Pick up groceries", completed: false, version: 1 },
++    { todo_id: "019ac000-0001-7000-8000-000000000000", title: "Complete Todo App on Frontend Mentor", completed: false, version: 1 },
++  ],
++};
+diff --git a/api/package.json b/api/package.json
+index e0ac440..dafbf6a 100644
+--- a/api/package.json
++++ b/api/package.json
+@@ -9,6 +9,7 @@
+     "typecheck": "tsc",
+     "lint": "eslint .",
+     "invoke": "node --env-file=.env --enable-source-maps dev/invoke.ts",
++    "db:reset": "node --env-file=.env dev/reset-local-db.ts",
+     "bundle": "esbuild src/index.ts --bundle --platform=node --format=esm --target=node26 --main-fields=module,main --sourcemap --outfile=dist/index.mjs",
+     "build": "pnpm typecheck && pnpm bundle",
+     "test": "vitest run"
+diff --git a/api/src/resources/todos/demo-todos.ts b/api/src/resources/todos/demo-todos.ts
+deleted file mode 100644
+index 10d4a88..0000000
+--- a/api/src/resources/todos/demo-todos.ts
++++ /dev/null
+@@ -1,9 +0,0 @@
+-// The Demo Todos, in the order that the list shows them.
+-export const DEMO_TODOS = [
+-  { title: "Complete online JavaScript course", completed: true },
+-  { title: "Jog around the park 3x", completed: false },
+-  { title: "10 minutes meditation", completed: false },
+-  { title: "Read for 1 hour", completed: false },
+-  { title: "Pick up groceries", completed: false },
+-  { title: "Complete Todo App on Frontend Mentor", completed: false },
+-];
+diff --git a/docs/adding-and-removing-resources.md b/docs/adding-and-removing-resources.md
+index 475d6d0..1472cc8 100644
+--- a/docs/adding-and-removing-resources.md
++++ b/docs/adding-and-removing-resources.md
+@@ -15,6 +15,8 @@ The examples add a resource called `articles`, with one route, `GET /api/article
+ | `api/src/router/handler-registry.ts` | One export line per route handler. |
+ | `api/src/route-handler-tools/outcome-codes.ts`, `common/src/error-body.ts` | Only the codes it alone uses, if any: a success code in the first file, an error code in the second. |
+ | `api/dev/sample-events/<resource>/` | One sample event per route, for `pnpm invoke`. |
++| `api/dev/seeds/<resource>.ts` | Its Seed: each Owner's ID, and that Owner's items, which `pnpm db:reset` writes to the local table. |
++| `api/dev/reset-local-db.ts` | About 10 lines: delete its local table, create it again with its keys, and write its Seed. |
+ | `api/tests/resources/<resource>/` | One test file per route handler, in `route-handlers/`, and a test of its ID rule. |
+ | `api/.env.example` | Its table's variable. |
+ | `infra/modules/app/dynamodb.tf` | Its table. |
+diff --git a/docs/local-development.md b/docs/local-development.md
+index 8cb4eb8..3b032e8 100644
+--- a/docs/local-development.md
++++ b/docs/local-development.md
+@@ -29,7 +29,8 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
+      On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
+    - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
+ 5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
+-6. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
++6. **Fill the local todos table** once: run `pnpm dev`, and from the repo root, in a second terminal, run `pnpm db:reset`. The reset prints `Reset tdl-dev-todos: 6 Todos written.` Before the first reset, the table doesn't exist, and every todos route answers 500. See [Reset Local Database](#reset-local-database).
++7. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
+ 
+ ## Running it
+ 
+@@ -71,6 +72,12 @@ The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true`
+ 
+ `pnpm invoke` (from `api/`) runs the built function, `api/dist/index.mjs`, with a sample event: `pnpm invoke dev/sample-events/<resource>/<name>.json`. It reads `api/.env` too. Build first with `pnpm build`.
+ 
++## Reset Local Database
++
++`pnpm db:reset`, from the repo root, deletes the local todos table, creates it again, and writes the six Demo Todos from `api/dev/seeds/todos.ts`. Each reset puts back the same six Todos, with the same IDs. Run it while `pnpm dev` runs DynamoDB Local.
++
++The reset always uses DynamoDB Local on `localhost:8000`, with fake credentials, whatever `DATABASE` says. So the reset never changes a table in AWS. It reads the table's name from `TODOS_TABLE` in `api/.env`.
++
+ ## Settings
+ 
+ Node loads `api/.env` with `--env-file`. A variable already set in your shell wins over the file. On macOS, Linux and WSL, `PORT=3001 pnpm dev` overrides it for one run, and a terminal where you once ran `export PORT=…` keeps that value until you close it or `unset PORT`.
+diff --git a/docs/structure.md b/docs/structure.md
+index cfd2a54..b411c23 100644
+--- a/docs/structure.md
++++ b/docs/structure.md
+@@ -17,8 +17,8 @@ to-do-list/
+ ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
+ │                           scripts that run in each package that has them (pnpm dev, build,
+ │                           typecheck, lint, test, and test:verbose, which lists every test by
+-│                           name), pnpm deploy:dev (build the API, then terraform apply in
+-│                           infra/envs/dev),
++│                           name), pnpm db:reset (the API's Reset Local Database), pnpm
++│                           deploy:dev (build the API, then terraform apply in infra/envs/dev),
+ │                           and the tools every package shares (TypeScript, ESLint and its plugins)
+ ├── pnpm-workspace.yaml     which folders are the workspace's packages, and the install scripts pnpm
+ │                           skips (esbuild's and @parcel/watcher's), with why each is safe to skip,
+@@ -207,7 +207,7 @@ to-do-list/
+ │   │                       Vitest), and its scripts: dev (runs dev:server, the API's dev server, and
+ │   │                       dev:db, DynamoDB Local on port 8000 with telemetry off, side by side),
+ │   │                       typecheck, lint,
+-│   │                       invoke, bundle, build, test
++│   │                       invoke, db:reset, bundle, build, test
+ │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
+ │   │                       dev/, tests/ and vitest.config.ts
+ │   ├── vitest.config.ts    the unit tests' config: the files in tests/, Node, mocks cleared before
+@@ -255,7 +255,6 @@ to-do-list/
+ │   │           │                         changes and deletes one owner's Todos; the table name comes from
+ │   │           │                         TODOS_TABLE, and the client's settings from DATABASE
+ │   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
+-│   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
+ │   │           └── route-handlers/       one file per route
+ │   │               ├── list-todos.ts             GET /api/todos: the owner's Todos, newest first
+ │   │               ├── create-todo.ts            POST /api/todos: checks the body, makes the ID (a version
+@@ -274,6 +273,11 @@ to-do-list/
+ │   │   ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
+ │   │   │                   stand-in Lambda context
+ │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
++│   │   ├── reset-local-db.ts  Reset Local Database (pnpm db:reset): deletes the local todos table
++│   │   │                   in DynamoDB Local, creates it again and writes the Seed; never AWS,
++│   │   │                   whatever DATABASE says
++│   │   ├── seeds/
++│   │   │   └── todos.ts    the todos table's Seed: the Demo Owner's six Demo Todos, with fixed IDs
+ │   │   └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.
+ │   │       │               The dev server doesn't restart when one changes
+ │   │       └── todos/      one file per route, and the bad requests: create-todo-invalid-body.json
+diff --git a/package.json b/package.json
+index 5a92f71..53a0d54 100644
+--- a/package.json
++++ b/package.json
+@@ -13,6 +13,7 @@
+     "lint": "eslint . && pnpm -r lint",
+     "test": "pnpm -r test",
+     "test:verbose": "pnpm -r --reporter=append-only test --reporter=verbose",
++    "db:reset": "pnpm --filter @to-do-list/api db:reset",
+     "deploy:dev": "pnpm --filter @to-do-list/api build && terraform -chdir=infra/envs/dev apply"
+   },
+   "devDependencies": {

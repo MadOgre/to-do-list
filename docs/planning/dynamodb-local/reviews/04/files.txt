@@ -1,0 +1,10 @@
+README.md
+api/CLAUDE.md
+api/dev/reset-local-db.ts
+api/dev/seeds/todos.ts
+api/package.json
+api/src/resources/todos/demo-todos.ts
+docs/adding-and-removing-resources.md
+docs/local-development.md
+docs/structure.md
+package.json

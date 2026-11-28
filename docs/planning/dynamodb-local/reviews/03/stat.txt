@@ -1,0 +1,9 @@
+ api/.env.example                                  |  5 +++++
+ api/CLAUDE.md                                     |  3 ++-
+ api/dev/server.ts                                 | 22 +++++++++++++++++-----
+ api/src/database/dynamodb-client-config.ts        | 19 +++++++++++++++++++
+ api/src/resources/todos/todos-repository.ts       |  6 ++++--
+ api/tests/database/dynamodb-client-config.test.ts | 21 +++++++++++++++++++++
+ docs/local-development.md                         |  9 +++++----
+ docs/structure.md                                 | 11 +++++++++--
+ 8 files changed, 82 insertions(+), 14 deletions(-)

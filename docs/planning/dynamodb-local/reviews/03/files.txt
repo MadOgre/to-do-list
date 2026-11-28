@@ -1,0 +1,8 @@
+api/.env.example
+api/CLAUDE.md
+api/dev/server.ts
+api/src/database/dynamodb-client-config.ts
+api/src/resources/todos/todos-repository.ts
+api/tests/database/dynamodb-client-config.test.ts
+docs/local-development.md
+docs/structure.md

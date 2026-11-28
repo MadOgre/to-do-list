@@ -1,0 +1,6 @@
+ .gitignore                |  3 +++
+ api/package.json          |  4 +++-
+ bin/setup-local-db.sh     | 23 +++++++++++++++++++++++
+ docs/local-development.md | 23 ++++++++++++++++++-----
+ docs/structure.md         | 12 ++++++++++--
+ 5 files changed, 57 insertions(+), 8 deletions(-)

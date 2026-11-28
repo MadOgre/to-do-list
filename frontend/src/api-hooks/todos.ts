@@ -5,7 +5,6 @@ import {
   createTodo,
   deleteTodo,
   listTodos,
-  restoreDemoTodos,
   setTodoCompleted,
 } from "@/api";
 import type { SetTodoCompletedBody } from "@/types";
@@ -45,15 +44,6 @@ export const useClearCompletedTodos = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: clearCompletedTodos,
-    onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
-  });
-};
-
-// Temporary: delete it together with restoreDemoTodos and the Restore Demo Todos link.
-export const useRestoreDemoTodos = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: restoreDemoTodos,
     onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
   });
 };

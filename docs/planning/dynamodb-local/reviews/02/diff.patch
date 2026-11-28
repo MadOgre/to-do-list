@@ -1,0 +1,148 @@
+diff --git a/.gitignore b/.gitignore
+index da50113..3d29acf 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -24,6 +24,9 @@ Thumbs.db
+ # The API's local settings for pnpm dev and pnpm invoke. api/.env.example shows what goes in them
+ api/.env
+ 
++# DynamoDB Local's download and its data, from bin/setup-local-db.sh
++api/.dynamodb-local/
++
+ # Terraform's working folder: downloaded providers (hundreds of MB), caches
+ .terraform/
+ 
+diff --git a/api/package.json b/api/package.json
+index a396910..e32f17b 100644
+--- a/api/package.json
++++ b/api/package.json
+@@ -3,7 +3,9 @@
+   "private": true,
+   "type": "module",
+   "scripts": {
+-    "dev": "nodemon --quiet --watch src --watch dev --watch routes.json --watch .env --ignore dev/sample-events --ext ts,json --exec \"tsc && node --env-file=.env dev/server.ts\"",
++    "dev": "pnpm run --no-bail \"/^dev:/\"",
++    "dev:server": "nodemon --quiet --watch src --watch dev --watch routes.json --watch .env --ignore dev/sample-events --ext ts,json --exec \"tsc && node --env-file=.env dev/server.ts\"",
++    "dev:db": "java -Djava.library.path=.dynamodb-local/DynamoDBLocal_lib -jar .dynamodb-local/DynamoDBLocal.jar -sharedDb -dbPath .dynamodb-local/data -port 8000",
+     "typecheck": "tsc",
+     "lint": "eslint .",
+     "invoke": "node --env-file=.env --enable-source-maps dev/invoke.ts",
+diff --git a/bin/setup-local-db.sh b/bin/setup-local-db.sh
+new file mode 100755
+index 0000000..9993375
+--- /dev/null
++++ b/bin/setup-local-db.sh
+@@ -0,0 +1,23 @@
++#!/usr/bin/env bash
++# Installs Java and DynamoDB Local for pnpm dev, if they are missing. WSL and Ubuntu only, because it uses apt.
++# Usage, from any folder: bin/setup-local-db.sh
++set -euo pipefail
++
++db_dir="$(dirname "$0")/../api/.dynamodb-local"
++db_jar="$db_dir/DynamoDBLocal.jar"
++download_url="https://d1ni2b6xgvw0s0.cloudfront.net/v2.x/dynamodb_local_latest.tar.gz"
++
++if command -v java > /dev/null && [ -f "$db_jar" ]; then
++  echo "Java and DynamoDB Local are installed."
++  exit 0
++fi
++
++if ! command -v java > /dev/null; then
++  sudo apt install -y openjdk-21-jre-headless
++fi
++
++if [ ! -f "$db_jar" ]; then
++  # data/ holds the tables: the dev:db script in api/package.json points -dbPath at it.
++  mkdir -p "$db_dir/data"
++  curl -fsSL "$download_url" | tar -xz -C "$db_dir"
++fi
+diff --git a/docs/local-development.md b/docs/local-development.md
+index b6abb4a..60ca3ab 100644
+--- a/docs/local-development.md
++++ b/docs/local-development.md
+@@ -16,8 +16,20 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
+    - **macOS and Linux:** run `corepack enable`, with `sudo` if Node is installed system-wide.
+    - **Check:** `pnpm --version` in the repo prints the pinned version.
+ 3. **Install the packages,** from the repo root: `pnpm install`. If it fails with `EACCES` errors on WSL, close VS Code and run it again: VS Code's file watching can block the install.
+-4. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
+-5. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
++4. **Install Java and DynamoDB Local.** `pnpm dev` starts DynamoDB Local, a local copy of DynamoDB that runs on Java. DynamoDB Local goes in `api/.dynamodb-local/`, which git ignores, and keeps its tables in the `data/` folder there.
++   - **WSL and Linux:** run `bin/setup-local-db.sh` from the repo root. If `java` isn't found, the script installs Java with `sudo apt`, so it asks for your password. If DynamoDB Local isn't there, the script downloads and unpacks it. A second run changes nothing.
++   - **Every other system:** install Java 17 or newer. Then, from the repo root, download and unpack DynamoDB Local:
++
++     ```sh
++     mkdir -p api/.dynamodb-local/data
++     curl -fLo api/.dynamodb-local/dynamodb_local_latest.tar.gz https://d1ni2b6xgvw0s0.cloudfront.net/v2.x/dynamodb_local_latest.tar.gz
++     tar -xzf api/.dynamodb-local/dynamodb_local_latest.tar.gz -C api/.dynamodb-local
++     ```
++
++     On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
++   - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
++5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
++6. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
+ 
+ ## Running it
+ 
+@@ -27,14 +39,15 @@ From the repo root:
+ pnpm dev
+ ```
+ 
+-This starts both packages' dev servers side by side, and prefixes each line with the package's folder:
++This starts three servers side by side, and prefixes each line with the package's folder:
+ 
+ - **The frontend** on <http://localhost:9000> (`frontend dev:` lines). Vite serves the app with HMR, and shows TypeScript and ESLint errors in the terminal and in the browser overlay.
+ - **The API** on <http://localhost:3000> (`api dev:` lines). See [The API's dev server](#the-apis-dev-server).
++- **DynamoDB Local** on <http://localhost:8000> (`api dev:` lines too). It keeps its tables in `api/.dynamodb-local/data/`, so they survive a stop and a start. If DynamoDB Local fails to start, the terminal shows its error, and the frontend and the API keep running. If it isn't installed, the error is Java's `Unable to access jarfile`: see step 4 of [First-time setup](#first-time-setup).
+ 
+-Both listen on localhost only, so they aren't reachable from your network. This matters most for the API's dev server, which runs with your AWS credentials. Both ports are fixed: if one is taken, its server stops with an error rather than moving to another port.
++The frontend and the API listen on localhost only, so they aren't reachable from your network. This matters most for the API's dev server, which runs with your AWS credentials. All three ports are fixed: if one is taken, its server stops with an error rather than moving to another port.
+ 
+-Ctrl+C stops both. pnpm may then print `Failed` for a package, which only means it was stopped.
++Ctrl+C stops all three. pnpm may then print `Failed` for a package, which only means it was stopped.
+ 
+ ### The proxy
+ 
+diff --git a/docs/structure.md b/docs/structure.md
+index 8066fcf..2ffa1c0 100644
+--- a/docs/structure.md
++++ b/docs/structure.md
+@@ -9,7 +9,8 @@ to-do-list/
+ ├── .gitattributes          makes git store every text file with LF (Linux) line endings, so Windows
+ │                           checkouts don't produce noisy diffs
+ ├── .gitignore              what git leaves out: installed packages, build output, local env overrides
+-│                           (*.local, api/.env), editor and OS files, and Terraform's working folders,
++│                           (*.local, api/.env), DynamoDB Local's folder (api/.dynamodb-local/), editor
++│                           and OS files, and Terraform's working folders,
+ │                           state files, variable files, crash logs and saved plans
+ ├── .nvmrc                  pins Node 26 for version managers such as fnm and nvm
+ ├── package.json            the workspace's root: pinned Node (engines) and pnpm (packageManager), the
+@@ -45,6 +46,9 @@ to-do-list/
+ │   ├── extensions.json     recommends the ESLint extension when the folder is opened in VS Code
+ │   └── settings.json       shared workspace settings: 2-space indentation, ESLint fixes on save
+ │                           instead of a formatter, and the workspace's own TypeScript version
++├── bin/
++│   └── setup-local-db.sh   installs Java (with apt) and DynamoDB Local (into api/.dynamodb-local/), if
++│                           they are missing; WSL and Ubuntu only. No package.json script runs it
+ │
+ ├── docs/
+ │   ├── structure.md        this file
+@@ -199,7 +203,9 @@ to-do-list/
+ │   ├── package.json        its libraries (Powertools Logger, the AWS SDK's DynamoDB client and document
+ │   │                       client, DynamoDB Toolbox, zod, the shared schemas from common/), its tools
+ │   │                       (esbuild, Express, nodemon, Node and Lambda types, typescript-eslint,
+-│   │                       Vitest), and its scripts: dev, typecheck, lint, invoke, bundle, build, test
++│   │                       Vitest), and its scripts: dev (runs dev:server, the API's dev server, and
++│   │                       dev:db, DynamoDB Local on port 8000, side by side), typecheck, lint,
++│   │                       invoke, bundle, build, test
+ │   ├── tsconfig.json       extends tsconfig.base.json with the settings for Node code; covers src/,
+ │   │                       dev/, tests/ and vitest.config.ts
+ │   ├── vitest.config.ts    the unit tests' config: the files in tests/, Node, mocks cleared before
+@@ -208,6 +214,8 @@ to-do-list/
+ │   │                       rules and Node globals
+ │   ├── .env.example        the settings pnpm dev and pnpm invoke read, with their values; committed
+ │   ├── .env                your own copy of .env.example; gitignored
++│   ├── .dynamodb-local/    DynamoDB Local, from bin/setup-local-db.sh, and its tables in data/;
++│   │                       gitignored
+ │   ├── CLAUDE.md           for AI coding agents: the request path and where to find each part
+ │   ├── routes.json         the one list of the API's routes (method, path, handler name);
+ │   │                       infra/modules/app/ makes one API Gateway route from each entry

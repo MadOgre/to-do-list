@@ -1,0 +1,227 @@
+diff --git a/api/.env.example b/api/.env.example
+index 2b9b284..ccbf1ce 100644
+--- a/api/.env.example
++++ b/api/.env.example
+@@ -7,5 +7,10 @@ PORT=3000
+ # Powertools Logger prints each log line as indented JSON. Local only: Lambda never reads this file.
+ POWERTOOLS_DEV=true
+ 
++# The database that the todos routes use: local for DynamoDB Local, which pnpm dev starts on
++# port 8000, or dev for the real dev table in AWS, after aws login. The dev server refuses any
++# other value.
++DATABASE=local
++
+ # The todos table, named in infra/modules/app/dynamodb.tf.
+ TODOS_TABLE=tdl-dev-todos
+diff --git a/api/CLAUDE.md b/api/CLAUDE.md
+index b9d530d..5bb81ec 100644
+--- a/api/CLAUDE.md
++++ b/api/CLAUDE.md
+@@ -10,7 +10,8 @@ API Gateway HTTP API (`infra/modules/app/`) → `handler` in `src/index.ts`, whi
+ 
+ - `routes.json` is the one route list. `src/router/router.ts` and `src/router/routes.ts` check it at startup, and Terraform makes one API Gateway route from each entry.
+ - `src/router/handler-registry.ts` exports each route handler under the name that `routes.json` uses. The route handlers are in `src/resources/<resource>/route-handlers/`, one file per route, named after the route handler.
+-- Locally, `dev/server.ts` (Express) plays API Gateway's part and calls the same `handler`. It reads `PORT` from `.env`.
++- Locally, `dev/server.ts` (Express) plays API Gateway's part and calls the same `handler`. It reads `PORT` and `DATABASE` from `.env`, and stops unless `DATABASE` is `local` or `dev`.
++- `src/database/dynamodb-client-config.ts` turns `DATABASE` into the DynamoDB client's settings: DynamoDB Local on port 8000 for `local`, the real DynamoDB for anything else, as in the deployed Lambda, which has no `DATABASE`.
+ - `pnpm build` writes `dist/index.mjs`. Terraform zips `dist/` and uploads it.
+ - `pnpm test` runs the unit tests in `tests/` (Vitest, `vitest.config.ts`). `tests/` has the same folders as `src/`. A route handler's test replaces the repository with `vi.mock` and builds its event with `makeEvent` from `tests/fixtures/events.ts`, so no test reaches DynamoDB.
+ 
+diff --git a/api/dev/server.ts b/api/dev/server.ts
+index e9f96b5..f67a2bc 100644
+--- a/api/dev/server.ts
++++ b/api/dev/server.ts
+@@ -15,15 +15,27 @@ if (!PORT) {
+   throw new Error("PORT environment variable must be set (see api/.env.example)");
+ }
+ 
++// Every developer chooses the database: no default, so nobody reaches AWS without meaning to.
++// The deployed Lambda never gets DATABASE, so only the dev server refuses a missing or unknown value.
++const { DATABASE } = process.env;
++if (DATABASE !== "local" && DATABASE !== "dev") {
++  throw new Error("DATABASE must be local or dev (see api/.env.example)");
++}
++
++// Only the dev database needs an AWS login: DynamoDB Local takes fake credentials.
++const usesAws = DATABASE === "dev";
++
+ const NOT_LOGGED_IN_MESSAGE =
+   "Not logged in to AWS. Run `aws login` in another terminal, then try your request again. If it still fails, restart the server.";
+ 
+ // Warn at startup when AWS credentials can't be loaded, and keep running: logging in usually fixes it without a restart.
+ // This only loads them: no request goes to AWS.
+-try {
+-  await new DynamoDBClient().config.credentials();
+-} catch {
+-  console.error(NOT_LOGGED_IN_MESSAGE);
++if (usesAws) {
++  try {
++    await new DynamoDBClient().config.credentials();
++  } catch {
++    console.error(NOT_LOGGED_IN_MESSAGE);
++  }
+ }
+ 
+ // A login can also end while the server runs. These errors say so:
+@@ -165,7 +177,7 @@ app.use((req: Request, res: Response) => {
+ // Express treats a function as an error handler only when it takes four parameters, so `next` stays unused.
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
+-  if (isCredentialsError(error)) {
++  if (usesAws && isCredentialsError(error)) {
+     console.error(NOT_LOGGED_IN_MESSAGE);
+   } else {
+     console.error(error);
+diff --git a/api/src/database/dynamodb-client-config.ts b/api/src/database/dynamodb-client-config.ts
+new file mode 100644
+index 0000000..2fdf509
+--- /dev/null
++++ b/api/src/database/dynamodb-client-config.ts
+@@ -0,0 +1,19 @@
++import type { DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
++
++// DynamoDB Local's fixed address, where pnpm dev starts it (dev:db in api/package.json).
++const LOCAL_ENDPOINT = "http://localhost:8000";
++
++// The DynamoDB client's settings for a DATABASE value, from api/.env.
++// Only "local" changes them: DynamoDB Local accepts any credentials and region, so fake ones
++// mean that no AWS login is needed. Every other value, and no value, as in the deployed Lambda,
++// gives the SDK's defaults: the real DynamoDB in AWS. Only the dev server refuses an unknown value.
++export const dynamoDbClientConfig = (database: string | undefined): DynamoDBClientConfig => {
++  if (database === "local") {
++    return {
++      endpoint: LOCAL_ENDPOINT,
++      region: "local",
++      credentials: { accessKeyId: "local", secretAccessKey: "local" },
++    };
++  }
++  return {};
++};
+diff --git a/api/src/resources/todos/todos-repository.ts b/api/src/resources/todos/todos-repository.ts
+index c7f6f70..5e4d826 100644
+--- a/api/src/resources/todos/todos-repository.ts
++++ b/api/src/resources/todos/todos-repository.ts
+@@ -14,7 +14,9 @@ import { QueryCommand } from "dynamodb-toolbox/table/actions/query";
+ 
+ import type { Todo } from "@to-do-list/common";
+ 
+-const { TODOS_TABLE } = process.env;
++import { dynamoDbClientConfig } from "../../database/dynamodb-client-config.ts";
++
++const { DATABASE, TODOS_TABLE } = process.env;
+ if (!TODOS_TABLE) {
+   throw new Error("TODOS_TABLE environment variable must be set");
+ }
+@@ -22,7 +24,7 @@ if (!TODOS_TABLE) {
+ // The one owner of every Todo until the app has logins. Then each request brings its own owner.
+ export const DEMO_OWNER_ID = "demo-owner";
+ 
+-const documentClient = DynamoDBDocumentClient.from(new DynamoDBClient());
++const documentClient = DynamoDBDocumentClient.from(new DynamoDBClient(dynamoDbClientConfig(DATABASE)));
+ 
+ const todosTable = new Table({
+   name: TODOS_TABLE,
+diff --git a/api/tests/database/dynamodb-client-config.test.ts b/api/tests/database/dynamodb-client-config.test.ts
+new file mode 100644
+index 0000000..6d190c1
+--- /dev/null
++++ b/api/tests/database/dynamodb-client-config.test.ts
+@@ -0,0 +1,21 @@
++import { describe, expect, it } from "vitest";
++
++import { dynamoDbClientConfig } from "../../src/database/dynamodb-client-config.ts";
++
++describe("dynamoDbClientConfig", () => {
++  it("sends the client to DynamoDB Local, with fake credentials and region, for local", () => {
++    expect(dynamoDbClientConfig("local")).toEqual({
++      endpoint: "http://localhost:8000",
++      region: "local",
++      credentials: { accessKeyId: "local", secretAccessKey: "local" },
++    });
++  });
++
++  it("leaves the client on the real DynamoDB in AWS for dev", () => {
++    expect(dynamoDbClientConfig("dev").endpoint).toBeUndefined();
++  });
++
++  it("leaves the client on the real DynamoDB in AWS when no database is set, as in the deployed Lambda", () => {
++    expect(dynamoDbClientConfig(undefined).endpoint).toBeUndefined();
++  });
++});
+diff --git a/docs/local-development.md b/docs/local-development.md
+index d641010..8cb4eb8 100644
+--- a/docs/local-development.md
++++ b/docs/local-development.md
+@@ -28,8 +28,8 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
+ 
+      On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
+    - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
+-5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for.
+-6. **Sign in to AWS** with `aws login`. The API's code calls AWS with your credentials: every todos route reads or writes the todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail.
++5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
++6. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
+ 
+ ## Running it
+ 
+@@ -57,7 +57,7 @@ The frontend calls the API at `/api` on its own origin (`VITE_API_BASE_URL=/api`
+ 
+ `api/dev/server.ts` plays API Gateway's part: it matches each request against `api/routes.json`, builds the event API Gateway would send, calls the function's own router (`api/src/router/router.ts`), and turns the result into an HTTP response. A request that matches no route gets API Gateway's own answer: a 404 and `{"message":"Not Found"}`.
+ 
+-Only the code is local. The todos routes read and write the real table in AWS, with your own credentials. If you're not signed in, the server says so when it starts and when a request fails for that reason.
++`DATABASE` in `api/.env` selects the database that the todos routes read and write. With `local`, they use DynamoDB Local, with fake credentials, and the server never checks your AWS login. With `dev`, they use the real table in AWS, with your own credentials: if you're not signed in, the server says so when it starts and when a request fails for that reason. With no `DATABASE`, or any other value, the server stops at startup with `DATABASE must be local or dev (see api/.env.example)`, and waits until you save `api/.env` with a valid value.
+ 
+ Send requests from another terminal:
+ 
+@@ -79,7 +79,8 @@ Node loads `api/.env` with `--env-file`. A variable already set in your shell wi
+ | --- | --- |
+ | `PORT` | The API dev server's port on `localhost`. |
+ | `POWERTOOLS_DEV` | `true` prints each log line as indented JSON. |
+-| `TODOS_TABLE` | The todos table's name. Locally, the code uses the dev environment's table, `tdl-dev-todos`. |
++| `DATABASE` | The database that the todos routes use: `local` for DynamoDB Local on port 8000, or `dev` for the real dev table in AWS, after `aws login`. The dev server refuses any other value, and a missing one. The deployed Lambda doesn't get `DATABASE`, and uses the real DynamoDB. |
++| `TODOS_TABLE` | The todos table's name. Locally, the code uses the dev environment's table name, `tdl-dev-todos`, for DynamoDB Local and for AWS alike. |
+ 
+ When code starts reading a new variable, add it to `api/.env.example`, with a comment, and a placeholder such as `XXXXXXX` for values that differ per person.
+ 
+diff --git a/docs/structure.md b/docs/structure.md
+index f4cd869..cfd2a54 100644
+--- a/docs/structure.md
++++ b/docs/structure.md
+@@ -235,6 +235,10 @@ to-do-list/
+ │   │   │   │                         path and a handler name
+ │   │   │   ├── handler-registry.ts   re-exports every route handler, under the name routes.json uses
+ │   │   │   └── logger.ts             the one Powertools Logger the whole function writes with
++│   │   ├── database/
++│   │   │   └── dynamodb-client-config.ts  dynamoDbClientConfig: the DynamoDB client's settings for a
++│   │   │                             DATABASE value; DynamoDB Local on port 8000, with fake
++│   │   │                             credentials, for local, and the real DynamoDB otherwise
+ │   │   ├── route-handler-tools/      what a route handler uses to read the request and write the response
+ │   │   │   ├── route-handler.ts      RouteHandler (the shape every route handler has) and Result (what a
+ │   │   │   │                         route handler returns)
+@@ -249,7 +253,7 @@ to-do-list/
+ │   │           ├── todos-repository.ts   the todos table and the Todo entity (DynamoDB Toolbox), and
+ │   │           │                         DEMO_OWNER_ID, the one owner until the login: creates, lists,
+ │   │           │                         changes and deletes one owner's Todos; the table name comes from
+-│   │           │                         TODOS_TABLE
++│   │           │                         TODOS_TABLE, and the client's settings from DATABASE
+ │   │           ├── todo-id.ts            checks a Todo ID: 1 to 64 letters, digits or hyphens
+ │   │           ├── demo-todos.ts         the six Demo Todos' titles, and which one is Completed
+ │   │           └── route-handlers/       one file per route
+@@ -265,7 +269,8 @@ to-do-list/
+ │   │                                             Todo
+ │   ├── dev/                the tools that run only on your machine, never in Lambda
+ │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
+-│   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
++│   │   │                   the router in src/router/router.ts, stops unless DATABASE is local or dev,
++│   │   │                   and with dev warns when you're not logged in to AWS
+ │   │   ├── invoke.ts       runs the built function (dist/index.mjs) with a sample event and a
+ │   │   │                   stand-in Lambda context
+ │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+@@ -277,6 +282,8 @@ to-do-list/
+ │       │                   reaches DynamoDB: the repository tests wait for DynamoDB Local
+ │       ├── fixtures/
+ │       │   └── events.ts   makeEvent: a whole API Gateway event from the parts a route handler reads
++│       ├── database/
++│       │   └── dynamodb-client-config.test.ts   the client's endpoint for local, dev and no DATABASE
+ │       ├── router/
+ │       │   └── routes.test.ts   the routes list: the removed POST /api/demo-todos/restore stays out
+ │       └── resources/

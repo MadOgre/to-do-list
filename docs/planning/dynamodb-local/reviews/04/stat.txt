@@ -1,0 +1,11 @@
+ README.md                             |  5 +++-
+ api/CLAUDE.md                         |  1 +
+ api/dev/reset-local-db.ts             | 51 +++++++++++++++++++++++++++++++++++
+ api/dev/seeds/todos.ts                | 16 +++++++++++
+ api/package.json                      |  1 +
+ api/src/resources/todos/demo-todos.ts |  9 -------
+ docs/adding-and-removing-resources.md |  2 ++
+ docs/local-development.md             |  9 ++++++-
+ docs/structure.md                     | 12 ++++++---
+ package.json                          |  1 +
+ 10 files changed, 92 insertions(+), 15 deletions(-)

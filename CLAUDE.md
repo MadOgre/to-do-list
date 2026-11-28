@@ -57,10 +57,10 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **`interface` for an object shape.** Write a hand-written object shape as an `interface`. Use `type` for everything else: unions, function types, and the types that come from `z.infer`.
 - **File names (a guideline).** Name files and folders in kebab-case: `todos-repository.ts`, `api-hooks/`, `local-development.md`. The usual exceptions:
   - A React component's folder and files are PascalCase, after the component: `TodoRow/TodoRow.tsx`.
-  - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`.
+  - The docs that tools and skills look for by name are uppercase: `README.md`, `CLAUDE.md`, `GLOSSARY.md`, `INTENT.md`, `SPEC.md`.
   - A tool's config keeps the name that the tool looks for: `vite.config.ts`, `tsconfig.app.json`.
   - A Sass partial starts with `_`: `_mantine.scss`.
-  - The grilling rounds keep the name `round_<N>_questions.md`.
+  - The grilling rounds of earlier features keep their old names, `round_<N>_questions.md`.
 
   Another exception is fine when a tool, a library or a clear reason needs it. Say why in the commit message.
 - **Imports** sit in up to four sections, in this order, with one blank line between sections and empty sections left out. One blank line follows the last import:
@@ -75,8 +75,8 @@ Lint enforces style (`eslint.config.base.js`, which each package's `eslint.confi
 - **Pages (frontend)** live one per folder under `frontend/src/pages/`, with their SCSS module next to them.
 - **Shared types (frontend)** go in `frontend/src/types/`, one file per type, with the types derived from it in the same file.
 - **Mantine (frontend,** ADR-0001**):** UI components come from `@mantine/core`, imported directly. Custom styles go in the Page's or component's SCSS module, imported as `classes` (`import classes from "./Home.module.scss";`), as Mantine's docs do. The styles use Mantine's CSS variables and the `mantine` helpers that Vite injects into every SCSS file. Translate Mantine docs examples written for `postcss-preset-mantine` to the Sass form: `mantine.rem(…)`, `@include mantine.<mixin>`, `mantine.$mantine-breakpoint-*`.
-- **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `api/.env.example`, with a comment and a placeholder, and each developer's own values in the gitignored `api/.env`.
+- **Environment variables:** the frontend's go in `frontend/.env` (committed, safe defaults), are typed in `frontend/src/vite-env.d.ts`, and are overridden in the gitignored `frontend/.env.local`. The API's go in `.env.example` at the repo root, with a comment and a placeholder, and each developer's own values in the gitignored `.env` next to it.
 
 ### Grilling sessions
 
-Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/round_<N>_questions.md`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `GLOSSARY.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.
+Start from the feature's `INTENT.md`, following `docs/agents/issue-tracker.md` for the feature slug and when the folder or `INTENT.md` is missing. Write each round's questions to `docs/planning/<feature-slug>/questions-round-NN.md`, numbered with two digits from `01`, with an empty **Answer:** under each question, and give only a short pointer in chat. A grilling session produces documents only (the round files, `decisions.md`, `GLOSSARY.md`, ADRs) and ends with the shared-understanding summary; implementation starts separately.

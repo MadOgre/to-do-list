@@ -4,5 +4,4 @@ export { clearCompletedTodos } from "../resources/todos/route-handlers/clear-com
 export { createTodo } from "../resources/todos/route-handlers/create-todo.ts";
 export { deleteTodo } from "../resources/todos/route-handlers/delete-todo.ts";
 export { listTodos } from "../resources/todos/route-handlers/list-todos.ts";
-export { restoreDemoTodos } from "../resources/todos/route-handlers/restore-demo-todos.ts";
 export { setTodoCompleted } from "../resources/todos/route-handlers/set-todo-completed.ts";

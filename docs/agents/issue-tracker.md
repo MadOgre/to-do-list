@@ -9,9 +9,10 @@ Some skills name `.scratch/<feature-slug>/` as the home of local issue files. In
 - One feature per directory: `docs/planning/<feature-slug>/`
 - The feature slug is the feature name the developer gives, lowercased, with every run of characters other than `a-z` and `0-9` turned into one hyphen and no hyphen at either end: "Mantine install" → `mantine-install`. When a folder for the same feature already exists under another spelling, ask the developer before creating a second one.
 - Every feature folder holds an `INTENT.md`: see [The intent document](#the-intent-document)
-- Grilling rounds are `docs/planning/<feature-slug>/round_<N>_questions.md`, numbered from `1`
-- The spec is `docs/planning/<feature-slug>/spec.md`
-- Implementation issues are one file per ticket at `docs/planning/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`, never a single combined tickets file
+- Grilling rounds are `docs/planning/<feature-slug>/questions-round-NN.md`, numbered with two digits from `01`. The rounds of earlier features keep their old names, `round_<N>_questions.md`
+- The decisions of a grilling session are `docs/planning/<feature-slug>/decisions.md`
+- The spec is `docs/planning/<feature-slug>/SPEC.md`. Earlier features keep their old name, `spec.md`
+- Implementation tickets are one file per ticket at `docs/planning/<feature-slug>/tickets/<NN>-<slug>.md`, numbered from `01`, never a single combined tickets file. Earlier features keep their old folder, `issues/`
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
 

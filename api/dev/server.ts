@@ -12,18 +12,30 @@ import { makeLocalContext } from "./local-context.ts";
 
 const { PORT } = process.env;
 if (!PORT) {
-  throw new Error("PORT environment variable must be set (see api/.env.example)");
+  throw new Error("PORT environment variable must be set (see .env.example)");
 }
+
+// Every developer chooses the database: no default, so nobody reaches AWS without meaning to.
+// The deployed Lambda never gets DATABASE, so only the dev server refuses a missing or unknown value.
+const { DATABASE } = process.env;
+if (DATABASE !== "local" && DATABASE !== "dev") {
+  throw new Error("DATABASE must be local or dev (see .env.example)");
+}
+
+// Only the dev database needs an AWS login: DynamoDB Local takes fake credentials.
+const usesAws = DATABASE === "dev";
 
 const NOT_LOGGED_IN_MESSAGE =
   "Not logged in to AWS. Run `aws login` in another terminal, then try your request again. If it still fails, restart the server.";
 
 // Warn at startup when AWS credentials can't be loaded, and keep running: logging in usually fixes it without a restart.
 // This only loads them: no request goes to AWS.
-try {
-  await new DynamoDBClient().config.credentials();
-} catch {
-  console.error(NOT_LOGGED_IN_MESSAGE);
+if (usesAws) {
+  try {
+    await new DynamoDBClient().config.credentials();
+  } catch {
+    console.error(NOT_LOGGED_IN_MESSAGE);
+  }
 }
 
 // A login can also end while the server runs. These errors say so:
@@ -165,7 +177,7 @@ app.use((req: Request, res: Response) => {
 // Express treats a function as an error handler only when it takes four parameters, so `next` stays unused.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
-  if (isCredentialsError(error)) {
+  if (usesAws && isCredentialsError(error)) {
     console.error(NOT_LOGGED_IN_MESSAGE);
   } else {
     console.error(error);

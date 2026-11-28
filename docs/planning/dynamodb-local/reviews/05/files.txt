@@ -1,0 +1,4 @@
+README.md
+api/dev/reset-local-db.ts
+docs/local-development.md
+docs/structure.md

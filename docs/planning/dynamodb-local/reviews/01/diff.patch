@@ -1,0 +1,351 @@
+diff --git a/api/CLAUDE.md b/api/CLAUDE.md
+index e69f0b4..b9d530d 100644
+--- a/api/CLAUDE.md
++++ b/api/CLAUDE.md
+@@ -2,7 +2,7 @@
+ 
+ A routing map for this package. Read a file only when this map points there. For a one-line note on each file, read the `api/` part of `docs/structure.md`.
+ 
+-**Status:** the API has one resource, todos, with all its routes (see `routes.json`). `POST /api/demo-todos/restore` is temporary, for the Restore Demo Todos link. The frontend reads and changes its Todos through these routes.
++**Status:** the API has one resource, todos, with all its routes (see `routes.json`). The frontend reads and changes its Todos through these routes.
+ 
+ ## Request path
+ 
+diff --git a/api/dev/sample-events/todos/restore-demo-todos.json b/api/dev/sample-events/todos/restore-demo-todos.json
+deleted file mode 100644
+index cbb2617..0000000
+--- a/api/dev/sample-events/todos/restore-demo-todos.json
++++ /dev/null
+@@ -1,6 +0,0 @@
+-{
+-  "routeKey": "POST /api/demo-todos/restore",
+-  "rawPath": "/api/demo-todos/restore",
+-  "requestContext": { "requestId": "local-restore-demo-todos" },
+-  "isBase64Encoded": false
+-}
+diff --git a/api/routes.json b/api/routes.json
+index f3d62ec..0f0a338 100644
+--- a/api/routes.json
++++ b/api/routes.json
+@@ -3,6 +3,5 @@
+   { "method": "POST", "path": "/api/todos", "handler": "createTodo" },
+   { "method": "PATCH", "path": "/api/todos/{todo_id}", "handler": "setTodoCompleted" },
+   { "method": "DELETE", "path": "/api/todos/{todo_id}", "handler": "deleteTodo" },
+-  { "method": "DELETE", "path": "/api/todos", "handler": "clearCompletedTodos" },
+-  { "method": "POST", "path": "/api/demo-todos/restore", "handler": "restoreDemoTodos" }
++  { "method": "DELETE", "path": "/api/todos", "handler": "clearCompletedTodos" }
+ ]
+diff --git a/api/src/resources/todos/route-handlers/restore-demo-todos.ts b/api/src/resources/todos/route-handlers/restore-demo-todos.ts
+deleted file mode 100644
+index e84e736..0000000
+--- a/api/src/resources/todos/route-handlers/restore-demo-todos.ts
++++ /dev/null
+@@ -1,30 +0,0 @@
+-import { randomUUIDv7 } from "node:crypto";
+-
+-import type { Todo } from "@to-do-list/common";
+-
+-import { noContent } from "../../../route-handler-tools/responses.ts";
+-import type { RouteHandler } from "../../../route-handler-tools/route-handler.ts";
+-import { DEMO_TODOS } from "../demo-todos.ts";
+-import * as todosRepository from "../todos-repository.ts";
+-
+-// Temporary: the frontend's Restore Demo Todos link calls this route. Delete the route together with the link.
+-export const restoreDemoTodos: RouteHandler = async () => {
+-  // The list shows the largest ID first. Two IDs from the same millisecond can come in any order,
+-  // so sort them, largest first: then the list shows DEMO_TODOS in its order.
+-  const todoIds = DEMO_TODOS.map(() => randomUUIDv7()).sort().reverse();
+-
+-  const todos: Todo[] = DEMO_TODOS.map((demoTodo, index) => {
+-    const todoId = todoIds[index];
+-    if (todoId === undefined) {
+-      throw new Error("one ID is missing for the Demo Todos");
+-    }
+-    return { todo_id: todoId, ...demoTodo, version: 1 };
+-  });
+-  await todosRepository.restoreDemoTodos(todosRepository.DEMO_OWNER_ID, todos);
+-
+-  return {
+-    outcome: "restored",
+-    message: `restored ${todos.length} demo todos`,
+-    response: noContent(),
+-  };
+-};
+diff --git a/api/src/resources/todos/todos-repository.ts b/api/src/resources/todos/todos-repository.ts
+index 00fbf28..c7f6f70 100644
+--- a/api/src/resources/todos/todos-repository.ts
++++ b/api/src/resources/todos/todos-repository.ts
+@@ -134,11 +134,3 @@ export const clearCompletedTodos = async (ownerId: string) => {
+ 
+   return result.Count ?? 0;
+ };
+-
+-// Deletes every Todo of one owner, then writes the given Todos.
+-export const restoreDemoTodos = async (ownerId: string, todos: Todo[]) => {
+-  await todosTable.build(DeletePartitionCommand).entities(TodoEntity).query({ partition: ownerId }).send();
+-
+-  const puts = todos.map((todo) => TodoEntity.build(PutItemCommand).item({ owner_id: ownerId, ...todo }).send());
+-  await Promise.all(puts);
+-};
+diff --git a/api/src/route-handler-tools/outcome-codes.ts b/api/src/route-handler-tools/outcome-codes.ts
+index 8488536..cf351ea 100644
+--- a/api/src/route-handler-tools/outcome-codes.ts
++++ b/api/src/route-handler-tools/outcome-codes.ts
+@@ -9,6 +9,5 @@ export type RequestOutcomeCode =
+   | "updated"          // change one item by ID: 200, with the changed item.
+   | "deleted"          // delete one item by ID: 204, also when it didn't exist.
+   | "cleared"          // delete every item that matches a filter: 204.
+-  | "restored"         // replace every item with the demo items: 204.
+   | ErrorOutcome       // the errors with a body: not_found, version_conflict, invalid_id, invalid_body, invalid_query.
+   | "error";           // any request: 500, something threw. The router logs it as ERROR and throws it again.
+diff --git a/api/src/router/handler-registry.ts b/api/src/router/handler-registry.ts
+index 908650a..4571e58 100644
+--- a/api/src/router/handler-registry.ts
++++ b/api/src/router/handler-registry.ts
+@@ -4,5 +4,4 @@ export { clearCompletedTodos } from "../resources/todos/route-handlers/clear-com
+ export { createTodo } from "../resources/todos/route-handlers/create-todo.ts";
+ export { deleteTodo } from "../resources/todos/route-handlers/delete-todo.ts";
+ export { listTodos } from "../resources/todos/route-handlers/list-todos.ts";
+-export { restoreDemoTodos } from "../resources/todos/route-handlers/restore-demo-todos.ts";
+ export { setTodoCompleted } from "../resources/todos/route-handlers/set-todo-completed.ts";
+diff --git a/api/tests/resources/todos/route-handlers/restore-demo-todos.test.ts b/api/tests/resources/todos/route-handlers/restore-demo-todos.test.ts
+deleted file mode 100644
+index a41270a..0000000
+--- a/api/tests/resources/todos/route-handlers/restore-demo-todos.test.ts
++++ /dev/null
+@@ -1,31 +0,0 @@
+-import { describe, expect, it, vi } from "vitest";
+-
+-import { DEMO_TODOS } from "../../../../src/resources/todos/demo-todos.ts";
+-import { restoreDemoTodos } from "../../../../src/resources/todos/route-handlers/restore-demo-todos.ts";
+-import * as todosRepository from "../../../../src/resources/todos/todos-repository.ts";
+-import { makeEvent } from "../../../fixtures/events.ts";
+-
+-vi.mock("../../../../src/resources/todos/todos-repository.ts", () => ({
+-  DEMO_OWNER_ID: "demo-owner",
+-  restoreDemoTodos: vi.fn(),
+-}));
+-
+-describe("restoreDemoTodos", () => {
+-  it("writes the Demo Todos at version 1, with IDs that sort them in the list's order, and answers 204", async () => {
+-    const result = await restoreDemoTodos(makeEvent({ routeKey: "POST /api/demo-todos/restore" }));
+-
+-    expect(result.outcome).toBe("restored");
+-    expect(result.response.statusCode).toBe(204);
+-
+-    // The Todos that the route handler passed to the repository, from the mock's record of its first call.
+-    const [ownerId, todos] = vi.mocked(todosRepository.restoreDemoTodos).mock.calls[0] ?? [];
+-    expect(ownerId).toBe("demo-owner");
+-    expect(todos?.map(({ title, completed, version }) => ({ title, completed, version }))).toEqual(
+-      DEMO_TODOS.map((demoTodo) => ({ ...demoTodo, version: 1 })),
+-    );
+-
+-    // The list shows the largest ID first, so the IDs must go from largest to smallest.
+-    const todoIds = todos?.map((todo) => todo.todo_id) ?? [];
+-    expect(todoIds).toEqual([...todoIds].sort().reverse());
+-  });
+-});
+diff --git a/api/tests/router/routes.test.ts b/api/tests/router/routes.test.ts
+new file mode 100644
+index 0000000..9990ca0
+--- /dev/null
++++ b/api/tests/router/routes.test.ts
+@@ -0,0 +1,11 @@
++import { describe, expect, it } from "vitest";
++
++import { routes } from "../../src/router/routes.ts";
++
++describe("routes", () => {
++  it("has no route for POST /api/demo-todos/restore, so that request gets the Not Found answer", () => {
++    const restoreRoute = routes.find((route) => route.method === "POST" && route.path === "/api/demo-todos/restore");
++
++    expect(restoreRoute).toBeUndefined();
++  });
++});
+diff --git a/docs/structure.md b/docs/structure.md
+index 098ac96..8066fcf 100644
+--- a/docs/structure.md
++++ b/docs/structure.md
+@@ -126,10 +126,10 @@ to-do-list/
+ │   │   │   ├── error-text.ts   the text that people see for each error outcome of the API, and
+ │   │   │   │                   getErrorText, which reads the outcome from a failed request's error body
+ │   │   │   ├── todos.ts        the Todo API Functions, one request each: list, create, set completed,
+-│   │   │   │                   delete, clear Completed, and the temporary Restore Demo Todos
++│   │   │   │                   delete, clear Completed
+ │   │   │   └── index.ts        barrel for the API Functions, getErrorText and the shared axios instance
+ │   │   ├── api-hooks/
+-│   │   │   ├── todos.ts        the Todo API Hooks: one query and five mutations. Each mutation
++│   │   │   ├── todos.ts        the Todo API Hooks: one query and four mutations. Each mutation
+ │   │   │   │                   refreshes the Todo list when it settles, whether it worked or failed
+ │   │   │   └── index.ts        barrel for the API Hooks
+ │   │   ├── components/     the Shared Components, one folder each: <Name>/<Name>.tsx and its scoped
+@@ -155,7 +155,7 @@ to-do-list/
+ │   │   │   │               <Name>/<Name>.module.scss
+ │   │   │   ├── Home/       in the PageLayout: the new-todo input, the Todo rows and footer in a
+ │   │   │   │               card (with the filters in a card of their own below the small
+-│   │   │   │               breakpoint), and the temporary Restore Demo Todos link. Asks before deleting, clearing or restoring.
++│   │   │   │               breakpoint), and a hidden Restore Demo Todos link that waits for a new use. Asks before deleting or clearing.
+ │   │   │   │               Shows an error alert if the Todos can't be loaded
+ │   │   │   ├── NotFound/   shown for any unknown URL: in the PageLayout, a card with a link back to
+ │   │   │   │               the Todo list
+@@ -185,6 +185,8 @@ to-do-list/
+ │   └── tests/              the unit tests (Vitest, in jsdom), with the same folders as src/
+ │       ├── setup.ts        runs before each test file: jest-dom's matchers, the cleanup after each
+ │       │                   test, and a stand-in for window.matchMedia, which jsdom lacks
++│       ├── pages/
++│       │   └── Home.test.tsx   the Home Page: the Restore Demo Todos link doesn't show
+ │       ├── test-utils/
+ │       │   └── render.tsx  render: renders a component in MantineProvider with the app's theme, in
+ │       │                   Mantine's test mode (no transitions, no portals)
+@@ -247,11 +249,8 @@ to-do-list/
+ │   │               │                             version
+ │   │               ├── delete-todo.ts            DELETE /api/todos/{todo_id}: 204, also when there's no
+ │   │               │                             such Todo
+-│   │               ├── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
+-│   │               │                             Todo
+-│   │               └── restore-demo-todos.ts     POST /api/demo-todos/restore: replaces every Todo with the
+-│   │                                             Demo Todos. Temporary, for the frontend's Restore Demo
+-│   │                                             Todos link
++│   │               └── clear-completed-todos.ts  DELETE /api/todos?completed=true: deletes every Completed
++│   │                                             Todo
+ │   ├── dev/                the tools that run only on your machine, never in Lambda
+ │   │   ├── server.ts       the local dev server: an Express app that plays API Gateway's part, calls
+ │   │   │                   the router in src/router/router.ts, and warns when you're not logged in to AWS
+@@ -266,6 +265,8 @@ to-do-list/
+ │       │                   reaches DynamoDB: the repository tests wait for DynamoDB Local
+ │       ├── fixtures/
+ │       │   └── events.ts   makeEvent: a whole API Gateway event from the parts a route handler reads
++│       ├── router/
++│       │   └── routes.test.ts   the routes list: the removed POST /api/demo-todos/restore stays out
+ │       └── resources/
+ │           └── todos/
+ │               ├── todo-id.test.ts   isValidTodoId: the IDs it accepts and refuses
+diff --git a/frontend/CLAUDE.md b/frontend/CLAUDE.md
+index 934f54d..dd62c1b 100644
+--- a/frontend/CLAUDE.md
++++ b/frontend/CLAUDE.md
+@@ -9,7 +9,7 @@ Page or Shared Component → API Hook (`src/api-hooks/todos.ts`, React Query, ke
+ - Every mutation invalidates `["todos"]` when it settles, whether it worked or failed, so the list refetches.
+ - A failed mutation shows a pop-up message from one place: the `MutationCache` in `src/query-client.ts`. `src/api/error-text.ts` turns the API's error body into the text that people see. A failed read shows in the Page, through the query's `isError`.
+ - The Todo types come from `@to-do-list/common`, through `src/types/todo.ts`.
+-- Code marked Temporary (`restoreDemoTodos`, `useRestoreDemoTodos` and the Restore Demo Todos link) goes away together with `POST /api/demo-todos/restore`.
++- The Home Page keeps the Restore Demo Todos link in its code, hidden, until it gets a new use.
+ 
+ ## Where to find
+ 
+diff --git a/frontend/src/api-hooks/todos.ts b/frontend/src/api-hooks/todos.ts
+index 4e108ef..ec27212 100644
+--- a/frontend/src/api-hooks/todos.ts
++++ b/frontend/src/api-hooks/todos.ts
+@@ -5,7 +5,6 @@ import {
+   createTodo,
+   deleteTodo,
+   listTodos,
+-  restoreDemoTodos,
+   setTodoCompleted,
+ } from "@/api";
+ import type { SetTodoCompletedBody } from "@/types";
+@@ -48,12 +47,3 @@ export const useClearCompletedTodos = () => {
+     onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
+   });
+ };
+-
+-// Temporary: delete it together with restoreDemoTodos and the Restore Demo Todos link.
+-export const useRestoreDemoTodos = () => {
+-  const queryClient = useQueryClient();
+-  return useMutation({
+-    mutationFn: restoreDemoTodos,
+-    onSettled: () => queryClient.invalidateQueries({ queryKey: todosQueryKey }),
+-  });
+-};
+diff --git a/frontend/src/api/todos.ts b/frontend/src/api/todos.ts
+index 2d0779f..2b9dc31 100644
+--- a/frontend/src/api/todos.ts
++++ b/frontend/src/api/todos.ts
+@@ -26,8 +26,3 @@ export const deleteTodo = async (todoId: string) => {
+ export const clearCompletedTodos = async () => {
+   await apiClient.delete("/todos", { params: { completed: true } });
+ };
+-
+-// Temporary: replaces every Todo with the six Demo Todos. Delete it together with POST /api/demo-todos/restore.
+-export const restoreDemoTodos = async () => {
+-  await apiClient.post("/demo-todos/restore");
+-};
+diff --git a/frontend/src/pages/Home/Home.tsx b/frontend/src/pages/Home/Home.tsx
+index 7770798..7bfbe90 100644
+--- a/frontend/src/pages/Home/Home.tsx
++++ b/frontend/src/pages/Home/Home.tsx
+@@ -7,7 +7,6 @@ import {
+   useCreateTodo,
+   useDeleteTodo,
+   useListTodos,
+-  useRestoreDemoTodos,
+   useSetTodoCompleted,
+ } from "@/api-hooks";
+ import { NewTodoInput, PageLayout, TodoFilters, TodoFooter, TodoRow } from "@/components";
+@@ -21,7 +20,6 @@ export const Home: FC = () => {
+   const setTodoCompleted = useSetTodoCompleted();
+   const deleteTodo = useDeleteTodo();
+   const clearCompletedTodos = useClearCompletedTodos();
+-  const restoreDemoTodos = useRestoreDemoTodos();
+   // Starts at All on every load: the filter isn't stored or put in the URL.
+   const [filter, setFilter] = useState<TodoFilter>("all");
+ 
+@@ -71,15 +69,6 @@ export const Home: FC = () => {
+     });
+   };
+ 
+-  const confirmRestore = () =>
+-    modals.openConfirmModal({
+-      title: "Restore demo todos?",
+-      children: <Text size="sm">Your current todos will be replaced by the six demo todos.</Text>,
+-      labels: { confirm: "Restore", cancel: "Cancel" },
+-      confirmProps: { color: "red" },
+-      onConfirm: () => restoreDemoTodos.mutate(),
+-    });
+-
+   return (
+     <PageLayout>
+       <Stack className={classes.content}>
+@@ -114,9 +103,8 @@ export const Home: FC = () => {
+             </Card>
+           </>
+         )}
+-        {/* Temporary: calls POST /api/demo-todos/restore. Delete it together with that route, restoreDemoTodos and
+-            useRestoreDemoTodos. Shown even when the list fails to load. */}
+-        <Anchor component="button" type="button" c="dimmed" onClick={confirmRestore} className={classes.restoreLink}>
++        {/* Hidden, and waiting for a new use: the developer plans to repurpose this link, or at least its style. */}
++        <Anchor component="button" type="button" c="dimmed" display="none" className={classes.restoreLink}>
+           Restore demo todos
+         </Anchor>
+       </Stack>
+diff --git a/frontend/tests/pages/Home.test.tsx b/frontend/tests/pages/Home.test.tsx
+new file mode 100644
+index 0000000..f495ee7
+--- /dev/null
++++ b/frontend/tests/pages/Home.test.tsx
+@@ -0,0 +1,24 @@
++import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
++import { screen } from "@testing-library/react";
++import { describe, expect, it, vi } from "vitest";
++
++import { Home } from "@/pages/Home/Home";
++
++import { render } from "../test-utils/render";
++
++// The HTTP client is the boundary: every API Function sends its request through it.
++vi.mock("@/api/api-client", () => ({
++  apiClient: { get: vi.fn().mockResolvedValue({ data: [] }) },
++}));
++
++describe("Home", () => {
++  it("doesn't show the Restore Demo Todos link", () => {
++    render(
++      <QueryClientProvider client={new QueryClient()}>
++        <Home />
++      </QueryClientProvider>,
++    );
++
++    expect(screen.getByText("Restore demo todos")).not.toBeVisible();
++  });
++});

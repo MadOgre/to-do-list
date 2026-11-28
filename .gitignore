@@ -8,6 +8,9 @@ dist
 # Local-only overrides (.env.local, .env.development.local, ...)
 *.local
 
+# Notes for humans only, which may go out of sync with the repo. .claude/settings.json denies Claude Code reads of it
+DEV-PLANS.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -18,8 +21,14 @@ dist
 .DS_Store
 Thumbs.db
 
-# The API's local settings for pnpm dev and pnpm invoke. api/.env.example shows what goes in them
-api/.env
+# The API's local settings for pnpm dev, pnpm invoke and pnpm db:reset. .env.example shows what goes
+# in them. The leading / ignores only the root .env: frontend/.env is committed
+/.env
+
+# DynamoDB Local's download and its data, from bin/setup-local-db.sh, and the metadata file
+# (installation ID, telemetry flag) that DynamoDB Local writes into api/ when it runs
+api/.dynamodb-local/
+api/dynamodb-local-metadata.json
 
 # Terraform's working folder: downloaded providers (hundreds of MB), caches
 .terraform/
