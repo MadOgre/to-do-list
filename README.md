@@ -17,8 +17,8 @@ cd to-do-list
 pnpm install
 bin/setup-local-db.sh          # WSL and Linux; other systems: see docs/local-development.md
 cp api/.env.example api/.env   # in Windows cmd: copy api\.env.example api\.env
+pnpm db:reset                  # once
 pnpm dev
-pnpm db:reset                  # once, in a second terminal, while pnpm dev runs
 ```
 
 The frontend opens at **<http://localhost:9000>**, and the API runs at **<http://localhost:3000>**. Full details, on every OS: [docs/local-development.md](docs/local-development.md).

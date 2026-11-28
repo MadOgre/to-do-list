@@ -1,6 +1,6 @@
 # 05 - The reset starts and stops DynamoDB Local by itself
 
-**Status:** todo
+**Status:** done
 **Blocked by:** 04
 **Model:** opus
 **Skills:** None
@@ -32,15 +32,25 @@ The running app, checked by hand: `pnpm db:reset` with `pnpm dev` stopped, and t
 
 ### Rule 9: the reset starts DynamoDB Local
 
-- [ ] **Not running**: given `pnpm dev` is stopped. The developer runs `pnpm db:reset`; then The reset prints `DynamoDB Local isn't running. Starting it…`, then `Reset tdl-dev-todos: 6 Todos written.`, then `Stopped DynamoDB Local.` Port 8000 is free afterward.
-- [ ] **Can't start**: given DynamoDB Local isn't installed. The developer runs `pnpm db:reset`; then After 10 seconds, the reset prints `DynamoDB Local didn't answer within 10 seconds. Did you run bin/setup-local-db.sh? See docs/local-development.md.` and exits with code 1. Nothing changes.
+- [x] **Not running**: given `pnpm dev` is stopped. The developer runs `pnpm db:reset`; then The reset prints `DynamoDB Local isn't running. Starting it…`, then `Reset tdl-dev-todos: 6 Todos written.`, then `Stopped DynamoDB Local.` Port 8000 is free afterward.
+- [x] **Can't start**: given DynamoDB Local isn't installed. The developer runs `pnpm db:reset`; then After 10 seconds, the reset prints `DynamoDB Local didn't answer within 10 seconds. Did you run bin/setup-local-db.sh? See docs/local-development.md.` and exits with code 1. Nothing changes.
 
 ## Acceptance criteria
 
-- [ ] After a failure, no Java process that the reset started is left, and port 8000 is free.
-- [ ] Every scenario above is a step in the closing manual check.
-- [ ] The project's checks pass, as "Keep the build green" in the project's `CLAUDE.md` lists them.
+- [x] After a failure, no Java process that the reset started is left, and port 8000 is free.
+- [x] Every scenario above is a step in the closing manual check.
+- [x] The project's checks pass, as "Keep the build green" in the project's `CLAUDE.md` lists them.
 
 ## Notes
 
-(Empty. `/forge:implement` adds notes here.)
+Base: 1b74a5e2f6dc048fb8d21699e3a8a3afd3f787e8
+
+Review (reviews/05/): no blocking findings. Spec review: no findings.
+- S1 (judgment, new, `reset-local-db.ts:42`): accepted. The `java` arguments repeat `dev:db`, with a comment that names the other copy.
+- S2 (judgment, new, `reset-local-db.ts:146`): accepted. The text "10 seconds" is the spec's literal message.
+- S3 (judgment, new, `reset-local-db.ts:136`): accepted. The code is plain enough, and the paths were tested.
+
+Paused (2026-11-28): the developer's manual check is in progress. "Can't start" passed with the jar renamed, because Windows refuses to rename `api/.dynamodb-local` (a lock that no tool shows). Steps 5 to 7 of the manual check are still owed. Next: close ticket 05, then the branch review. After the run: move `api/.env` and `api/.env.example` to the repo root, with the developer's approval of the exact edits.
+
+Close: the developer passed every step of the manual check, steps 5 to 7 included. Blocking findings fixed: 0. Accepted: S1, S2, S3, as above. Deferred: 0.
+- The folder lock: WSL 1 held a stale handle on `api/.dynamodb-local`, which no tool showed. `wsl --shutdown` released the handle.

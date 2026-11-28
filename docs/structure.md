@@ -275,7 +275,8 @@ to-do-list/
 │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
 │   │   ├── reset-local-db.ts  Reset Local Database (pnpm db:reset): deletes the local todos table
 │   │   │                   in DynamoDB Local, creates it again and writes the Seed; never AWS,
-│   │   │                   whatever DATABASE says
+│   │   │                   whatever DATABASE says; starts and stops DynamoDB Local if it
+│   │   │                   isn't running
 │   │   ├── seeds/
 │   │   │   └── todos.ts    the todos table's Seed: the Demo Owner's six Demo Todos, with fixed IDs
 │   │   └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.

@@ -1,0 +1,241 @@
+diff --git a/README.md b/README.md
+index 8e328ec..1c66f59 100644
+--- a/README.md
++++ b/README.md
+@@ -17,8 +17,8 @@ cd to-do-list
+ pnpm install
+ bin/setup-local-db.sh          # WSL and Linux; other systems: see docs/local-development.md
+ cp api/.env.example api/.env   # in Windows cmd: copy api\.env.example api\.env
++pnpm db:reset                  # once
+ pnpm dev
+-pnpm db:reset                  # once, in a second terminal, while pnpm dev runs
+ ```
+ 
+ The frontend opens at **<http://localhost:9000>**, and the API runs at **<http://localhost:3000>**. Full details, on every OS: [docs/local-development.md](docs/local-development.md).
+diff --git a/api/dev/reset-local-db.ts b/api/dev/reset-local-db.ts
+index 12e723a..cd3263f 100644
+--- a/api/dev/reset-local-db.ts
++++ b/api/dev/reset-local-db.ts
+@@ -1,51 +1,150 @@
+ // Reset Local Database: deletes the local todos table, creates it again, and writes the Seed.
+-// Usage, in api/, while pnpm dev runs DynamoDB Local: pnpm db:reset
++// If DynamoDB Local isn't running, the reset starts it first and stops it at the end.
++// Usage, in api/: pnpm db:reset
+ import { CreateTableCommand, DeleteTableCommand, DynamoDBClient, ResourceNotFoundException } from "@aws-sdk/client-dynamodb";
+ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
++import { type ChildProcess, spawn } from "node:child_process";
++import { once } from "node:events";
++import { connect } from "node:net";
++import { setTimeout as sleep } from "node:timers/promises";
++import { fileURLToPath } from "node:url";
+ 
+ import { dynamoDbClientConfig } from "../src/database/dynamodb-client-config.ts";
+ import { TODOS_SEED } from "./seeds/todos.ts";
+ 
++const DYNAMODB_LOCAL_PORT = 8000;
++const START_TIMEOUT_MS = 10_000;
++const POLL_INTERVAL_MS = 250;
++
+ const { TODOS_TABLE } = process.env;
+ if (!TODOS_TABLE) {
+   throw new Error("TODOS_TABLE environment variable must be set");
+ }
+ 
+-// Always DynamoDB Local, with fake credentials, whatever DATABASE says: the reset never reaches AWS.
+-const client = new DynamoDBClient(dynamoDbClientConfig("local"));
+-const documentClient = DynamoDBDocumentClient.from(client);
+-
+-// Deleting a table that doesn't exist yet, before the first reset, isn't an error.
+-try {
+-  await client.send(new DeleteTableCommand({ TableName: TODOS_TABLE }));
+-} catch (error) {
+-  if (!(error instanceof ResourceNotFoundException)) {
+-    throw error;
++// True when a program accepts connections on DynamoDB Local's port. The reset doesn't check
++// that the program is DynamoDB Local: a foreign program makes the reset fail later.
++const isPortAnswering = async () => {
++  const socket = connect(DYNAMODB_LOCAL_PORT, "localhost");
++  try {
++    await once(socket, "connect");
++    return true;
++  } catch {
++    return false;
++  } finally {
++    socket.destroy();
+   }
+-}
++};
+ 
+-// The same keys as the real table in infra/modules/app/dynamodb.tf.
+-await client.send(
+-  new CreateTableCommand({
+-    TableName: TODOS_TABLE,
+-    AttributeDefinitions: [
+-      { AttributeName: "owner_id", AttributeType: "S" },
+-      { AttributeName: "todo_id", AttributeType: "S" },
++// Starts DynamoDB Local with the same values as dev:db in api/package.json, from api/, so that
++// DynamoDB Local writes dynamodb-local-metadata.json where git ignores it.
++const startDynamoDbLocal = () => {
++  const apiFolder = fileURLToPath(new URL("..", import.meta.url));
++  const dynamoDbLocal = spawn(
++    "java",
++    [
++      "-Djava.library.path=.dynamodb-local/DynamoDBLocal_lib",
++      "-jar",
++      ".dynamodb-local/DynamoDBLocal.jar",
++      "-sharedDb",
++      "-dbPath",
++      ".dynamodb-local/data",
++      "-port",
++      String(DYNAMODB_LOCAL_PORT),
++      "-disableTelemetry",
+     ],
+-    KeySchema: [
+-      { AttributeName: "owner_id", KeyType: "HASH" },
+-      { AttributeName: "todo_id", KeyType: "RANGE" },
+-    ],
+-    BillingMode: "PAY_PER_REQUEST",
+-  }),
+-);
+-
+-let todosWritten = 0;
+-for (const [ownerId, todos] of Object.entries(TODOS_SEED)) {
+-  for (const todo of todos) {
+-    await documentClient.send(new PutCommand({ TableName: TODOS_TABLE, Item: { owner_id: ownerId, ...todo } }));
+-    todosWritten += 1;
++    { cwd: apiFolder, stdio: "ignore" },
++  );
++  // Without a listener, a missing java command would crash the reset. The wait below then
++  // reports that DynamoDB Local didn't answer, as for a missing DynamoDB Local.
++  dynamoDbLocal.on("error", () => {});
++  return dynamoDbLocal;
++};
++
++const waitUntilAnswering = async () => {
++  const deadline = Date.now() + START_TIMEOUT_MS;
++  while (Date.now() < deadline) {
++    if (await isPortAnswering()) {
++      return true;
++    }
++    await sleep(POLL_INTERVAL_MS);
+   }
+-}
++  return false;
++};
++
++// Stops the DynamoDB Local that the reset started, and waits until its process has exited,
++// so that port 8000 is free for the next pnpm dev.
++const stopDynamoDbLocal = async (dynamoDbLocal: ChildProcess) => {
++  const hasExited = dynamoDbLocal.exitCode !== null || dynamoDbLocal.signalCode !== null;
++  if (!hasExited) {
++    const exited = once(dynamoDbLocal, "exit");
++    dynamoDbLocal.kill();
++    await exited;
++  }
++};
++
++const resetTodosTable = async (tableName: string) => {
++  // Always DynamoDB Local, with fake credentials, whatever DATABASE says: the reset never reaches AWS.
++  const client = new DynamoDBClient(dynamoDbClientConfig("local"));
++  const documentClient = DynamoDBDocumentClient.from(client);
+ 
+-console.log(`Reset ${TODOS_TABLE}: ${todosWritten} Todos written.`);
++  // Deleting a table that doesn't exist yet, before the first reset, isn't an error.
++  try {
++    await client.send(new DeleteTableCommand({ TableName: tableName }));
++  } catch (error) {
++    if (!(error instanceof ResourceNotFoundException)) {
++      throw error;
++    }
++  }
++
++  // The same keys as the real table in infra/modules/app/dynamodb.tf.
++  await client.send(
++    new CreateTableCommand({
++      TableName: tableName,
++      AttributeDefinitions: [
++        { AttributeName: "owner_id", AttributeType: "S" },
++        { AttributeName: "todo_id", AttributeType: "S" },
++      ],
++      KeySchema: [
++        { AttributeName: "owner_id", KeyType: "HASH" },
++        { AttributeName: "todo_id", KeyType: "RANGE" },
++      ],
++      BillingMode: "PAY_PER_REQUEST",
++    }),
++  );
++
++  let todosWritten = 0;
++  for (const [ownerId, todos] of Object.entries(TODOS_SEED)) {
++    for (const todo of todos) {
++      await documentClient.send(new PutCommand({ TableName: tableName, Item: { owner_id: ownerId, ...todo } }));
++      todosWritten += 1;
++    }
++  }
++
++  console.log(`Reset ${tableName}: ${todosWritten} Todos written.`);
++};
++
++// A DynamoDB Local that runs already, as under pnpm dev, is used and left running.
++if (await isPortAnswering()) {
++  await resetTodosTable(TODOS_TABLE);
++} else {
++  console.log("DynamoDB Local isn't running. Starting it…");
++  const dynamoDbLocal = startDynamoDbLocal();
++  const answered = await waitUntilAnswering();
++  // The try/finally stops the DynamoDB Local that the reset started, also after a failure:
++  // a left-over java process would hold port 8000 and break the next pnpm dev.
++  try {
++    if (answered) {
++      await resetTodosTable(TODOS_TABLE);
++    }
++  } finally {
++    await stopDynamoDbLocal(dynamoDbLocal);
++  }
++  if (answered) {
++    console.log("Stopped DynamoDB Local.");
++  } else {
++    console.error(
++      "DynamoDB Local didn't answer within 10 seconds. Did you run bin/setup-local-db.sh? See docs/local-development.md.",
++    );
++    process.exitCode = 1;
++  }
++}
+diff --git a/docs/local-development.md b/docs/local-development.md
+index 3b032e8..327d587 100644
+--- a/docs/local-development.md
++++ b/docs/local-development.md
+@@ -29,7 +29,7 @@ macOS, Linux, Windows with WSL 1 or WSL 2, and Windows itself. The same commands
+      On Windows itself, run the commands in PowerShell, with `curl.exe` in place of `curl` and `mkdir` without `-p`.
+    - **Check:** `java -version` prints a version, and `api/.dynamodb-local/DynamoDBLocal.jar` exists.
+ 5. **Copy `api/.env.example` to `api/.env`.** Git ignores `api/.env`. Its comments say what each value is for. `DATABASE=local` selects DynamoDB Local, so you need no AWS account (see [Settings](#settings)).
+-6. **Fill the local todos table** once: run `pnpm dev`, and from the repo root, in a second terminal, run `pnpm db:reset`. The reset prints `Reset tdl-dev-todos: 6 Todos written.` Before the first reset, the table doesn't exist, and every todos route answers 500. See [Reset Local Database](#reset-local-database).
++6. **Fill the local todos table** once: from the repo root, run `pnpm db:reset`. The reset prints `Reset tdl-dev-todos: 6 Todos written.` Before the first reset, the table doesn't exist, and every todos route answers 500. See [Reset Local Database](#reset-local-database).
+ 7. **Only for `DATABASE=dev`: sign in to AWS** with `aws login`. With `dev`, the API's code calls AWS with your credentials: every todos route reads or writes the real todos table in DynamoDB. If you're not signed in, the dev server warns at startup, and those routes fail. With `DATABASE=local`, skip this step.
+ 
+ ## Running it
+@@ -74,7 +74,9 @@ The function's log lines print in the terminal, indented (`POWERTOOLS_DEV=true`
+ 
+ ## Reset Local Database
+ 
+-`pnpm db:reset`, from the repo root, deletes the local todos table, creates it again, and writes the six Demo Todos from `api/dev/seeds/todos.ts`. Each reset puts back the same six Todos, with the same IDs. Run it while `pnpm dev` runs DynamoDB Local.
++`pnpm db:reset`, from the repo root, deletes the local todos table, creates it again, and writes the six Demo Todos from `api/dev/seeds/todos.ts`. Each reset puts back the same six Todos, with the same IDs.
++
++The reset works whether `pnpm dev` runs or not. If DynamoDB Local runs already, the reset uses it and leaves it running. If DynamoDB Local isn't running, the reset starts it, prints `DynamoDB Local isn't running. Starting it…`, resets the table, and stops DynamoDB Local again with `Stopped DynamoDB Local.` If DynamoDB Local doesn't answer within 10 seconds, for example because it isn't installed, the reset stops with an error and exits with code 1. The reset checks only that a program answers on port 8000. If a foreign program uses the port, the reset fails: free the port.
+ 
+ The reset always uses DynamoDB Local on `localhost:8000`, with fake credentials, whatever `DATABASE` says. So the reset never changes a table in AWS. It reads the table's name from `TODOS_TABLE` in `api/.env`.
+ 
+diff --git a/docs/structure.md b/docs/structure.md
+index b411c23..501107f 100644
+--- a/docs/structure.md
++++ b/docs/structure.md
+@@ -275,7 +275,8 @@ to-do-list/
+ │   │   ├── local-context.ts  the stand-in Lambda context that server.ts and invoke.ts pass
+ │   │   ├── reset-local-db.ts  Reset Local Database (pnpm db:reset): deletes the local todos table
+ │   │   │                   in DynamoDB Local, creates it again and writes the Seed; never AWS,
+-│   │   │                   whatever DATABASE says
++│   │   │                   whatever DATABASE says; starts and stops DynamoDB Local if it
++│   │   │                   isn't running
+ │   │   ├── seeds/
+ │   │   │   └── todos.ts    the todos table's Seed: the Demo Owner's six Demo Todos, with fixed IDs
+ │   │   └── sample-events/  sample API Gateway events for pnpm invoke, one folder per resource.

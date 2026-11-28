@@ -1,0 +1,5 @@
+ README.md                 |   2 +-
+ api/dev/reset-local-db.ts | 167 ++++++++++++++++++++++++++++++++++++----------
+ docs/local-development.md |   6 +-
+ docs/structure.md         |   3 +-
+ 4 files changed, 140 insertions(+), 38 deletions(-)
